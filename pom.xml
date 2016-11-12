@@ -67,6 +67,12 @@
             <scope>compile</scope>
         </dependency>
         -->
+        <dependency>
+            <groupId>org.antlr</groupId>
+            <artifactId>antlr4-maven-plugin</artifactId>
+            <version>4.5.3</version>
+            <type>maven-plugin</type>
+        </dependency>
     </dependencies>
 
     <build>
