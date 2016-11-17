@@ -48,7 +48,8 @@ elem_name: name;
 name: name_prefix (WORD+ | UNDERSCORE)+;
 coord: INT SEP INT;
 name_prefix: '<' INT DOT INT DOT INT '>' COLON;
-time: RAT | INT;
+time: rat | INT;
+rat: INT '/' INT;
 time_with_wrapper: 'Time' '(' time ')';
 
 
@@ -60,7 +61,6 @@ NOSIG: 'NOSIG';
 FAHRT: 'FAHRT';
 STOP: 'STOP';
 INT: DIGIT+;
-RAT: INT '/' INT;
 WORD: (LOWERCASE_CHAR | UPPERCASE_CHAR)+;
 LOWERCASE_WORD: LOWERCASE_CHAR+;
 UPPERCASE_WORD: UPPERCASE_CHAR+;
