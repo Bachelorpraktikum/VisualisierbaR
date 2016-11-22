@@ -1,0 +1,106 @@
+package com.github.bachelorpraktikum.dbvisualization.view;
+
+import java.io.IOException;
+import java.net.URL;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Objects;
+import java.util.logging.Logger;
+
+import javafx.beans.property.ReadOnlyProperty;
+import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Scene;
+import javafx.scene.control.Button;
+import javafx.scene.control.TabPane;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.Pane;
+import javafx.stage.Stage;
+
+public class SourceController implements SourceChooser {
+    @FXML
+    private BorderPane rootPane;
+    @FXML
+    private GridPane fileChooserTab;
+    @FXML
+    private FileChooserController fileChooserTabController;
+    @FXML
+    private GridPane dbChooserTab;
+    @FXML
+    private DBChooserController dbChooserTabController;
+    @FXML
+    private TabPane tabPane;
+
+    private Stage stage;
+
+    @FXML
+    private Button openSource;
+
+    private SourceChooser activeController;
+    private List<SourceChooser> controllers;
+
+    @FXML
+    private void initialize() {
+        activeController = fileChooserTabController;
+
+        controllers = new LinkedList<>();
+        controllers.add(fileChooserTabController);
+        controllers.add(dbChooserTabController);
+
+
+        tabPane.getSelectionModel().selectedItemProperty().addListener(((observable, oldValue, newValue) -> {
+            activeController = getTabController(newValue.getContent().getId());
+        }));
+
+        resourceURLProperty().addListener((observable, oldValue, newValue) -> openSource.setDisable(newValue.toString().isEmpty()));
+
+        openSource.setOnAction(event -> {
+            try {
+                openMainWindow();
+            } catch (IOException e) {
+                Logger.getLogger(getClass().getName()).severe(e.getMessage());
+            }
+        });
+    }
+
+    private SourceChooser getTabController(String id) {
+        for (SourceChooser controller : controllers) {
+            if (Objects.equals(id, controller.getRootPaneId())) {
+                return controller;
+            }
+        }
+
+        return null;
+    }
+
+    @Override
+    public String getRootPaneId() {
+        return tabPane.getId();
+    }
+
+    @Override
+    public URL getResourceURL() {
+        return resourceURLProperty().getValue();
+    }
+
+    @Override
+    public ReadOnlyProperty<URL> resourceURLProperty() {
+        return activeController.resourceURLProperty();
+    }
+
+    public void setStage(Stage stage) {
+        this.stage = stage;
+
+        Scene scene = new Scene(rootPane);
+        stage.setScene(scene);
+    }
+
+    private void openMainWindow() throws IOException {
+        FXMLLoader mainLoader = new FXMLLoader(getClass().getResource("MainView.fxml"));
+        Pane mainPane = mainLoader.load();
+        stage.setScene(new Scene(mainPane));
+        MainViewController controller = mainLoader.getController();
+        controller.setURL(getResourceURL());
+    }
+}
