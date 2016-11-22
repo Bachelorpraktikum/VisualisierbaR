@@ -52,11 +52,7 @@ public class SourceController implements SourceChooser {
         resourceURLProperty().addListener((observable, oldValue, newValue) -> openSource.setDisable(newValue.toString().isEmpty()));
 
         openSource.setOnAction(event -> {
-            try {
-                openMainWindow();
-            } catch (IOException e) {
-                Logger.getLogger(getClass().getName()).severe(e.getMessage());
-            }
+            openMainWindow();
         });
     }
 
@@ -92,11 +88,17 @@ public class SourceController implements SourceChooser {
         stage.setScene(scene);
     }
 
-    private void openMainWindow() throws IOException {
+    private void openMainWindow() {
         FXMLLoader mainLoader = new FXMLLoader(getClass().getResource("MainView.fxml"));
-        Pane mainPane = mainLoader.load();
+        Pane mainPane = null;
+        try {
+            mainPane = mainLoader.load();
+        } catch (IOException e) {
+            // This should never happen (see load function)
+            return;
+        }
         stage.setScene(new Scene(mainPane));
-        MainViewController controller = mainLoader.getController();
-        controller.setURL(getResourceURL());
+        // MainViewController controller = mainLoader.getController();
+        // controller.setURL(getResourceURL());
     }
 }
