@@ -26,6 +26,7 @@ public class DBVisualizer extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("view/SourceChooser.fxml"));
+        loader.load();
         SourceController controller = loader.getController();
 
         controller.setStage(primaryStage);
