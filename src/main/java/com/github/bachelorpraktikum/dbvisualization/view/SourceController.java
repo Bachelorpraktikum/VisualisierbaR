@@ -5,7 +5,6 @@ import java.net.URL;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
-import java.util.logging.Logger;
 
 import javafx.beans.property.ReadOnlyProperty;
 import javafx.fxml.FXML;
@@ -28,8 +27,6 @@ public class SourceController implements SourceChooser {
     @FXML
     private GridPane dbChooserTab;
     @FXML
-    private DBChooserController dbChooserTabController;
-    @FXML
     private TabPane tabPane;
 
     private Stage stage;
@@ -46,7 +43,6 @@ public class SourceController implements SourceChooser {
 
         controllers = new LinkedList<>();
         controllers.add(fileChooserTabController);
-        controllers.add(dbChooserTabController);
 
 
         tabPane.getSelectionModel().selectedItemProperty().addListener(((observable, oldValue, newValue) -> {
