@@ -1,5 +1,7 @@
 package com.github.bachelorpraktikum.dbvisualization.view;
 
+import com.github.bachelorpraktikum.dbvisualization.DataSource;
+
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -60,5 +62,10 @@ public class FileChooserController implements SourceChooser {
     @Override
     public String getRootPaneId() {
         return rootPane.getId();
+    }
+
+    @Override
+    public DataSource.Type getResourceType() {
+        return DataSource.Type.LOG_FILE;
     }
 }

@@ -1,5 +1,7 @@
 package com.github.bachelorpraktikum.dbvisualization.view;
 
+import com.github.bachelorpraktikum.dbvisualization.DataSource;
+
 import java.io.IOException;
 import java.net.URL;
 import java.util.LinkedList;
@@ -69,6 +71,11 @@ public class SourceController implements SourceChooser {
     @Override
     public String getRootPaneId() {
         return tabPane.getId();
+    }
+
+    @Override
+    public DataSource.Type getResourceType() {
+        return activeController.getResourceType();
     }
 
     @Override
