@@ -1,12 +1,15 @@
 package com.github.bachelorpraktikum.dbvisualization;
 
-import javafx.application.Application;
-import javafx.stage.Stage;
+import com.github.bachelorpraktikum.dbvisualization.view.SourceController;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.logging.LogManager;
 import java.util.logging.Logger;
+
+import javafx.application.Application;
+import javafx.fxml.FXMLLoader;
+import javafx.stage.Stage;
 
 public class DBVisualizer extends Application {
     static {
@@ -22,6 +25,10 @@ public class DBVisualizer extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception {
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("view/SourceChooser.fxml"));
+        SourceController controller = loader.getController();
+
+        controller.setStage(primaryStage);
         primaryStage.show();
     }
 
