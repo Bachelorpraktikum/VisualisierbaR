@@ -47,9 +47,10 @@ public class SourceController implements SourceChooser {
         controllers.add(fileChooserTabController);
 
 
-        tabPane.getSelectionModel().selectedItemProperty().addListener(((observable, oldValue, newValue) -> {
-            activeController = getTabController(newValue.getContent().getId());
-        }));
+        tabPane.getSelectionModel().selectedItemProperty().addListener(
+                (observable, oldValue, newValue) ->
+                        activeController = getTabController(newValue.getContent().getId())
+        );
 
         resourceURLProperty().addListener((observable, oldValue, newValue) ->
                 openSource.setDisable(newValue == null || newValue.toString().isEmpty())
