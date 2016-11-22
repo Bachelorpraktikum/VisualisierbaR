@@ -43,8 +43,12 @@ public class FileChooserController implements SourceChooser {
     }
 
     private void updatePath(File file) {
+        if (file == null) {
+            return;
+        }
+
         try {
-            fileURLProperty.setValue(file.getAbsoluteFile().toURL());
+            fileURLProperty.setValue(file.getAbsoluteFile().toURI().toURL());
         } catch (MalformedURLException e) {
             e.printStackTrace();
         }
