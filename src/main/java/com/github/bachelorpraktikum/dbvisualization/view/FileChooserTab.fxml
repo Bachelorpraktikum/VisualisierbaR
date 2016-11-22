@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.RowConstraints?>
+<GridPane id="fileRootPane" fx:id="rootPane" xmlns="http://javafx.com/javafx/8.0.65"
+          xmlns:fx="http://javafx.com/fxml/1"
+          fx:controller="com.github.bachelorpraktikum.dbvisualization.view.FileChooserController">
+    <columnConstraints>
+        <ColumnConstraints hgrow="SOMETIMES" maxWidth="315.0" minWidth="10.0" prefWidth="99.0"/>
+        <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" maxWidth="1.7976931348623157E308"
+                           minWidth="10.0" prefWidth="97.0"/>
+        <ColumnConstraints hgrow="SOMETIMES" maxWidth="553.0" minWidth="10.0" prefWidth="506.0"/>
+    </columnConstraints>
+    <rowConstraints>
+        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
+    </rowConstraints>
+    <children>
+        <Label maxWidth="106.0" prefHeight="16.0" prefWidth="106.0" text="Choose a File"
+               GridPane.halignment="CENTER">
+            <GridPane.margin>
+                <Insets left="6.0"/>
+            </GridPane.margin>
+        </Label>
+        <TextField fx:id="pathField" prefHeight="26.0" prefWidth="509.0" GridPane.columnIndex="2">
+            <GridPane.margin>
+                <Insets right="6.0"/>
+            </GridPane.margin>
+        </TextField>
+        <Button fx:id="explorerButton" mnemonicParsing="false" prefHeight="26.0" prefWidth="75.0"
+                text="Explorer" GridPane.columnIndex="1">
+            <GridPane.margin>
+                <Insets right="6.0"/>
+            </GridPane.margin>
+        </Button>
+    </children>
+</GridPane>
