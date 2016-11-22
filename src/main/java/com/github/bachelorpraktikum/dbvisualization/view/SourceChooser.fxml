@@ -6,7 +6,8 @@
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TabPane?>
 <?import javafx.scene.layout.BorderPane?>
-<BorderPane fx:id="rootPane" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1"
+<BorderPane fx:id="rootPane" xmlns="http://javafx.com/javafx/8.0.65"
+            xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="com.github.bachelorpraktikum.dbvisualization.view.SourceController">
     <center>
         <TabPane fx:id="tabPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity"
@@ -14,9 +15,6 @@
                  tabClosingPolicy="UNAVAILABLE">
             <Tab text="File">
                 <fx:include fx:id="fileChooserTab" source="FileChooserTab.fxml"/>
-            </Tab>
-            <Tab text="Database">
-                <fx:include fx:id="dbChooserTab" source="DBChooser.fxml"/>
             </Tab>
         </TabPane>
     </center>
