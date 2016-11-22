@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.layout.BorderPane?>
+<BorderPane fx:id="rootPane" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.github.bachelorpraktikum.dbvisualization.view.SourceController">
+    <center>
+        <TabPane fx:id="tabPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity"
+                 minWidth="-Infinity" prefHeight="112.0" prefWidth="600.0"
+                 tabClosingPolicy="UNAVAILABLE">
+            <Tab text="File">
+                <fx:include fx:id="fileChooserTab" source="FileChooserTab.fxml"/>
+            </Tab>
+            <Tab text="Database">
+                <fx:include fx:id="dbChooserTab" source="DBChooser.fxml"/>
+            </Tab>
+        </TabPane>
+    </center>
+    <bottom>
+        <Button fx:id="openSource" contentDisplay="TEXT_ONLY" disable="true" mnemonicParsing="false"
+                text="Open" textAlignment="CENTER" wrapText="true" BorderPane.alignment="CENTER">
+            <BorderPane.margin>
+                <Insets bottom="6.0"/>
+            </BorderPane.margin>
+        </Button>
+    </bottom>
+</BorderPane>
