@@ -51,7 +51,9 @@ public class SourceController implements SourceChooser {
             activeController = getTabController(newValue.getContent().getId());
         }));
 
-        resourceURLProperty().addListener((observable, oldValue, newValue) -> openSource.setDisable(newValue.toString().isEmpty()));
+        resourceURLProperty().addListener((observable, oldValue, newValue) ->
+                openSource.setDisable(newValue == null || newValue.toString().isEmpty())
+        );
 
         openSource.setOnAction(event -> {
             openMainWindow();
