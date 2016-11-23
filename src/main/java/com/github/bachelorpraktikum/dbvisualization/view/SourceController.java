@@ -56,6 +56,13 @@ public class SourceController implements SourceChooser {
         });
     }
 
+    /**
+     * Gets the controller which corresponds to the current tab
+     * The controller is chosen by the root pane id of the tab
+     *
+     * @param id ID of the current root pane of the selected tab
+     * @return Controller which corresponds to the current tab
+     */
     private SourceChooser getTabController(String id) {
         for (SourceChooser controller : controllers) {
             if (Objects.equals(id, controller.getRootPaneId())) {
@@ -86,6 +93,11 @@ public class SourceController implements SourceChooser {
         return activeController.resourceURLProperty();
     }
 
+    /**
+     * The {@link #rootPane} will be displayed on the given stage
+     *
+     * @param stage Stage on which the scene will be displayed
+     */
     public void setStage(Stage stage) {
         this.stage = stage;
 
@@ -93,6 +105,9 @@ public class SourceController implements SourceChooser {
         stage.setScene(scene);
     }
 
+    /**
+     * Sets the scene for the current stage to the main view
+     */
     private void openMainWindow() {
         FXMLLoader mainLoader = new FXMLLoader(getClass().getResource("MainView.fxml"));
         Pane mainPane = null;
