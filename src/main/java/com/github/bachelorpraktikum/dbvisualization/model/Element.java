@@ -444,8 +444,8 @@ public final class Element {
         @Nonnull
         @Override
         public String getDescription() {
-            // TODO
-            return null;
+            // TODO replace by something more human readable
+            return toString();
         }
 
         @Nonnull

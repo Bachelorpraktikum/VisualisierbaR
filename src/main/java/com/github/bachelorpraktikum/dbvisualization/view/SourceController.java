@@ -140,7 +140,7 @@ public class SourceController implements SourceChooser {
         }
         MainController controller = mainLoader.getController();
         controller.setStage(stage);
-        // controller.setDataSource(getResourceURL());
+        controller.setDataSource(new DataSource(DataSource.Type.LOG_FILE, getResourceURL()));
     }
 
     private void closeWindow() {
