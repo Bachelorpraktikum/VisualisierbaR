@@ -133,14 +133,14 @@ public class SourceController implements SourceChooser {
         FXMLLoader mainLoader = new FXMLLoader(getClass().getResource("MainView.fxml"));
         Pane mainPane = null;
         try {
-            mainPane = mainLoader.load();
+            mainLoader.load();
         } catch (IOException e) {
             // This should never happen (see load function)
             return;
         }
-        stage.setScene(new Scene(mainPane));
-        // MainViewController controller = mainLoader.getController();
-        // controller.setURL(getResourceURL());
+        MainController controller = mainLoader.getController();
+        controller.setStage(stage);
+        // controller.setDataSource(getResourceURL());
     }
 
     private void closeWindow() {
