@@ -15,7 +15,6 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.TabPane;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 
@@ -23,11 +22,7 @@ public class SourceController implements SourceChooser {
     @FXML
     private BorderPane rootPane;
     @FXML
-    private GridPane fileChooserTab;
-    @FXML
     private FileChooserController fileChooserTabController;
-    @FXML
-    private GridPane dbChooserTab;
     @FXML
     private TabPane tabPane;
 
