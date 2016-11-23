@@ -75,21 +75,33 @@ public class SourceController implements SourceChooser {
         return null;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String getRootPaneId() {
         return tabPane.getId();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public DataSource.Type getResourceType() {
         return activeController.getResourceType();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public URL getResourceURL() {
         return resourceURLProperty().getValue();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public ReadOnlyProperty<URL> resourceURLProperty() {
         return activeController.resourceURLProperty();

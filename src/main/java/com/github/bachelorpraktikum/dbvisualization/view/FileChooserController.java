@@ -56,20 +56,33 @@ public class FileChooserController implements SourceChooser {
         pathField.setText(file.getAbsolutePath());
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public URL getResourceURL() {
         return fileURLProperty.getValue();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public ReadOnlyObjectProperty<URL> resourceURLProperty() {
         return fileURLProperty.getReadOnlyProperty();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String getRootPaneId() {
         return rootPane.getId();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public DataSource.Type getResourceType() {
         return DataSource.Type.LOG_FILE;
