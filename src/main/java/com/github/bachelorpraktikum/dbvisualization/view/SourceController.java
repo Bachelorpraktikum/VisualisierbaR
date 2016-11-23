@@ -20,6 +20,8 @@ import javafx.stage.Stage;
 
 public class SourceController implements SourceChooser {
     @FXML
+    private Button closeWindowButton;
+    @FXML
     private BorderPane rootPane;
     @FXML
     private FileChooserController fileChooserTabController;
@@ -53,9 +55,9 @@ public class SourceController implements SourceChooser {
                 openSource.setDisable(newValue == null || newValue.toString().isEmpty())
         );
 
-        openSource.setOnAction(event -> {
-            openMainWindow();
-        });
+        openSource.setOnAction(event -> openMainWindow());
+
+        closeWindowButton.setOnAction(event -> closeWindow());
     }
 
     /**
@@ -134,5 +136,10 @@ public class SourceController implements SourceChooser {
         stage.setScene(new Scene(mainPane));
         // MainViewController controller = mainLoader.getController();
         // controller.setURL(getResourceURL());
+    }
+
+    private void closeWindow() {
+        Stage primaryStage = (Stage) rootPane.getScene().getWindow();
+        primaryStage.close();
     }
 }
