@@ -177,9 +177,9 @@ public final class Element {
         @Nonnull
         private final Switch.Factory switchFactory;
         @Nonnull
-        private final ObservableList<Event> unorderedEvents;
+        private final ObservableList<ElementEvent> unorderedEvents;
         @Nonnull
-        private final SortedList<Event> events;
+        private final SortedList<ElementEvent> events;
         private int currentTime;
         private int nextIndex;
 
@@ -269,7 +269,7 @@ public final class Element {
             if (!events.isEmpty() && time < events.get(events.size() - 1).getTime()) {
                 throw new IllegalStateException("tried to add event before last event");
             }
-            unorderedEvents.add(new Event(element, time, state));
+            unorderedEvents.add(new ElementEvent(element, time, state));
             // maybe the states has to be updated
             if (time <= currentTime) {
                 int refreshTime = currentTime;
@@ -302,12 +302,16 @@ public final class Element {
                 resetTime();
             }
 
-            Event event;
+            ElementEvent event;
             while (nextIndex < events.size() && (event = events.get(nextIndex)).getTime() <= time) {
                 currentTime = event.getTime();
                 nextIndex += 1;
                 event.fire();
             }
+        }
+
+        public ObservableList<? extends Event> getEvents() {
+            return FXCollections.unmodifiableObservableList(events);
         }
     }
 
@@ -414,14 +418,14 @@ public final class Element {
     }
 
     @ParametersAreNonnullByDefault
-    private static class Event implements Comparable<Event> {
+    private static class ElementEvent implements Event {
         @Nonnull
         private final Element element;
         private final int time;
         @Nonnull
         private final State state;
 
-        private Event(Element element, int time, State state) {
+        private ElementEvent(Element element, int time, State state) {
             this.element = element;
             this.time = time;
             this.state = state;
@@ -432,8 +436,16 @@ public final class Element {
             return element;
         }
 
+        @Override
         public int getTime() {
             return time;
+        }
+
+        @Nonnull
+        @Override
+        public String getDescription() {
+            // TODO
+            return null;
         }
 
         @Nonnull
@@ -446,16 +458,11 @@ public final class Element {
         }
 
         @Override
-        public int compareTo(Event other) {
-            return Integer.compare(time, other.getTime());
-        }
-
-        @Override
         public boolean equals(Object obj) {
             if (this == obj) return true;
             if (obj == null || getClass() != obj.getClass()) return false;
 
-            Event event = (Event) obj;
+            ElementEvent event = (ElementEvent) obj;
 
             if (time != event.time) return false;
             return state == event.state;
@@ -470,7 +477,7 @@ public final class Element {
 
         @Override
         public String toString() {
-            return "Event{"
+            return "ElementEvent{"
                     + "time=" + time
                     + ", state=" + state
                     + '}';

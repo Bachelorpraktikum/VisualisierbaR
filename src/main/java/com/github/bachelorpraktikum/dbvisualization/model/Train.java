@@ -394,13 +394,11 @@ public class Train {
      */
     @Immutable
     @ParametersAreNonnullByDefault
-    public interface State extends Comparable<State> {
+    public interface State extends Event {
         @Nonnull
         Train getTrain();
 
         boolean isTerminated();
-
-        int getTime();
 
         int getSpeed();
 
@@ -413,14 +411,6 @@ public class Train {
          * @return the distance in meters
          */
         int getTotalDistance();
-
-        /**
-         * Compares states by the point of time they represent.
-         */
-        @Override
-        default int compareTo(State other) {
-            return Integer.compare(getTime(), other.getTime());
-        }
     }
 
     /**
@@ -586,6 +576,12 @@ public class Train {
             return time;
         }
 
+        @Nonnull
+        @Override
+        public String getDescription() {
+            return toString(); // TODO change to something more user-friendly
+        }
+
         @Override
         public int getTotalDistance() {
             return distance;
@@ -595,6 +591,7 @@ public class Train {
             return index;
         }
 
+        @Nonnull
         public List<String> getEvents() {
             return events;
         }
