@@ -44,10 +44,22 @@ public class FileChooserController implements SourceChooser {
         });
     }
 
+    /**
+     * Opens the system explorer where a file can be chosen.
+     * If a file was chosen the {@link File file} will be returned.
+     * If no file was chosen and the explorer has been closed, null will be returned.
+     *
+     * @return A {@link File file} or null
+     */
     private File openFileChooser() {
         return fileChooser.showOpenDialog(rootPane.getScene().getWindow());
     }
 
+    /**
+     * Updates the text in the path field with the absolute path of the <code>file</code>
+     *
+     * @param file File to get the path from
+     */
     private void updatePath(File file) {
         if (file == null) {
             return;
