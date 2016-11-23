@@ -33,8 +33,14 @@ public class FileChooserController implements SourceChooser {
         fileChooser = new FileChooser();
         explorerButton.setOnAction(event -> updatePath(openFileChooser()));
 
-        fileURLProperty.addListener((observable, oldValue, newValue) -> {
-            pathField.setText(String.valueOf(newValue));
+        pathField.textProperty().addListener((o, oldValue, newValue) -> {
+            try {
+                URL url = new File(String.valueOf(newValue)).getAbsoluteFile().toURI().toURL();
+                fileURLProperty.set(url);
+            } catch (MalformedURLException e) {
+                // ignore.
+                // This won't ever happen, because File.toURI().toURL() won't ever create an URL with an invalid protocol.
+            }
         });
     }
 
@@ -47,11 +53,7 @@ public class FileChooserController implements SourceChooser {
             return;
         }
 
-        try {
-            fileURLProperty.setValue(file.getAbsoluteFile().toURI().toURL());
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
-        }
+        pathField.setText(file.getAbsolutePath());
     }
 
     public URL getResourceURL() {
