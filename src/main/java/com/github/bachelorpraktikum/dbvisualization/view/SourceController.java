@@ -42,11 +42,13 @@ public class SourceController implements SourceChooser {
         controllers.add(fileChooserTabController);
 
 
+        // Set the activeController based on the selected tab
         tabPane.getSelectionModel().selectedItemProperty().addListener(
                 (observable, oldValue, newValue) ->
                         activeController = getTabController(newValue.getContent().getId())
         );
 
+        // Enable the "Open" button if path is set
         resourceURLProperty().addListener((observable, oldValue, newValue) ->
                 openSource.setDisable(newValue == null || newValue.toString().isEmpty())
         );
