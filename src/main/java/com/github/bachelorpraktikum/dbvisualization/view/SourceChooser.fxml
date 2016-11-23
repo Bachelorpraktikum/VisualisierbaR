@@ -19,11 +19,26 @@
         </TabPane>
     </center>
     <bottom>
-        <Button fx:id="openSource" contentDisplay="TEXT_ONLY" disable="true" mnemonicParsing="false"
-                text="Open" textAlignment="CENTER" wrapText="true" BorderPane.alignment="CENTER">
+        <BorderPane BorderPane.alignment="CENTER">
+            <center>
+                <Button fx:id="openSource" contentDisplay="TEXT_ONLY" disable="true"
+                        mnemonicParsing="false" text="Open" textAlignment="CENTER" wrapText="true">
+                    <BorderPane.margin>
+                        <Insets left="75.0"/>
+                    </BorderPane.margin>
+                </Button>
+            </center>
+            <right>
+                <Button fx:id="closeWindowButton" contentDisplay="TEXT_ONLY" mnemonicParsing="false"
+                        text="Close">
+                    <BorderPane.margin>
+                        <Insets right="4.0"/>
+                    </BorderPane.margin>
+                </Button>
+            </right>
             <BorderPane.margin>
-                <Insets bottom="6.0"/>
+                <Insets bottom="4.0"/>
             </BorderPane.margin>
-        </Button>
+        </BorderPane>
     </bottom>
 </BorderPane>
