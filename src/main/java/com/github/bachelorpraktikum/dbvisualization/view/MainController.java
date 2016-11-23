@@ -20,6 +20,7 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ListView;
 import javafx.scene.control.ToggleButton;
@@ -83,9 +84,12 @@ public class MainController {
                 Context context = null;
                 try {
                     context = new GraphParser(source.getUrl().getFile()).parse();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                    // TODO log, tell user and open source chooser
+                } catch (IOException | RuntimeException e) {
+                    Alert alert = new Alert(Alert.AlertType.ERROR);
+                    alert.setHeaderText("Verarbeitungs-Fehler");
+                    alert.setContentText("Can't parse chosen data source");
+                    alert.show();
+                    showSourceChooser();
                     return;
                 }
                 ContextHolder.getInstance().setContext(context);

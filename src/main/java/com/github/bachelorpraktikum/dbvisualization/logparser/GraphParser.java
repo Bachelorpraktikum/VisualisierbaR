@@ -8,6 +8,7 @@ import com.github.bachelorpraktikum.dbvisualization.model.Node;
 import com.github.bachelorpraktikum.dbvisualization.model.Train;
 
 import org.antlr.v4.runtime.ANTLRFileStream;
+import org.antlr.v4.runtime.BailErrorStrategy;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.atn.PredictionMode;
@@ -43,6 +44,7 @@ public final class GraphParser {
         LogLexer lexer = new LogLexer(input);
         CommonTokenStream tokens = new CommonTokenStream(lexer);
         LogParser parser = new LogParser(tokens);
+        parser.setErrorHandler(new BailErrorStrategy());
         parser.getInterpreter().setPredictionMode(PredictionMode.SLL);
         ParseTree parseTree;
         try {
