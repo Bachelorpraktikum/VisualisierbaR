@@ -482,48 +482,59 @@ public class Train {
             this.events = new ArrayList<>(events);
         }
 
+        private List<String> createEvents(int newTime, String newEvent) {
+            if (getTime() == newTime) {
+                List<String> newEvents = new ArrayList<>(getEvents());
+                newEvents.add(newEvent);
+                return newEvents;
+            } else {
+                return Collections.singletonList(newEvent);
+            }
+        }
+
         final InterpolatableState speed(int time, int index, int distance, int speed) {
-            List<String> newEvents = new ArrayList<>(getEvents());
-            newEvents.add("Speed{"
+            String event = "Speed{"
                     + "time=" + time
                     + ", distance=" + distance
                     + ", speed=" + speed
-                    + "}");
+                    + "}";
+            List<String> newEvents = createEvents(time, event);
+
             int newDistance = getTotalDistance() + distance;
             TrainPosition newPosition = getPosition().move(distance);
             return new NormalState(getTrain(), index, time, newDistance, speed, newPosition, newEvents);
         }
 
         final InterpolatableState reach(int time, int index, Edge reached, int movedDistance) {
-            List<String> newEvents = new ArrayList<>(getEvents());
-            newEvents.add("Reach{"
+            String event = "Reach{"
                     + "time=" + time
                     + ", distance=" + movedDistance
                     + ", reached=" + reached
-                    + "}");
+                    + "}";
+            List<String> newEvents = createEvents(time, event);
             int newDistance = getTotalDistance() + movedDistance;
             TrainPosition newPosition = getPosition().reachFront(reached, movedDistance);
             return new NormalState(getTrain(), index, time, newDistance, getSpeed(), newPosition, newEvents);
         }
 
         final InterpolatableState leave(int time, int index, Edge left, int movedDistance) {
-            List<String> newEvents = new ArrayList<>(getEvents());
-            newEvents.add("Terminate{"
+            String event = "Leave{"
                     + "time=" + time
                     + ", distance=" + movedDistance
                     + ", left=" + left
-                    + "}");
+                    + "}";
+            List<String> newEvents = createEvents(time, event);
             int newDistance = getTotalDistance() + movedDistance;
             TrainPosition newPosition = getPosition().leaveBack(left, movedDistance);
             return new NormalState(getTrain(), index, time, newDistance, getSpeed(), newPosition, newEvents);
         }
 
         final InterpolatableState terminate(int time, int index, int distance) {
-            List<String> newEvents = new ArrayList<>(getEvents());
-            newEvents.add("Terminate{"
+            String event = "Terminate{"
                     + "time=" + time
                     + ", distance=" + distance
-                    + "}");
+                    + "}";
+            List<String> newEvents = createEvents(time, event);
             TrainPosition newPosition = getPosition().move(distance);
             int newDistance = getTotalDistance() + distance;
             return new TerminatedState(getTrain(), index, newPosition, time, newDistance, newEvents);

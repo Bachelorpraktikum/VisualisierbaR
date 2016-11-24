@@ -478,7 +478,8 @@ public final class Element {
         @Override
         public String toString() {
             return "ElementEvent{"
-                    + "time=" + time
+                    + "element=" + getElement().getName()
+                    + ", time=" + time
                     + ", state=" + state
                     + '}';
         }
