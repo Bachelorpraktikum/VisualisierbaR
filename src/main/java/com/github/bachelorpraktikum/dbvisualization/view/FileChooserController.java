@@ -34,8 +34,12 @@ public class FileChooserController implements SourceChooser {
         explorerButton.setOnAction(event -> updatePath(openFileChooser()));
 
         pathField.textProperty().addListener((o, oldValue, newValue) -> {
+            if (newValue == null || newValue.trim().isEmpty()) {
+                fileURLProperty.set(null);
+                return;
+            }
             try {
-                URL url = new File(String.valueOf(newValue)).getAbsoluteFile().toURI().toURL();
+                URL url = new File(newValue).getAbsoluteFile().toURI().toURL();
                 fileURLProperty.set(url);
             } catch (MalformedURLException e) {
                 // ignore.
