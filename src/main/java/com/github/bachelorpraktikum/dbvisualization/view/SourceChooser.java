@@ -4,6 +4,9 @@ import com.github.bachelorpraktikum.dbvisualization.DataSource;
 
 import java.net.URL;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import javafx.beans.property.ReadOnlyProperty;
 
 /**
@@ -22,6 +25,7 @@ interface SourceChooser {
      *
      * @return URL for the resource
      */
+    @Nullable
     URL getResourceURL();
 
     /**
@@ -29,6 +33,7 @@ interface SourceChooser {
      *
      * @return Property for the resource url
      */
+    @Nonnull
     ReadOnlyProperty<URL> resourceURLProperty();
 
     /**
@@ -36,6 +41,7 @@ interface SourceChooser {
      *
      * @return ID of the root pane
      */
+    @Nonnull
     String getRootPaneId();
 
     /**
@@ -44,5 +50,6 @@ interface SourceChooser {
      * @return Type of the resource
      * @see DataSource.Type
      */
+    @Nonnull
     DataSource.Type getResourceType();
 }

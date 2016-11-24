@@ -8,6 +8,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 
+import javax.annotation.Nonnull;
+
 import javafx.beans.property.ReadOnlyProperty;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -33,7 +35,7 @@ public class SourceController implements SourceChooser {
     @FXML
     private Button openSource;
 
-    private SourceChooser activeController;
+        private SourceChooser activeController;
     private List<SourceChooser> controllers;
 
     @FXML
@@ -80,6 +82,7 @@ public class SourceController implements SourceChooser {
     /**
      * {@inheritDoc}
      */
+    @Nonnull
     @Override
     public String getRootPaneId() {
         return tabPane.getId();
@@ -88,6 +91,7 @@ public class SourceController implements SourceChooser {
     /**
      * {@inheritDoc}
      */
+    @Nonnull
     @Override
     public DataSource.Type getResourceType() {
         return activeController.getResourceType();
@@ -104,6 +108,7 @@ public class SourceController implements SourceChooser {
     /**
      * {@inheritDoc}
      */
+    @Nonnull
     @Override
     public ReadOnlyProperty<URL> resourceURLProperty() {
         return activeController.resourceURLProperty();

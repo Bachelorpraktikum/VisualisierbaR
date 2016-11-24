@@ -6,6 +6,9 @@ import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.fxml.FXML;
@@ -55,6 +58,7 @@ public class FileChooserController implements SourceChooser {
      *
      * @return A {@link File file} or null
      */
+    @Nonnull
     private File openFileChooser() {
         return fileChooser.showOpenDialog(rootPane.getScene().getWindow());
     }
@@ -64,7 +68,7 @@ public class FileChooserController implements SourceChooser {
      *
      * @param file File to get the path from
      */
-    private void updatePath(File file) {
+    private void updatePath(@Nullable File file) {
         if (file == null) {
             return;
         }
@@ -75,6 +79,7 @@ public class FileChooserController implements SourceChooser {
     /**
      * {@inheritDoc}
      */
+    @Nullable
     @Override
     public URL getResourceURL() {
         return fileURLProperty.getValue();
@@ -83,6 +88,7 @@ public class FileChooserController implements SourceChooser {
     /**
      * {@inheritDoc}
      */
+    @Nonnull
     @Override
     public ReadOnlyObjectProperty<URL> resourceURLProperty() {
         return fileURLProperty.getReadOnlyProperty();
@@ -91,6 +97,7 @@ public class FileChooserController implements SourceChooser {
     /**
      * {@inheritDoc}
      */
+    @Nonnull
     @Override
     public String getRootPaneId() {
         return rootPane.getId();
@@ -99,6 +106,7 @@ public class FileChooserController implements SourceChooser {
     /**
      * {@inheritDoc}
      */
+    @Nonnull
     @Override
     public DataSource.Type getResourceType() {
         return DataSource.Type.LOG_FILE;
