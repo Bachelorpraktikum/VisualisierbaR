@@ -20,7 +20,8 @@ class CompositeObservableEventList extends ObservableListBase<Event> {
     private final List<ObservableList<? extends Event>> lists;
 
     /**
-     * Creates a new instance.
+     * Creates a new instance. A defensive copy of the given list is created, so changes to the list
+     * after calling this constructor won't be represented in this object.
      *
      * @param eventLists the lists this list is composed of
      * @throws NullPointerException if eventLists is null
