@@ -21,7 +21,7 @@ import javafx.beans.property.ReadOnlyProperty;
  */
 interface SourceChooser {
     /**
-     * Returns the url for the resource
+     * Returns the url for the resource.
      *
      * @return URL for the resource
      */
@@ -29,7 +29,7 @@ interface SourceChooser {
     URL getResourceURL();
 
     /**
-     * Returns the property for the resource url
+     * Returns the property for the resource url.
      *
      * @return Property for the resource url
      */
@@ -37,7 +37,7 @@ interface SourceChooser {
     ReadOnlyProperty<URL> resourceURLProperty();
 
     /**
-     * Returns the id of the root pane
+     * Returns the id of the root pane.
      *
      * @return ID of the root pane
      */
@@ -45,7 +45,7 @@ interface SourceChooser {
     String getRootPaneId();
 
     /**
-     * Returns the resource {@link DataSource.Type type}
+     * Returns the resource {@link DataSource.Type type}.
      *
      * @return Type of the resource
      * @see DataSource.Type

@@ -64,7 +64,7 @@ public class FileChooserController implements SourceChooser {
     }
 
     /**
-     * Updates the text in the path field with the absolute path of the <code>file</code>
+     * Updates the text in the path field with the absolute path of the <code>file</code>.
      *
      * @param file File to get the path from
      */

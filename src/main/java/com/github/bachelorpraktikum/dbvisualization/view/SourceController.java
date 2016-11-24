@@ -35,7 +35,7 @@ public class SourceController implements SourceChooser {
     @FXML
     private Button openSource;
 
-        private SourceChooser activeController;
+    private SourceChooser activeController;
     private List<SourceChooser> controllers;
 
     @FXML
@@ -63,8 +63,8 @@ public class SourceController implements SourceChooser {
     }
 
     /**
-     * Gets the controller which corresponds to the current tab
-     * The controller is chosen by the root pane id of the tab
+     * Gets the controller which corresponds to the current tab.
+     * The controller is chosen by the root pane id of the tab.
      *
      * @param id ID of the current root pane of the selected tab
      * @return Controller which corresponds to the current tab
@@ -115,7 +115,7 @@ public class SourceController implements SourceChooser {
     }
 
     /**
-     * The {@link #rootPane} will be displayed on the given stage
+     * The {@link #rootPane} will be displayed on the given stage.
      *
      * @param stage Stage on which the scene will be displayed
      */
@@ -127,7 +127,7 @@ public class SourceController implements SourceChooser {
     }
 
     /**
-     * Sets the scene for the current stage to the main view
+     * Sets the scene for the current stage to the main view.
      */
     private void openMainWindow() {
         FXMLLoader mainLoader = new FXMLLoader(getClass().getResource("MainView.fxml"));
