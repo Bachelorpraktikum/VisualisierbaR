@@ -18,6 +18,7 @@
                 </FlowPane>
                 <FlowPane alignment="CENTER_RIGHT" hgap="5.0" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                     <children>
+                        <ToggleButton fx:id="legendButton" text="Legend" />
                         <Button fx:id="closeButton" text="%close_data_source" />
                     </children>
                 </FlowPane>

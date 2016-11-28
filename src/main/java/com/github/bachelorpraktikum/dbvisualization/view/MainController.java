@@ -45,6 +45,8 @@ import javafx.util.StringConverter;
 
 public class MainController {
     @FXML
+    private ToggleButton legendButton;
+    @FXML
     private Button closeButton;
     @FXML
     private BorderPane rootPane;
