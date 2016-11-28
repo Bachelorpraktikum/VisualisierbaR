@@ -38,8 +38,8 @@
         </StackPane>
     </center>
     <right>
-        <StackPane>
-
+        <StackPane fx:id="sidebar">
+            <ListView/>
         </StackPane>
     </right>
 </BorderPane>
