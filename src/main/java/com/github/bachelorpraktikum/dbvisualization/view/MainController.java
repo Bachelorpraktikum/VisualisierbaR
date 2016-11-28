@@ -38,12 +38,17 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.StackPane;
 import javafx.scene.shape.Shape;
 import javafx.stage.Stage;
 import javafx.util.Callback;
 import javafx.util.StringConverter;
 
 public class MainController {
+    @FXML
+    private StackPane sidebar;
+    @FXML
+    private ListView legend;
     @FXML
     private ToggleButton legendButton;
     @FXML
@@ -73,6 +78,14 @@ public class MainController {
             @Override
             public void handle(ActionEvent event) {
                 showSourceChooser();
+            }
+        });
+
+        legendButton.selectedProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue) {
+                legend.toFront();
+            } else {
+                legend.toBack();
             }
         });
 
