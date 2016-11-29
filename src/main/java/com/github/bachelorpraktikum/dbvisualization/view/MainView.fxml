@@ -33,7 +33,7 @@
         </StackPane>
     </left>
     <center>
-        <StackPane>
+        <StackPane fx:id="centerPane">
 
         </StackPane>
     </center>

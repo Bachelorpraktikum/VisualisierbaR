@@ -6,6 +6,9 @@ import com.github.bachelorpraktikum.dbvisualization.model.Context;
 import com.github.bachelorpraktikum.dbvisualization.model.Element;
 import com.github.bachelorpraktikum.dbvisualization.model.Event;
 import com.github.bachelorpraktikum.dbvisualization.model.train.Train;
+import com.github.bachelorpraktikum.dbvisualization.view.graph.Graph;
+import com.github.bachelorpraktikum.dbvisualization.view.graph.Shapeable;
+import com.github.bachelorpraktikum.dbvisualization.view.graph.adapter.SimpleCoordinatesAdapter;
 
 import java.io.IOException;
 import java.util.LinkedList;
@@ -13,7 +16,9 @@ import java.util.List;
 import java.util.ResourceBundle;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
+import javafx.beans.value.ChangeListener;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -33,6 +38,7 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
+import javafx.scene.shape.Shape;
 import javafx.stage.Stage;
 import javafx.util.Callback;
 import javafx.util.StringConverter;
@@ -49,6 +55,11 @@ public class MainController {
     private ToggleButton logToggle;
     @FXML
     private ListView<Event> logList;
+
+    @FXML
+    private Pane centerPane;
+    @Nullable
+    private Shape graphShape;
 
     private Stage stage;
 
@@ -100,6 +111,14 @@ public class MainController {
             }
         };
         logList.setCellFactory(listCellFactory);
+
+        ChangeListener<Number> boundsListener = (observable, oldValue, newValue) -> {
+            if (ContextHolder.getInstance().hasContext()) {
+                fitGraphToCenter(getGraphShape());
+            }
+        };
+        centerPane.heightProperty().addListener(boundsListener);
+        centerPane.widthProperty().addListener(boundsListener);
     }
 
     /**
@@ -148,10 +167,51 @@ public class MainController {
 
                 ObservableList<Event> events = new CompositeObservableList<>(lists);
                 logList.setItems(events.sorted());
+
+                fitGraphToCenter(getGraphShape());
                 return;
             default:
                 return;
         }
+    }
+
+    /**
+     * Gets the current graph shape.<br>
+     * If no graph shape exists, this method creates one and returns it.
+     *
+     * @return the graph shape
+     * @throws IllegalStateException if there is no context
+     */
+    @Nonnull
+    private Shape getGraphShape() {
+        if (graphShape == null) {
+            Context context = ContextHolder.getInstance().getContext();
+            Shapeable graph = new Graph(context, new SimpleCoordinatesAdapter());
+            graphShape = graph.createShape();
+            centerPane.getChildren().add(graphShape);
+        }
+        return graphShape;
+    }
+
+    private void fitGraphToCenter(Shape shape) {
+        double minCenter = Math.min(centerPane.getHeight(), centerPane.getWidth()) - 10;
+
+        Bounds graphBounds = shape.getBoundsInParent();
+        double maxGraph = Math.max(graphBounds.getHeight(), graphBounds.getWidth());
+
+        double scaleFactor = minCenter / maxGraph;
+        double scale = shape.getScaleX() * scaleFactor;
+
+        if (!Double.isFinite(scale)) {
+            scale = 1;
+        }
+
+        if (scale <= 0) {
+            scale = 0.1;
+        }
+
+        shape.setScaleX(scale);
+        shape.setScaleY(scale);
     }
 
     private void showSourceChooser() {
