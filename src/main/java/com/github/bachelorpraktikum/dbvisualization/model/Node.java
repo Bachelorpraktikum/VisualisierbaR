@@ -40,6 +40,7 @@ public final class Node {
      * Ensures there is always only one instance of node per name per {@link Context}.
      */
     public static final class Factory {
+        private static final int INITIAL_NODES_CAPACITY = 64;
         private static final Map<Context, Factory> instances = new WeakHashMap<>();
 
         @Nonnull
@@ -54,7 +55,7 @@ public final class Node {
         }
 
         private Factory() {
-            this.nodes = new HashMap<>(64);
+            this.nodes = new HashMap<>(INITIAL_NODES_CAPACITY);
         }
 
         /**

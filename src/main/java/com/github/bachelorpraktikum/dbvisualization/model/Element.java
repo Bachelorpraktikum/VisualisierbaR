@@ -161,6 +161,7 @@ public final class Element {
      */
     @ParametersAreNonnullByDefault
     public static final class Factory {
+        private static final int INITIAL_ELEMENTS_CAPACITY = 128;
         private static final Map<Context, Factory> instances = new WeakHashMap<>();
 
         @Nonnull
@@ -184,7 +185,7 @@ public final class Element {
         }
 
         private Factory(Context context) {
-            this.elements = new HashMap<>(64);
+            this.elements = new HashMap<>(INITIAL_ELEMENTS_CAPACITY);
 
             this.switchFactory = Switch.in(context);
             this.unorderedEvents = FXCollections.observableArrayList();

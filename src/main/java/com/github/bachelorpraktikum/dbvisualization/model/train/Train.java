@@ -15,7 +15,6 @@ import java.util.WeakHashMap;
 import java.util.logging.Logger;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 import javax.annotation.concurrent.Immutable;
 
@@ -59,6 +58,7 @@ public class Train {
      */
     @ParametersAreNonnullByDefault
     public static final class Factory {
+        private static final int INITIAL_TRAINS_CAPACITY = 16;
         private static final Map<Context, Factory> instances = new WeakHashMap<>();
 
         @Nonnull
@@ -73,7 +73,7 @@ public class Train {
         }
 
         private Factory() {
-            this.trains = new HashMap<>();
+            this.trains = new HashMap<>(INITIAL_TRAINS_CAPACITY);
         }
 
         /**

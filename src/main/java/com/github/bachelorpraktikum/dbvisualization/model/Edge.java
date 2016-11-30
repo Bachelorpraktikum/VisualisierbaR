@@ -41,6 +41,7 @@ public final class Edge {
      */
     @ParametersAreNonnullByDefault
     public static final class Factory {
+        private static final int INITIAL_EDGES_CAPACITY = 128;
         private static final Map<Context, Factory> instances = new WeakHashMap<>();
 
         @Nonnull
@@ -54,7 +55,7 @@ public final class Edge {
         }
 
         private Factory() {
-            this.edges = new HashMap<>(128);
+            this.edges = new HashMap<>(INITIAL_EDGES_CAPACITY);
         }
 
         /**
