@@ -6,6 +6,7 @@ import com.github.bachelorpraktikum.dbvisualization.model.Node;
 import com.github.bachelorpraktikum.dbvisualization.view.graph.adapter.CoordinatesAdapter;
 
 import java.util.Map;
+import java.util.Objects;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -29,10 +30,11 @@ public final class Graph implements Shapeable {
      * @param context            the context
      * @param coordinatesAdapter the coordinates adapter to translate coordinates from the model to
      *                           real coordinates
+     * @throws NullPointerException if either argument is null
      */
     public Graph(Context context, CoordinatesAdapter coordinatesAdapter) {
-        this.context = context;
-        this.coordinatesAdapter = coordinatesAdapter;
+        this.context = Objects.requireNonNull(context);
+        this.coordinatesAdapter = Objects.requireNonNull(coordinatesAdapter);
     }
 
     @Nonnull
