@@ -36,7 +36,7 @@ class NodeShape implements Shapeable {
 
     private Shape createBaseShape() {
         Point2D position = getPosition();
-        double radius = calibrationBase * CALIBRATION_COEFFICIENT;
+        double radius = getCalibrationBase() * CALIBRATION_COEFFICIENT;
         return new Circle(position.getX(), position.getY(), radius);
     }
 
