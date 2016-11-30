@@ -12,8 +12,7 @@ public interface Shapeable {
      * Creates a <b>new</b> Shape representing this object.
      *
      * @return a shape
-     * @throws IllegalStateException if this object is not in a state in which a shape can be
-     *                               created
+     * @throws IllegalStateException if no Shape can be created in the current context
      */
     @Nonnull
     Shape createShape();
