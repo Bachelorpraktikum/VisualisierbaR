@@ -15,7 +15,9 @@ import javafx.geometry.Point2D;
 public interface CoordinatesAdapter extends Function<Node, Point2D> {
     /**
      * Gets the length of the shortest edge in the graph. Should be used to determine the size of
-     * elements in the graph, like the size of nodes or the width of edges.
+     * elements in the graph, like the size of nodes or the width of edges.<br> The length returned
+     * by this method is the real length corresponding to the real coordinates returned by {@link
+     * #apply(Node)}.
      *
      * @return the length of the shortest edge
      */
