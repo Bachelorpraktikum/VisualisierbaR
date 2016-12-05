@@ -29,6 +29,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonBase;
+import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.control.ToggleButton;
@@ -37,6 +38,7 @@ import javafx.scene.control.cell.TextFieldListCell;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.shape.Shape;
@@ -156,6 +158,16 @@ public class MainController {
         stage.centerOnScreen();
     }
 
+    private void showLegend() {
+        legend.setCellFactory(listView -> new ListCell<Label>() {
+            public void updateItem(Label friend, boolean empty) {
+                if (!empty) {
+                    setGraphic(new HBox());
+                }
+            }
+        });
+    }
+
     void setDataSource(@Nonnull DataSource source) {
         switch (source.getType()) {
             case LOG_FILE:
@@ -182,12 +194,14 @@ public class MainController {
 
                 ObservableList<Event> events = new CompositeObservableList<>(lists);
                 logList.setItems(events.sorted());
-
                 fitGraphToCenter(getGraphShape());
-                return;
+
+                break;
             default:
                 return;
         }
+
+        showLegend();
     }
 
     /**
