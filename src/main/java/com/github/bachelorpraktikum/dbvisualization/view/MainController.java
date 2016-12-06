@@ -14,11 +14,13 @@ import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ResourceBundle;
+import java.util.stream.Stream;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import javafx.beans.value.ChangeListener;
+import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -29,7 +31,6 @@ import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonBase;
-import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.control.ToggleButton;
@@ -38,7 +39,6 @@ import javafx.scene.control.cell.TextFieldListCell;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.shape.Shape;
@@ -159,13 +159,14 @@ public class MainController {
     }
 
     private void showLegend() {
-        legend.setCellFactory(listView -> new ListCell<Label>() {
-            public void updateItem(Label friend, boolean empty) {
-                if (!empty) {
-                    setGraphic(new HBox());
-                }
-            }
-        });
+        Context context = ContextHolder.getInstance().getContext();
+        Stream str = Element.in(context).getAll().stream().map(Element::getType).distinct();
+
+        legend.setItems(FXCollections.observableArrayList(str.toArray()));
+        Train t = Train.in(context).getAll().stream().iterator().next();
+        legend.getItems().add(t);
+        // legend.setCellFactory(studentListView -> new ElementListViewCell());
+        legend.setCellFactory(param -> new ElementListViewCell());
     }
 
     void setDataSource(@Nonnull DataSource source) {
