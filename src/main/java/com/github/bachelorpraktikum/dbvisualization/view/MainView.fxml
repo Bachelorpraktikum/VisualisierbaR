@@ -42,13 +42,13 @@
     <right>
         <StackPane fx:id="sidebar">
             <children>
-                <ListView fx:id="legend">
-                    <Label text="Legend goes here."/>
+                <ListView fx:id="legend" fixedCellSize="0.0" style="-fx-background-color: #ccc;">
+                    <Label text="Legend goes here." />
                 </ListView>
-                <ListView>
-                    <Label text="This is not a legend."/>
-                    <Label text="I REPEAT"/>
-                    <Label text="This is not a legend."/>
+                <ListView style="-fx-padding: 1px;">
+                    <Label text="This is not a legend." />
+                    <Label text="I REPEAT" />
+                    <Label text="This is not a legend." />
                 </ListView>
             </children>
         </StackPane>
