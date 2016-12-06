@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<AnchorPane fx:id="cell" xmlns="http://javafx.com/javafx/8.0.112"
+            xmlns:fx="http://javafx.com/fxml/1">
+    <children>
+        <Label fx:id="eleName" alignment="CENTER" contentDisplay="CENTER" text="Label"
+               AnchorPane.leftAnchor="0.0"/>
+        <ImageView fx:id="eleImage" fitHeight="150.0" fitWidth="200.0" pickOnBounds="true"
+                   preserveRatio="true" AnchorPane.rightAnchor="0.0"/>
+        <CheckBox fx:id="checkbox" alignment="CENTER" allowIndeterminate="true"
+                  contentDisplay="CENTER" indeterminate="true" AnchorPane.rightAnchor="70"/>
+    </children>
+</AnchorPane>
