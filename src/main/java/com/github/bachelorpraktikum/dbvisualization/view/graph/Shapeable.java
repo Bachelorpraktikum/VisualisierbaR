@@ -9,7 +9,8 @@ import javafx.scene.shape.Shape;
  */
 public interface Shapeable {
     /**
-     * Creates a <b>new</b> Shape representing this object.
+     * Creates a Shape representing this object. If the represented object hasn't changed, the Shape
+     * can be an instance created for a previous call of this method.
      *
      * @return a shape
      * @throws IllegalStateException if no Shape can be created in the current context

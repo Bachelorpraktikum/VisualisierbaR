@@ -1,11 +1,15 @@
 package com.github.bachelorpraktikum.dbvisualization.view.graph;
 
+import com.github.bachelorpraktikum.dbvisualization.model.Element;
 import com.github.bachelorpraktikum.dbvisualization.model.Node;
 import com.github.bachelorpraktikum.dbvisualization.view.graph.adapter.CoordinatesAdapter;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.WeakChangeListener;
 import javafx.geometry.Point2D;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Shape;
@@ -19,10 +23,19 @@ class NodeShape implements Shapeable {
     private final Point2D position;
     private final double calibrationBase;
 
+    @Nullable
+    private Shape shape;
+
     NodeShape(CoordinatesAdapter coordinatesAdapter, Node node) {
         this.node = node;
         this.position = coordinatesAdapter.apply(node);
         this.calibrationBase = coordinatesAdapter.getCalibrationBase();
+
+        ChangeListener<Element.State> listener = new WeakChangeListener<>(
+                (observable, oldValue, newValue) -> shape = null
+        );
+        node.getElements()
+                .forEach(element -> element.stateProperty().addListener(listener));
     }
 
     @Nonnull
@@ -43,8 +56,12 @@ class NodeShape implements Shapeable {
     @Nonnull
     @Override
     public Shape createShape() {
+        if (shape != null) {
+            return shape;
+        }
+
         Shape shape = createBaseShape();
         // TODO append name / elements
-        return shape;
+        return this.shape = shape;
     }
 }

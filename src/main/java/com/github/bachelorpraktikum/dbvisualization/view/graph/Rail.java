@@ -1,6 +1,7 @@
 package com.github.bachelorpraktikum.dbvisualization.view.graph;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 
 import javafx.geometry.Point2D;
@@ -17,6 +18,9 @@ class Rail implements Shapeable {
     @Nonnull
     private final Point2D end;
 
+    @Nullable
+    private Shape shape;
+
     Rail(double calibrationBase, Point2D start, Point2D end) {
         this.calibrationBase = calibrationBase;
         this.start = start;
@@ -32,8 +36,12 @@ class Rail implements Shapeable {
     @Nonnull
     @Override
     public Shape createShape() {
+        if (shape != null) {
+            return shape;
+        }
+
         Shape shape = createBaseShape();
         // TODO add name / length
-        return shape;
+        return this.shape = shape;
     }
 }
