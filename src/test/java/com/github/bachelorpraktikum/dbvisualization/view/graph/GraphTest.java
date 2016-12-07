@@ -7,6 +7,7 @@ import com.github.bachelorpraktikum.dbvisualization.model.Node;
 import com.github.bachelorpraktikum.dbvisualization.view.graph.adapter.SimpleCoordinatesAdapter;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -57,10 +58,11 @@ public class GraphTest {
         Graph graph = new Graph(context, null);
     }
 
+    @Ignore("NEEDS UPDATE")
     @Test
     public void testCreateShapeNotNull() {
-        //  Shape shape = graph.createShape();
-        //assertNotNull(shape);
+        // Shape shape = graph.createShape();
+        // assertNotNull(shape);
     }
 
     @Test
