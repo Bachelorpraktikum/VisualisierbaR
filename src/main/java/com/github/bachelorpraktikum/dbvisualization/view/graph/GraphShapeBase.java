@@ -14,7 +14,7 @@ import javafx.beans.value.WeakChangeListener;
 import javafx.scene.shape.Shape;
 import javafx.scene.transform.Transform;
 
-public abstract class GraphShapeBase<T, S extends Shape> extends SimpleObjectProperty<Shape> implements GraphShape, Callable<Shape> {
+public abstract class GraphShapeBase<T, S extends Shape> extends SimpleObjectProperty<Shape> implements GraphShape<T>, Callable<Shape> {
     private final T represented;
     private final ReadOnlyProperty<Transform> parentTransform;
     private final CoordinatesAdapter adapter;
@@ -31,7 +31,8 @@ public abstract class GraphShapeBase<T, S extends Shape> extends SimpleObjectPro
         return Bindings.createObjectBinding(this, getDependencies());
     }
 
-    protected final T getRepresented() {
+    @Override
+    public final T getRepresented() {
         return represented;
     }
 

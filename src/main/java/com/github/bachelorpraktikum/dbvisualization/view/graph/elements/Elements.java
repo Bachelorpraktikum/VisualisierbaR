@@ -16,8 +16,8 @@ public final class Elements {
     private Elements() {
     }
 
-    public static Collection<GraphShape> create(Node node, ReadOnlyProperty<Transform> parentTransform, CoordinatesAdapter adapter) {
-        List<GraphShape> shapes = new ArrayList<>(node.getElements().size());
+    public static Collection<GraphShape<Element>> create(Node node, ReadOnlyProperty<Transform> parentTransform, CoordinatesAdapter adapter) {
+        List<GraphShape<Element>> shapes = new ArrayList<>(node.getElements().size());
         for (Element element : node.getElements()) {
             switch (element.getType()) {
                 case MagnetImpl:

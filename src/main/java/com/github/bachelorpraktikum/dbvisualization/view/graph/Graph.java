@@ -6,7 +6,6 @@ import com.github.bachelorpraktikum.dbvisualization.model.Edge;
 import com.github.bachelorpraktikum.dbvisualization.model.Element;
 import com.github.bachelorpraktikum.dbvisualization.model.Node;
 import com.github.bachelorpraktikum.dbvisualization.view.graph.adapter.CoordinatesAdapter;
-import com.github.bachelorpraktikum.dbvisualization.view.graph.elements.ElementBase;
 import com.github.bachelorpraktikum.dbvisualization.view.graph.elements.Elements;
 
 import java.util.LinkedHashMap;
@@ -36,11 +35,11 @@ public final class Graph {
     private final ReadOnlyObjectWrapper<Transform> transformProperty;
 
     @Nonnull
-    private final Map<Node, GraphShape> nodes;
+    private final Map<Node, GraphShape<Node>> nodes;
     @Nonnull
-    private final Map<Edge, GraphShape> edges;
+    private final Map<Edge, GraphShape<Edge>> edges;
     @Nonnull
-    private final Map<Element, GraphShape> elements;
+    private final Map<Element, GraphShape<Element>> elements;
 
 
     /**
@@ -69,17 +68,17 @@ public final class Graph {
         this.nodes = new LinkedHashMap<>(128);
         this.elements = new LinkedHashMap<>(256);
         for (Node node : Node.in(context).getAll()) {
-            GraphShape shape = new Junction(node, transformProperty, coordinatesAdapter);
+            GraphShape<Node> shape = new Junction(node, transformProperty, coordinatesAdapter);
             nodes.put(node, shape);
 
-            for (ElementBase elementShape : Elements.create(node, transformProperty, coordinatesAdapter)) {
-                elements.put(elementShape.getElement(), elementShape);
+            for (GraphShape<Element> elementShape : Elements.create(node, transformProperty, coordinatesAdapter)) {
+                elements.put(elementShape.getRepresented(), elementShape);
             }
         }
 
         this.edges = new LinkedHashMap<>(256);
         for (Edge edge : Edge.in(context).getAll()) {
-            GraphShape shape = new Rail(edge, transformProperty, coordinatesAdapter);
+            GraphShape<Edge> shape = new Rail(edge, transformProperty, coordinatesAdapter);
             edges.put(edge, shape);
         }
     }
@@ -107,15 +106,15 @@ public final class Graph {
         return boundsShape.getBoundsInParent();
     }
 
-    public Map<Node, GraphShape> getNodes() {
+    public Map<Node, GraphShape<Node>> getNodes() {
         return nodes;
     }
 
-    public Map<Edge, GraphShape> getEdges() {
+    public Map<Edge, GraphShape<Edge>> getEdges() {
         return edges;
     }
 
-    public Map<Element, GraphShape> getElements() {
+    public Map<Element, GraphShape<Element>> getElements() {
         return elements;
     }
 }
