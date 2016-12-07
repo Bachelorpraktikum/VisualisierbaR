@@ -64,11 +64,4 @@ public class GraphTest {
         // Shape shape = graph.createShape();
         // assertNotNull(shape);
     }
-
-    @Test
-    public void testCreateShapeNothingToShow() {
-        Graph graph = new Graph(new Context(), new SimpleCoordinatesAdapter());
-        expected.expect(IllegalStateException.class);
-        //graph.createShape();
-    }
 }
