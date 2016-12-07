@@ -10,7 +10,7 @@ import javafx.geometry.Point2D;
 import javafx.scene.shape.Shape;
 import javafx.scene.transform.Transform;
 
-public abstract class ElementBase<T extends Shape> extends GraphShapeBase<Element, T> {
+abstract class ElementBase<T extends Shape> extends GraphShapeBase<Element, T> {
 
     ElementBase(Element element, ReadOnlyProperty<Transform> parentTransform, CoordinatesAdapter adapter) {
         super(element, parentTransform, adapter);

@@ -6,7 +6,7 @@ import com.github.bachelorpraktikum.dbvisualization.view.graph.adapter.Coordinat
 import javafx.beans.property.ReadOnlyProperty;
 import javafx.scene.transform.Transform;
 
-public class StellwerkWechselElement extends PathElement {
+class StellwerkWechselElement extends PathElement {
     StellwerkWechselElement(Element element, ReadOnlyProperty<Transform> parentTransform, CoordinatesAdapter adapter) {
         super(element, parentTransform, adapter);
     }

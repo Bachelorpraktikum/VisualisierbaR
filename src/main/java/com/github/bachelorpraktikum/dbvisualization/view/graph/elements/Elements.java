@@ -2,6 +2,7 @@ package com.github.bachelorpraktikum.dbvisualization.view.graph.elements;
 
 import com.github.bachelorpraktikum.dbvisualization.model.Element;
 import com.github.bachelorpraktikum.dbvisualization.model.Node;
+import com.github.bachelorpraktikum.dbvisualization.view.graph.GraphShape;
 import com.github.bachelorpraktikum.dbvisualization.view.graph.adapter.CoordinatesAdapter;
 
 import java.util.ArrayList;
@@ -15,8 +16,8 @@ public final class Elements {
     private Elements() {
     }
 
-    public static Collection<ElementBase> create(Node node, ReadOnlyProperty<Transform> parentTransform, CoordinatesAdapter adapter) {
-        List<ElementBase> shapes = new ArrayList<>(node.getElements().size());
+    public static Collection<GraphShape> create(Node node, ReadOnlyProperty<Transform> parentTransform, CoordinatesAdapter adapter) {
+        List<GraphShape> shapes = new ArrayList<>(node.getElements().size());
         for (Element element : node.getElements()) {
             switch (element.getType()) {
                 case MagnetImpl:
