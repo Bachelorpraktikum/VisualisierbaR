@@ -3,6 +3,7 @@ package com.github.bachelorpraktikum.dbvisualization.view;
 import com.github.bachelorpraktikum.dbvisualization.DataSource;
 import com.github.bachelorpraktikum.dbvisualization.logparser.GraphParser;
 import com.github.bachelorpraktikum.dbvisualization.model.Context;
+import com.github.bachelorpraktikum.dbvisualization.model.Edge;
 import com.github.bachelorpraktikum.dbvisualization.model.Element;
 import com.github.bachelorpraktikum.dbvisualization.model.Event;
 import com.github.bachelorpraktikum.dbvisualization.model.train.Train;
@@ -47,6 +48,7 @@ import javafx.util.Callback;
 import javafx.util.StringConverter;
 
 public class MainController {
+    public ListView elementList;
     @FXML
     private StackPane sidebar;
     @FXML
@@ -165,8 +167,21 @@ public class MainController {
         legend.setItems(FXCollections.observableArrayList(str.toArray()));
         Train t = Train.in(context).getAll().stream().iterator().next();
         legend.getItems().add(t);
-        // legend.setCellFactory(studentListView -> new LegendListViewCell());
-        legend.setCellFactory(param -> new LegendListViewCell());
+        legend.setCellFactory(studentListView -> new LegendListViewCell());
+    }
+
+    private void showElements() {
+        Context context = ContextHolder.getInstance().getContext();
+
+        ObservableList<Element> elements = FXCollections.observableArrayList(Element.in(context).getAll());
+        ObservableList<Train> trains = FXCollections.observableArrayList(Train.in(context).getAll());
+        ObservableList<Edge> edges = FXCollections.observableArrayList(Edge.in(context).getAll());
+
+        ObservableList lists = FXCollections.observableArrayList(elements, trains, edges);
+        ObservableList content = new CompositeObservableList(lists);
+
+        elementList.setItems(content);
+        // legend.setCellFactory();
     }
 
     void setDataSource(@Nonnull DataSource source) {
@@ -203,6 +218,7 @@ public class MainController {
         }
 
         showLegend();
+        showElements();
     }
 
     /**
