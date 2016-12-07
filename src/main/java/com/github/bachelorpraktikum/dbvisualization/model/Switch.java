@@ -44,6 +44,19 @@ public final class Switch {
         return Collections.unmodifiableList(elements);
     }
 
+    /**
+     * Gets the main element of this switch.
+     *
+     * @return the main element
+     */
+    @Nonnull
+    public Element getMainElement() {
+        return elements.stream()
+                .filter(element -> element.getNode().getEdges().size() == 3)
+                .findFirst()
+                .orElseThrow(IllegalStateException::new);
+    }
+
     @Override
     public String toString() {
         return "Switch{"

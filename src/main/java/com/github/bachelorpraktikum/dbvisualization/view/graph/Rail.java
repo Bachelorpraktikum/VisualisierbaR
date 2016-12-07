@@ -1,47 +1,46 @@
 package com.github.bachelorpraktikum.dbvisualization.view.graph;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import javax.annotation.ParametersAreNonnullByDefault;
+import com.github.bachelorpraktikum.dbvisualization.model.Edge;
+import com.github.bachelorpraktikum.dbvisualization.view.graph.adapter.CoordinatesAdapter;
 
+import javafx.beans.Observable;
+import javafx.beans.property.ReadOnlyProperty;
 import javafx.geometry.Point2D;
 import javafx.scene.shape.Line;
-import javafx.scene.shape.Shape;
+import javafx.scene.transform.Transform;
 
-@ParametersAreNonnullByDefault
-class Rail implements Shapeable {
-    private static final double CALIBRATION_COEFFICIENT = 0.01;
-
-    private final double calibrationBase;
-    @Nonnull
-    private final Point2D start;
-    @Nonnull
-    private final Point2D end;
-
-    @Nullable
-    private Shape shape;
-
-    Rail(double calibrationBase, Point2D start, Point2D end) {
-        this.calibrationBase = calibrationBase;
-        this.start = start;
-        this.end = end;
+final class Rail extends GraphShapeBase<Edge, Line> {
+    protected Rail(Edge edge, ReadOnlyProperty<Transform> parentTransform, CoordinatesAdapter adapter) {
+        super(edge, parentTransform, adapter);
     }
 
-    private Shape createBaseShape() {
-        Line line = new Line(start.getX(), start.getY(), end.getX(), end.getY());
-        line.setStrokeWidth(calibrationBase * CALIBRATION_COEFFICIENT);
-        return line;
-    }
-
-    @Nonnull
     @Override
-    public Shape createShape() {
-        if (shape != null) {
-            return shape;
-        }
+    protected void relocate(Line shape) {
+        CoordinatesAdapter adapter = getCoordinatesAdapter();
+        Point2D start = adapter.apply(getRepresented().getNode1().getCoordinates());
+        Point2D end = adapter.apply(getRepresented().getNode2().getCoordinates());
+        shape.setStartX(start.getX());
+        shape.setStartY(start.getY());
+        shape.setEndX(end.getX());
+        shape.setEndY(end.getY());
+    }
 
-        Shape shape = createBaseShape();
-        // TODO add name / length
-        return this.shape = shape;
+    @Override
+    protected void resize(Line line) {
+        line.setStrokeWidth(getCalibrationBase() * 0.05);
+    }
+
+    @Override
+    protected void displayState(Line shape) {
+    }
+
+    @Override
+    protected Observable[] getDependencies() {
+        return new Observable[0];
+    }
+
+    @Override
+    public Line createShape() {
+        return new Line();
     }
 }

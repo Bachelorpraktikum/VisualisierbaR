@@ -1,42 +1,47 @@
 package com.github.bachelorpraktikum.dbvisualization.view.graph;
 
 import com.github.bachelorpraktikum.dbvisualization.model.Context;
+import com.github.bachelorpraktikum.dbvisualization.model.Coordinates;
 import com.github.bachelorpraktikum.dbvisualization.model.Edge;
 import com.github.bachelorpraktikum.dbvisualization.model.Element;
 import com.github.bachelorpraktikum.dbvisualization.model.Node;
 import com.github.bachelorpraktikum.dbvisualization.view.graph.adapter.CoordinatesAdapter;
+import com.github.bachelorpraktikum.dbvisualization.view.graph.elements.ElementBase;
+import com.github.bachelorpraktikum.dbvisualization.view.graph.elements.Elements;
 
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Objects;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.WeakChangeListener;
+import javafx.beans.property.ReadOnlyObjectWrapper;
+import javafx.geometry.Bounds;
 import javafx.geometry.Point2D;
+import javafx.scene.shape.Circle;
 import javafx.scene.shape.Shape;
+import javafx.scene.transform.Transform;
 
 @ParametersAreNonnullByDefault
-public final class Graph implements Shapeable {
+public final class Graph {
     @Nonnull
     private final Context context;
     @Nonnull
     private final CoordinatesAdapter coordinatesAdapter;
-    @Nonnull
-    private final Map<Node, NodeShape> nodes;
-    @Nonnull
-    private final Map<Edge, Rail> edges;
 
-    @Nullable
-    private Shape railsShape;
-    @Nullable
-    private Shape nodesShape;
-    @Nullable
-    private Shape fullShape;
+    @Nonnull
+    private final Shape boundsShape;
+    @Nonnull
+    private final ReadOnlyObjectWrapper<Transform> transformProperty;
+
+    @Nonnull
+    private final Map<Node, GraphShape> nodes;
+    @Nonnull
+    private final Map<Edge, GraphShape> edges;
+    @Nonnull
+    private final Map<Element, GraphShape> elements;
+
 
     /**
      * Creates a new graph for the given context. The graph is laid out by using the given {@link
@@ -45,60 +50,72 @@ public final class Graph implements Shapeable {
      * @param context            the context
      * @param coordinatesAdapter the coordinates adapter to translate coordinates from the model to
      *                           real coordinates
-     * @throws NullPointerException if either argument is null
+     * @throws NullPointerException  if either argument is null
+     * @throws IllegalStateException if there is nothing for this context to show
      */
     public Graph(Context context, CoordinatesAdapter coordinatesAdapter) {
         this.context = Objects.requireNonNull(context);
         this.coordinatesAdapter = Objects.requireNonNull(coordinatesAdapter);
+        this.transformProperty = new ReadOnlyObjectWrapper<>();
 
-        ChangeListener<Element.State> elementListener = new WeakChangeListener<>(
-                (observable, oldValue, newValue) -> {
-                    nodesShape = null;
-                    fullShape = null;
-                }
-        );
-        Element.in(context).getAll().parallelStream()
-                .forEach(element -> element.stateProperty().addListener(elementListener));
+        boundsShape = Node.in(context).getAll().parallelStream()
+                .map(Node::getCoordinates)
+                .map(coordinatesAdapter)
+                .map(point -> (Shape) new Circle(point.getX(), point.getY(), 0.7))
+                .reduce(Shape::union)
+                .orElseThrow(IllegalStateException::new);
+        transformProperty.bind(boundsShape.localToParentTransformProperty());
 
-        this.nodes = Node.in(context).getAll().parallelStream()
-                .collect(Collectors.toMap(Function.identity(),
-                        node -> new NodeShape(coordinatesAdapter, node)));
+        this.nodes = new LinkedHashMap<>(128);
+        this.elements = new LinkedHashMap<>(256);
+        for (Node node : Node.in(context).getAll()) {
+            GraphShape shape = new Junction(node, transformProperty, coordinatesAdapter);
+            nodes.put(node, shape);
 
-        double calibrationBase = coordinatesAdapter.getCalibrationBase();
-        this.edges = Edge.in(context).getAll().parallelStream()
-                .collect(Collectors.toMap(Function.identity(),
-                        edge -> {
-                            Point2D start = nodes.get(edge.getNode1()).getPosition();
-                            Point2D end = nodes.get(edge.getNode2()).getPosition();
-                            return new Rail(calibrationBase, start, end);
-                        })
-                );
+            for (ElementBase elementShape : Elements.create(node, transformProperty, coordinatesAdapter)) {
+                elements.put(elementShape.getElement(), elementShape);
+            }
+        }
+
+        this.edges = new LinkedHashMap<>(256);
+        for (Edge edge : Edge.in(context).getAll()) {
+            GraphShape shape = new Rail(edge, transformProperty, coordinatesAdapter);
+            edges.put(edge, shape);
+        }
     }
 
-    @Nonnull
-    @Override
-    public Shape createShape() {
-        if (nodesShape != null && railsShape != null) {
-            if (fullShape == null) {
-                throw new IllegalStateException("full shape was null for some reason");
-            }
-            return fullShape;
-        }
+    public void scale(double factor) {
+        double scale = boundsShape.getScaleX() * factor;
+        boundsShape.setScaleX(scale);
+        boundsShape.setScaleY(scale);
+    }
 
-        if (nodesShape == null) {
-            nodesShape = nodes.values().parallelStream()
-                    .map(Shapeable::createShape)
-                    .reduce(Shape::union)
-                    .orElseThrow(IllegalStateException::new);
-        }
+    public void move(double x, double y) {
+        boundsShape.setTranslateX(boundsShape.getTranslateX() + x);
+        boundsShape.setTranslateY(boundsShape.getTranslateY() + y);
+    }
 
-        if (railsShape == null) {
-            railsShape = edges.values().parallelStream()
-                    .map(Shapeable::createShape)
-                    .reduce(Shape::union)
-                    .orElseThrow(IllegalStateException::new);
-        }
+    public Point2D getPosition(Point2D localPosition) {
+        return transformProperty.getValue().transform(localPosition);
+    }
 
-        return fullShape = Shape.union(nodesShape, railsShape);
+    public Point2D getPosition(Coordinates coordinates) {
+        return getPosition(coordinatesAdapter.apply(coordinates));
+    }
+
+    public Bounds getBounds() {
+        return boundsShape.getBoundsInParent();
+    }
+
+    public Map<Node, GraphShape> getNodes() {
+        return nodes;
+    }
+
+    public Map<Edge, GraphShape> getEdges() {
+        return edges;
+    }
+
+    public Map<Element, GraphShape> getElements() {
+        return elements;
     }
 }

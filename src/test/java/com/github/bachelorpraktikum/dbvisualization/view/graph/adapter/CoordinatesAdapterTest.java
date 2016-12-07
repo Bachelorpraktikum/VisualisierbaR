@@ -50,7 +50,7 @@ public abstract class CoordinatesAdapterTest {
     @Test
     public void testApplyRandomCoordinates() {
         for (Node node : Node.in(getContext()).getAll()) {
-            Point2D point = getAdapter().apply(node);
+            Point2D point = getAdapter().apply(node.getCoordinates());
             assertNotNull(point);
             assertFalse(point.getX() < 0.0);
             assertFalse(point.getY() < 0.0);

@@ -7,12 +7,13 @@ import com.github.bachelorpraktikum.dbvisualization.model.Element;
 import com.github.bachelorpraktikum.dbvisualization.model.Event;
 import com.github.bachelorpraktikum.dbvisualization.model.train.Train;
 import com.github.bachelorpraktikum.dbvisualization.view.graph.Graph;
-import com.github.bachelorpraktikum.dbvisualization.view.graph.Shapeable;
+import com.github.bachelorpraktikum.dbvisualization.view.graph.GraphShape;
 import com.github.bachelorpraktikum.dbvisualization.view.graph.adapter.SimpleCoordinatesAdapter;
 import com.github.bachelorpraktikum.dbvisualization.view.legend.LegendItem;
 import com.github.bachelorpraktikum.dbvisualization.view.legend.LegendListViewCell;
 
 import java.io.IOException;
+import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -30,6 +31,7 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Bounds;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
@@ -82,7 +84,7 @@ public class MainController {
     @FXML
     private Pane centerPane;
     @Nullable
-    private Shape graphShape;
+    private Graph graph;
 
     private Stage stage;
 
@@ -132,16 +134,20 @@ public class MainController {
                     Bounds bounds = result.localToScreen(result.getBoundsInLocal());
                     tooltip.show(result, bounds.getMinX(), bounds.getMaxY());
                 });
+
                 result.setOnMouseExited(event -> tooltip.hide());
 
                 return result;
             }
         };
         logList.setCellFactory(listCellFactory);
+        logList.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) ->
+                Element.in(ContextHolder.getInstance().getContext()).setTime(newValue.getTime())
+        );
 
         ChangeListener<Number> boundsListener = (observable, oldValue, newValue) -> {
             if (ContextHolder.getInstance().hasContext()) {
-                fitGraphToCenter(getGraphShape());
+                fitGraphToCenter(getGraph());
             }
         };
         centerPane.heightProperty().addListener(boundsListener);
@@ -225,7 +231,7 @@ public class MainController {
 
                 ObservableList<Event> events = new CompositeObservableList<>(lists);
                 logList.setItems(events.sorted());
-                fitGraphToCenter(getGraphShape());
+                fitGraphToCenter(getGraph());
 
                 break;
             default:
@@ -247,38 +253,64 @@ public class MainController {
      * @throws IllegalStateException if there is no context
      */
     @Nonnull
-    private Shape getGraphShape() {
-        if (graphShape == null) {
+    private Graph getGraph() {
+        if (graph == null) {
             Context context = ContextHolder.getInstance().getContext();
-            Shapeable graph = new Graph(context, new SimpleCoordinatesAdapter());
-            graphShape = graph.createShape();
-            centerPane.getChildren().add(graphShape);
+            graph = new Graph(context, new SimpleCoordinatesAdapter());
+            addToCenter(graph.getNodes().values());
+            addToCenter(graph.getEdges().values());
+            addToCenter(graph.getElements().values());
         }
-        return graphShape;
+        return graph;
     }
 
-    private void fitGraphToCenter(Shape shape) {
+    private void addToCenter(Collection<GraphShape> values) {
+        ObservableList<Node> children = centerPane.getChildren();
+        for (GraphShape graphShape : values) {
+            Shape shape = graphShape.getValue();
+            children.add(shape);
+            graphShape.addListener((observable, oldValue, newValue) -> {
+                children.remove(oldValue);
+                children.add(newValue);
+            });
+        }
+    }
+
+    private void fitGraphToCenter(Graph graph) {
         double minCenter = Math.min(centerPane.getHeight(), centerPane.getWidth()) - 10;
 
-        Bounds graphBounds = shape.getBoundsInParent();
+        Bounds graphBounds = graph.getBounds();
         double maxGraph = Math.max(graphBounds.getHeight(), graphBounds.getWidth());
 
         double scaleFactor = minCenter / maxGraph;
-        double scale = shape.getScaleX() * scaleFactor;
 
-        if (!Double.isFinite(scale)) {
-            scale = 1;
+        if (!Double.isFinite(scaleFactor)) {
+            scaleFactor = 1;
         }
 
-        if (scale <= 0) {
-            scale = 0.1;
+        if (scaleFactor <= 0) {
+            scaleFactor = 1;
         }
 
-        shape.setScaleX(scale);
-        shape.setScaleY(scale);
+        graph.scale(scaleFactor);
+        moveGraphToCenter(graph);
+    }
+
+    private void moveGraphToCenter(Graph graph) {
+        Bounds graphBounds = graph.getBounds();
+
+        double finalX = (centerPane.getWidth() - graphBounds.getWidth()) / 2;
+        double xTranslate = finalX - graphBounds.getMinX();
+
+        double finalY = (centerPane.getHeight() - graphBounds.getHeight()) / 2;
+        double yTranslate = finalY - graphBounds.getMinY();
+
+        graph.move(xTranslate, yTranslate);
     }
 
     private void showSourceChooser() {
+        graph = null;
+        ContextHolder.getInstance().setContext(null);
         FXMLLoader loader = new FXMLLoader(getClass().getResource("SourceChooser.fxml"));
         loader.setResources(ResourceBundle.getBundle("bundles.localization"));
         try {

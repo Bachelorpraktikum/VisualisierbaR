@@ -19,8 +19,7 @@ public final class SimpleCoordinatesAdapter implements CoordinatesAdapter {
 
     @Nonnull
     @Override
-    public Point2D apply(@Nonnull Node node) {
-        Coordinates coordinates = node.getCoordinates();
+    public Point2D apply(@Nonnull Coordinates coordinates) {
         return new Point2D(coordinates.getX(), coordinates.getY());
     }
 }

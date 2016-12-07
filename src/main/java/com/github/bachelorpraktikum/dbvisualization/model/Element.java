@@ -17,6 +17,7 @@ import javafx.beans.property.ReadOnlyProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.SortedList;
+import javafx.scene.paint.Color;
 
 /**
  * Represents an element on the track.<p>Every element is associated with a {@link Node}.</p>
@@ -43,7 +44,22 @@ public final class Element {
      * Represents the state of an {@link Element}.
      */
     public enum State {
-        NOSIG, STOP, FAHRT;
+        NOSIG(Color.BLACK), STOP(Color.RED), FAHRT(Color.GREEN);
+
+        private final Color color;
+
+        State(Color color) {
+            this.color = color;
+        }
+
+        /**
+         * The color an element with this state should be shown in.
+         *
+         * @return a color
+         */
+        public Color getColor() {
+            return color;
+        }
 
         /**
          * Gets the state with the given name.
@@ -64,19 +80,23 @@ public final class Element {
      * Every type is associated with an image file containing the symbol for the element.
      */
     public enum Type {
-        HauptSignalImpl,
-        VorSignalImpl,
-        SichtbarkeitsPunktImpl,
+        HauptSignalImpl("HauptsignalImpl"),
+        VorSignalImpl("VorsignalImpl"),
+        SichtbarkeitsPunktImpl("SichtbarkeitspunktImpl", "SichtbarkeitspunktImpl2"),
         GefahrenPunktImpl,
-        MagnetImpl,
+        MagnetImpl("MagnetImpl"),
         WeichenPunktImpl,
-        SwWechselImpl,
+        SwWechselImpl("SwWechselImpl", "SwWechselImpl2", "SwWechselImpl3", "SwWechselImpl4"),
         GeschwindigkeitsAnzeigerImpl;
 
-        private final String imageUrl;
+        private final String[] imageUrls;
 
-        Type() {
-            imageUrl = Element.class.getResource(String.format("symbols/%s.svg", name())).toExternalForm();
+        Type(String... imageNames) {
+            imageUrls = new String[imageNames.length];
+
+            for (int i = 0; i < imageNames.length; i++) {
+                imageUrls[i] = Element.class.getResource(String.format("symbols/%s.fxml", imageNames[i])).toExternalForm();
+            }
         }
 
         /**
@@ -90,14 +110,14 @@ public final class Element {
         }
 
         /**
-         * Gets a URL to an SVG image representing this {@link Type}.<br>
-         * Typically, the image is contained in the application's jar file.
+         * Gets a URL to FXML files each containing one SVGPath representing this {@link Type}.<br>
+         * Typically, the FXML files are contained in the application's jar file.
          *
-         * @return the image url
+         * @return the image URLs
          */
         @Nonnull
-        public String getImageUrl() {
-            return imageUrl;
+        public String[] getImageUrls() {
+            return imageUrls;
         }
 
         /**
