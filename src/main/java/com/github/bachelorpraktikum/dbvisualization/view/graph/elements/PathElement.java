@@ -21,7 +21,7 @@ class PathElement extends ElementBase<Shape> {
 
     @Override
     protected void relocate(Shape shape) {
-        Point2D nodePos = getNodePosition().add(getOffset(), getOffset());
+        Point2D nodePos = getNodePosition().add(getOffset());
         Point2D parentPos = parentTransformProperty().getValue().transform(nodePos);
 
         Bounds bounds = shape.getBoundsInLocal();

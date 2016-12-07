@@ -15,9 +15,9 @@ final class DummyElement extends ElementBase<Rectangle> {
 
     @Override
     protected void relocate(Rectangle shape) {
-        Point2D nodePos = getNodePosition();
-        shape.setX(nodePos.getX() + getOffset());
-        shape.setY(nodePos.getY() + getOffset());
+        Point2D pos = getNodePosition().add(getOffset());
+        shape.setX(pos.getX());
+        shape.setY(pos.getY());
     }
 
     @Override
@@ -29,7 +29,6 @@ final class DummyElement extends ElementBase<Rectangle> {
 
     @Override
     protected Rectangle createShape() {
-        Rectangle circle = new Rectangle();
-        return circle;
+        return new Rectangle();
     }
 }

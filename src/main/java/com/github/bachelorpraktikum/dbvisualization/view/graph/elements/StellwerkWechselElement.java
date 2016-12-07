@@ -4,6 +4,7 @@ import com.github.bachelorpraktikum.dbvisualization.model.Element;
 import com.github.bachelorpraktikum.dbvisualization.view.graph.adapter.CoordinatesAdapter;
 
 import javafx.beans.property.ReadOnlyProperty;
+import javafx.geometry.Point2D;
 import javafx.scene.transform.Transform;
 
 class StellwerkWechselElement extends PathElement {
@@ -12,7 +13,7 @@ class StellwerkWechselElement extends PathElement {
     }
 
     @Override
-    protected double getOffset() {
-        return 0;
+    protected Point2D getOffset() {
+        return Point2D.ZERO;
     }
 }

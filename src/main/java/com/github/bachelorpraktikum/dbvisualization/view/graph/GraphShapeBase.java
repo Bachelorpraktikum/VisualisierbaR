@@ -11,6 +11,7 @@ import javafx.beans.property.ReadOnlyProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.WeakChangeListener;
+import javafx.geometry.Point2D;
 import javafx.scene.shape.Shape;
 import javafx.scene.transform.Transform;
 
@@ -44,8 +45,8 @@ public abstract class GraphShapeBase<T, S extends Shape> extends SimpleObjectPro
         return getCoordinatesAdapter().getCalibrationBase();
     }
 
-    protected double getOffset() {
-        return 0.5;
+    protected Point2D getOffset() {
+        return new Point2D(0.5, 0.5);
     }
 
     protected final ReadOnlyProperty<Transform> parentTransformProperty() {
