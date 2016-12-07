@@ -48,7 +48,7 @@ class LegendListViewCell<T> extends ListCell<T> {
                 name = ((Element.Type) element).getName();
                 imageURL = ((Element.Type) element).getImageUrl();
             } else if (element instanceof Train) {
-                name = Train.class.getName().substring(Train.class.getName().lastIndexOf(".") + 1);
+                name = Train.class.getSimpleName();
                 imageURL = Element.class.getResource(String.format("symbols/%s.png", name)).toExternalForm();
             }
             Image img = new Image(imageURL);
