@@ -15,7 +15,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.shape.Rectangle;
 
-class ElementListViewCell<T> extends ListCell<T> {
+class LegendListViewCell<T> extends ListCell<T> {
     @FXML
     private Label eleName;
     @FXML

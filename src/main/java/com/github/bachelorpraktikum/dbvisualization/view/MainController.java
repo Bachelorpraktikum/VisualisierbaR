@@ -165,8 +165,8 @@ public class MainController {
         legend.setItems(FXCollections.observableArrayList(str.toArray()));
         Train t = Train.in(context).getAll().stream().iterator().next();
         legend.getItems().add(t);
-        // legend.setCellFactory(studentListView -> new ElementListViewCell());
-        legend.setCellFactory(param -> new ElementListViewCell());
+        // legend.setCellFactory(studentListView -> new LegendListViewCell());
+        legend.setCellFactory(param -> new LegendListViewCell());
     }
 
     void setDataSource(@Nonnull DataSource source) {
