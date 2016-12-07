@@ -277,12 +277,11 @@ public class MainController {
     }
 
     private void fitGraphToCenter(Graph graph) {
-        double minCenter = Math.min(centerPane.getHeight(), centerPane.getWidth()) - 10;
-
         Bounds graphBounds = graph.getBounds();
-        double maxGraph = Math.max(graphBounds.getHeight(), graphBounds.getWidth());
+        double widthFactor = (centerPane.getWidth() - 20) / graphBounds.getWidth();
+        double heightFactor = (centerPane.getHeight() - 20) / graphBounds.getHeight();
 
-        double scaleFactor = minCenter / maxGraph;
+        double scaleFactor = Math.min(widthFactor, heightFactor);
 
         if (!Double.isFinite(scaleFactor)) {
             scaleFactor = 1;
