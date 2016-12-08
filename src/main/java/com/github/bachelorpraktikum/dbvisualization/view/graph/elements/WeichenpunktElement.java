@@ -17,13 +17,13 @@ final class WeichenpunktElement extends ElementBase<Polygon> {
 
     @Override
     protected void relocate(Polygon shape) {
-        Switch swit = getElement().getSwitch().get();
+        Switch swit = getRepresented().getSwitch().get();
 
         CoordinatesAdapter adapter = getCoordinatesAdapter();
         Point2D[] others = new Point2D[2];
         int i = 0;
         for (Element element : swit.getElements()) {
-            if (!element.equals(getElement())) {
+            if (!element.equals(getRepresented())) {
                 others[i++] = adapter.apply(element.getNode().getCoordinates());
             }
         }
@@ -40,6 +40,11 @@ final class WeichenpunktElement extends ElementBase<Polygon> {
         p.addAll(start.getX(), start.getY(),
                 fin1.getX(), fin1.getY(),
                 fin2.getX(), fin2.getY());
+    }
+
+    @Override
+    protected Point2D getOffset() {
+        return Point2D.ZERO;
     }
 
     @Override
