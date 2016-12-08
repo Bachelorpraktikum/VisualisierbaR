@@ -4,6 +4,9 @@ import com.github.bachelorpraktikum.dbvisualization.view.graph.adapter.Coordinat
 
 import java.util.concurrent.Callable;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import javafx.beans.Observable;
 import javafx.beans.binding.Binding;
 import javafx.beans.binding.Bindings;
@@ -20,6 +23,9 @@ public abstract class GraphShapeBase<T, S extends Shape> extends SimpleObjectPro
     private final ReadOnlyProperty<Transform> parentTransform;
     private final CoordinatesAdapter adapter;
     private ChangeListener<Transform> listener;
+
+    @Nullable
+    private S shape;
 
     protected GraphShapeBase(T represented, ReadOnlyProperty<Transform> parentTransform, CoordinatesAdapter adapter) {
         this.represented = represented;
@@ -55,20 +61,23 @@ public abstract class GraphShapeBase<T, S extends Shape> extends SimpleObjectPro
 
     @Override
     public final Shape call() throws Exception {
-        S shape = createShape();
-        resize(shape);
-        relocate(shape);
-        displayState(shape);
-        shape.getTransforms().add(parentTransform.getValue());
-        listener = (observable, oldValue, newValue) -> {
-            if (oldValue != null) {
-                shape.getTransforms().remove(oldValue);
-            }
-            shape.getTransforms().add(newValue);
+        if (shape == null) {
+            shape = createShape();
+            resize(shape);
             relocate(shape);
-        };
-        parentTransform.addListener(new WeakChangeListener<>(listener));
-        shape.setOnMouseClicked(event -> System.out.println("CLICK: " + getRepresented()));
+            shape.getTransforms().add(parentTransform.getValue());
+            listener = (observable, oldValue, newValue) -> {
+                if (oldValue != null) {
+                    shape.getTransforms().remove(oldValue);
+                }
+                shape.getTransforms().add(newValue);
+                relocate(shape);
+            };
+            parentTransform.addListener(new WeakChangeListener<>(listener));
+            shape.setOnMouseClicked(event -> System.out.println("CLICK: " + getRepresented()));
+        }
+
+        displayState(shape);
         return shape;
     }
 
@@ -78,6 +87,7 @@ public abstract class GraphShapeBase<T, S extends Shape> extends SimpleObjectPro
 
     protected abstract void displayState(S shape);
 
+    @Nonnull
     protected abstract S createShape();
 
     protected abstract Observable[] getDependencies();
