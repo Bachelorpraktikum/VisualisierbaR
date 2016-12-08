@@ -46,7 +46,7 @@ public abstract class GraphShapeBase<T, S extends Shape> extends SimpleObjectPro
     }
 
     protected Point2D getOffset() {
-        return new Point2D(0.5, 0.5);
+        return new Point2D(0.4, 0.4);
     }
 
     protected final ReadOnlyProperty<Transform> parentTransformProperty() {
