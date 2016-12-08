@@ -5,10 +5,7 @@ import com.github.bachelorpraktikum.dbvisualization.view.graph.adapter.Coordinat
 
 import java.net.URL;
 
-import javax.annotation.Nonnull;
-
 import javafx.beans.property.ReadOnlyProperty;
-import javafx.scene.shape.Shape;
 import javafx.scene.transform.Transform;
 
 final class HauptsignalElement extends PathElement {
@@ -16,13 +13,22 @@ final class HauptsignalElement extends PathElement {
         super(element, parentTransform, adapter);
     }
 
+    private boolean hasGeschwindigkeit() {
+        return getRepresented().getNode().getElements().stream()
+                .map(Element::getType)
+                .anyMatch(type -> type == Element.Type.GeschwindigkeitsAnzeigerImpl);
+    }
+
+    @Override
+    protected double getDesiredMax() {
+        return super.getDesiredMax() + (hasGeschwindigkeit() ? 0.2 : 0.0);
+    }
+
     @Override
     protected URL[] getImageUrls() {
-        if(getRepresented().getNode().getElements().stream()
-                .map(Element::getType)
-                .anyMatch(type -> type == Element.Type.GeschwindigkeitsAnzeigerImpl)) {
+        if (hasGeschwindigkeit()) {
             return Element.Type.GeschwindigkeitsAnzeigerImpl.getImageUrls();
-        }else {
+        } else {
             return super.getImageUrls();
         }
     }
