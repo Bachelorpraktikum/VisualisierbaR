@@ -84,7 +84,7 @@ public final class Element {
         HauptSignalImpl("HauptsignalImpl"),
         VorSignalImpl("VorsignalImpl"),
         SichtbarkeitsPunktImpl("SichtbarkeitspunktImpl", "SichtbarkeitspunktImpl2"),
-        GefahrenPunktImpl,
+        GefahrenPunktImpl("GefahrenpunktImpl"),
         MagnetImpl("MagnetImpl"),
         WeichenPunktImpl,
         SwWechselImpl("SwWechselImpl", "SwWechselImpl2", "SwWechselImpl3", "SwWechselImpl4"),

@@ -24,6 +24,7 @@ public final class Elements {
                 case SichtbarkeitsPunktImpl:
                 case VorSignalImpl:
                 case HauptSignalImpl:
+                case GefahrenPunktImpl:
                     shapes.add(new PathElement(element, parentTransform, adapter));
                     break;
                 case WeichenPunktImpl:
