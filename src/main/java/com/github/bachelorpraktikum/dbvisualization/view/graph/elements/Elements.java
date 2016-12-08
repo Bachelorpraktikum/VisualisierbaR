@@ -25,7 +25,6 @@ public final class Elements {
                     break;
                 case SichtbarkeitsPunktImpl:
                 case VorSignalImpl:
-                case HauptSignalImpl:
                 case GefahrenPunktImpl:
                     shapes.add(new PathElement(element, parentTransform, adapter));
                     break;
@@ -35,6 +34,12 @@ public final class Elements {
                     break;
                 case SwWechselImpl:
                     shapes.add(new StellwerkWechselElement(element, parentTransform, adapter));
+                    break;
+                case HauptSignalImpl:
+                    shapes.add(new HauptsignalElement(element, parentTransform, adapter));
+                    break;
+                case GeschwindigkeitsAnzeigerImpl:
+                    // included in Hauptsignal
                     break;
                 default:
                     shapes.add(new DummyElement(element, parentTransform, adapter));

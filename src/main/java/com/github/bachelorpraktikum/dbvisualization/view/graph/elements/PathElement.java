@@ -4,8 +4,6 @@ import com.github.bachelorpraktikum.dbvisualization.model.Element;
 import com.github.bachelorpraktikum.dbvisualization.view.graph.adapter.CoordinatesAdapter;
 
 import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.net.URL;
 
 import javax.annotation.Nonnull;
@@ -34,22 +32,29 @@ class PathElement extends ElementBase<Shape> {
         shape.relocate(x, y);
     }
 
+    protected double getDesiredMax() {
+        return 0.5;
+    }
+
     @Override
     protected void resize(Shape shape) {
         Bounds bounds = shape.getLayoutBounds();
         double max = Math.max(bounds.getHeight(), bounds.getWidth());
-        double desiredMax = 0.5;
-        double factor = desiredMax / max;
+        double factor = getDesiredMax() / max;
         double scale = shape.getScaleX() * factor;
 
         shape.setScaleX(scale);
         shape.setScaleY(scale);
     }
 
+    protected URL[] getImageUrls() {
+        return getRepresented().getType().getImageUrls();
+    }
+
     @Nonnull
     @Override
     protected Shape createShape() {
-        URL[] urls = getRepresented().getType().getImageUrls();
+        URL[] urls = getImageUrls();
         try {
             Shape shape = null;
 

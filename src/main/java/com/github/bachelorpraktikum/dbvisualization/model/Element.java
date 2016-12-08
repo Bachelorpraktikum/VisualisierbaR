@@ -88,7 +88,7 @@ public final class Element {
         MagnetImpl("MagnetImpl"),
         WeichenPunktImpl,
         SwWechselImpl("SwWechselImpl", "SwWechselImpl2", "SwWechselImpl3", "SwWechselImpl4"),
-        GeschwindigkeitsAnzeigerImpl;
+        GeschwindigkeitsAnzeigerImpl("HauptsignalGeschwindigkeitImpl");
 
         private final URL[] imageUrls;
 
