@@ -8,6 +8,8 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 
+import javax.annotation.Nonnull;
+
 import javafx.beans.property.ReadOnlyProperty;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Bounds;
@@ -44,6 +46,7 @@ class PathElement extends ElementBase<Shape> {
         shape.setScaleY(scale);
     }
 
+    @Nonnull
     @Override
     protected Shape createShape() {
         URL[] urls = getRepresented().getType().getImageUrls();

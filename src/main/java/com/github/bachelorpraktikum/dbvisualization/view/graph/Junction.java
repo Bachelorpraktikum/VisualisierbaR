@@ -3,6 +3,8 @@ package com.github.bachelorpraktikum.dbvisualization.view.graph;
 import com.github.bachelorpraktikum.dbvisualization.model.Node;
 import com.github.bachelorpraktikum.dbvisualization.view.graph.adapter.CoordinatesAdapter;
 
+import javax.annotation.Nonnull;
+
 import javafx.beans.Observable;
 import javafx.beans.property.ReadOnlyProperty;
 import javafx.geometry.Point2D;
@@ -41,6 +43,7 @@ final class Junction extends GraphShapeBase<Node, Circle> {
         return new Observable[0];
     }
 
+    @Nonnull
     @Override
     public Circle createShape() {
         return new Circle();

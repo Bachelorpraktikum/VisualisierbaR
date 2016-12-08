@@ -4,6 +4,8 @@ import com.github.bachelorpraktikum.dbvisualization.model.Element;
 import com.github.bachelorpraktikum.dbvisualization.model.Switch;
 import com.github.bachelorpraktikum.dbvisualization.view.graph.adapter.CoordinatesAdapter;
 
+import javax.annotation.Nonnull;
+
 import javafx.beans.property.ReadOnlyProperty;
 import javafx.collections.ObservableList;
 import javafx.geometry.Point2D;
@@ -51,6 +53,7 @@ final class WeichenpunktElement extends ElementBase<Polygon> {
     protected void resize(Polygon shape) {
     }
 
+    @Nonnull
     @Override
     protected Polygon createShape() {
         return new Polygon();

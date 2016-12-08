@@ -3,6 +3,8 @@ package com.github.bachelorpraktikum.dbvisualization.view.graph;
 import com.github.bachelorpraktikum.dbvisualization.model.Edge;
 import com.github.bachelorpraktikum.dbvisualization.view.graph.adapter.CoordinatesAdapter;
 
+import javax.annotation.Nonnull;
+
 import javafx.beans.Observable;
 import javafx.beans.property.ReadOnlyProperty;
 import javafx.geometry.Point2D;
@@ -39,6 +41,7 @@ final class Rail extends GraphShapeBase<Edge, Line> {
         return new Observable[0];
     }
 
+    @Nonnull
     @Override
     public Line createShape() {
         return new Line();

@@ -3,6 +3,8 @@ package com.github.bachelorpraktikum.dbvisualization.view.graph.elements;
 import com.github.bachelorpraktikum.dbvisualization.model.Element;
 import com.github.bachelorpraktikum.dbvisualization.view.graph.adapter.CoordinatesAdapter;
 
+import javax.annotation.Nonnull;
+
 import javafx.beans.property.ReadOnlyProperty;
 import javafx.geometry.Point2D;
 import javafx.scene.shape.Rectangle;
@@ -27,6 +29,7 @@ final class DummyElement extends ElementBase<Rectangle> {
         shape.setWidth(radius);
     }
 
+    @Nonnull
     @Override
     protected Rectangle createShape() {
         return new Rectangle();
