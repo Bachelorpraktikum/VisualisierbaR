@@ -21,6 +21,8 @@ public final class Elements {
         for (Element element : node.getElements()) {
             switch (element.getType()) {
                 case MagnetImpl:
+                    shapes.add(new MagnetElement(element, parentTransform, adapter));
+                    break;
                 case SichtbarkeitsPunktImpl:
                 case VorSignalImpl:
                 case HauptSignalImpl:
