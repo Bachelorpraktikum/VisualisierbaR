@@ -45,7 +45,7 @@ public final class Element {
      * Represents the state of an {@link Element}.
      */
     public enum State {
-        NOSIG(Color.BLACK), STOP(Color.RED), FAHRT(Color.GREEN);
+        NOSIG(Color.BLACK), STOP(Color.RED), FAHRT(Color.BLUE);
 
         private final Color color;
 
