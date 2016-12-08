@@ -6,6 +6,7 @@ import com.github.bachelorpraktikum.dbvisualization.view.graph.adapter.Coordinat
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.net.URL;
 
 import javafx.beans.property.ReadOnlyProperty;
 import javafx.fxml.FXMLLoader;
@@ -45,13 +46,12 @@ class PathElement extends ElementBase<Shape> {
 
     @Override
     protected Shape createShape() {
-        String[] urls = getRepresented().getType().getImageUrls();
+        URL[] urls = getRepresented().getType().getImageUrls();
         try {
             Shape shape = null;
 
-            for (String url : urls) {
-                URI uri = new URI(url);
-                FXMLLoader loader = new FXMLLoader(uri.toURL());
+            for (URL url : urls) {
+                FXMLLoader loader = new FXMLLoader(url);
                 if (shape == null) {
                     shape = loader.load();
                 } else {
@@ -66,7 +66,7 @@ class PathElement extends ElementBase<Shape> {
 */
 
             return shape;
-        } catch (URISyntaxException | IOException e) {
+        } catch (IOException e) {
             e.printStackTrace();
             throw new IllegalStateException(e);
         }
