@@ -33,7 +33,7 @@ class PathElement extends ElementBase<Shape> {
     }
 
     protected double getDesiredMax() {
-        return 0.5;
+        return 0.5 * getCalibrationBase();
     }
 
     @Override

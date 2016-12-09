@@ -11,6 +11,8 @@ import javafx.scene.shape.Line;
 import javafx.scene.transform.Transform;
 
 final class Rail extends GraphShapeBase<Edge, Line> {
+    private static final double CALIBRATION_COEFFICIENT = 0.05;
+
     protected Rail(Edge edge, ReadOnlyProperty<Transform> parentTransform, CoordinatesAdapter adapter) {
         super(edge, parentTransform, adapter);
     }
@@ -28,7 +30,7 @@ final class Rail extends GraphShapeBase<Edge, Line> {
 
     @Override
     protected void resize(Line line) {
-        line.setStrokeWidth(getCalibrationBase() * 0.05);
+        line.setStrokeWidth(getCalibrationBase() * CALIBRATION_COEFFICIENT);
     }
 
     @Nonnull

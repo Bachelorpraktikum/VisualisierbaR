@@ -34,9 +34,9 @@ final class WeichenpunktElement extends ElementBase<Polygon> {
         Point2D vec1 = others[0].subtract(nodePos);
         Point2D vec2 = others[1].subtract(nodePos);
 
-        Point2D start = nodePos.add(vec1.add(vec2).normalize().multiply(0.1));
-        Point2D fin1 = start.add(vec1.normalize().multiply(0.3));
-        Point2D fin2 = start.add(vec2.normalize().multiply(0.3));
+        Point2D start = nodePos.add(vec1.add(vec2).normalize().multiply(0.1 * getCalibrationBase()));
+        Point2D fin1 = start.add(vec1.normalize().multiply(0.3 * getCalibrationBase()));
+        Point2D fin2 = start.add(vec2.normalize().multiply(0.3 * getCalibrationBase()));
 
         ObservableList<Double> p = shape.getPoints();
         p.addAll(start.getX(), start.getY(),

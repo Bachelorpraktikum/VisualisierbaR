@@ -67,7 +67,7 @@ public abstract class GraphShapeBase<T, S extends Shape> implements GraphShape<T
     }
 
     protected Point2D getOffset() {
-        return new Point2D(0.4, 0.4);
+        return new Point2D(0.4, 0.4).multiply(getCalibrationBase());
     }
 
     protected final ReadOnlyProperty<Transform> parentTransformProperty() {
