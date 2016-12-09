@@ -48,7 +48,14 @@ abstract class ElementBase<T extends Shape> extends GraphShapeBase<Element, T> {
 
         if (nearVec.equals(Point2D.ZERO)) {
             Point2D other = otherVecs.get(0);
-            return new Point2D(other.getY(), -other.getX()).normalize().multiply(super.getOffset().magnitude());
+            Point2D result = new Point2D(other.getY(), -other.getX()).normalize().multiply(super.getOffset().magnitude());
+            if (result.getX() < 0) {
+                result = result.multiply(-1);
+            } else if (result.getY() < 0) {
+                result = result.multiply(-1);
+            }
+
+            return result;
         }
 
         return nearVec.multiply(-1.0).multiply(super.getOffset().magnitude());
