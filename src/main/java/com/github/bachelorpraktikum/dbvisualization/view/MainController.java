@@ -3,7 +3,6 @@ package com.github.bachelorpraktikum.dbvisualization.view;
 import com.github.bachelorpraktikum.dbvisualization.DataSource;
 import com.github.bachelorpraktikum.dbvisualization.logparser.GraphParser;
 import com.github.bachelorpraktikum.dbvisualization.model.Context;
-import com.github.bachelorpraktikum.dbvisualization.model.Edge;
 import com.github.bachelorpraktikum.dbvisualization.model.Element;
 import com.github.bachelorpraktikum.dbvisualization.model.Event;
 import com.github.bachelorpraktikum.dbvisualization.model.train.Train;
@@ -14,7 +13,6 @@ import com.github.bachelorpraktikum.dbvisualization.view.legend.LegendItem;
 import com.github.bachelorpraktikum.dbvisualization.view.legend.LegendListViewCell;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -36,8 +34,10 @@ import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonBase;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
+import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.control.Tooltip;
 import javafx.scene.control.cell.TextFieldListCell;
@@ -52,7 +52,15 @@ import javafx.util.Callback;
 import javafx.util.StringConverter;
 
 public class MainController {
-    public ListView<String> elementList;
+    @FXML
+    private ListView<String> elementList;
+    @FXML
+    private CheckBox elementFilter;
+    @FXML
+    private CheckBox trainFilter;
+    @FXML
+    private TextField filterText;
+
     @FXML
     private StackPane sidebar;
     @FXML
@@ -90,11 +98,7 @@ public class MainController {
         });
 
         legendButton.selectedProperty().addListener((observable, oldValue, newValue) -> {
-            if (newValue) {
-                legend.toFront();
-            } else {
-                legend.toBack();
-            }
+            legend.setVisible(newValue);
         });
 
         // Hide logList by default
@@ -181,12 +185,14 @@ public class MainController {
         Context context = ContextHolder.getInstance().getContext();
 
         Stream<String> elements = Element.in(context).getAll().stream()
-                .map(Element::getName);
+                .map(Element::getName).filter(el -> elementFilter.isSelected());
         Stream<String> trains = Train.in(context).getAll().stream()
-                .map(Train::getName);
+                .map(Train::getName).filter(el -> trainFilter.isSelected());
 
         ObservableList<String> items = FXCollections.observableList(
-                Stream.concat(elements, trains).collect(Collectors.toList())
+                Stream.concat(elements, trains)
+                        .filter(t -> t.toLowerCase().contains(filterText.getText().trim().toLowerCase()))
+                        .collect(Collectors.toList())
         );
 
         elementList.setItems(items);
@@ -228,6 +234,9 @@ public class MainController {
 
         showLegend();
         showElements();
+        trainFilter.selectedProperty().addListener((observable, oldValue, newValue) -> showElements());
+        elementFilter.selectedProperty().addListener((observable, oldValue, newValue) -> showElements());
+        filterText.textProperty().addListener((observable, oldValue, newValue) -> showElements());
     }
 
     /**
