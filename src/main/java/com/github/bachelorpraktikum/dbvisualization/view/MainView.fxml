@@ -11,29 +11,32 @@
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.FlowPane?>
 <?import javafx.scene.layout.StackPane?>
-
-<BorderPane fx:id="rootPane" prefHeight="600" prefWidth="800" xmlns="http://javafx.com/javafx/8.0.60" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.github.bachelorpraktikum.dbvisualization.view.MainController">
+<BorderPane fx:id="rootPane" prefHeight="600" prefWidth="800"
+            xmlns="http://javafx.com/javafx/8.0.60" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.github.bachelorpraktikum.dbvisualization.view.MainController">
     <top>
         <AnchorPane>
             <children>
-                <FlowPane alignment="CENTER_LEFT" hgap="5.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0">
-                    <ToggleButton fx:id="logToggle" text="%show_hide_logs" />
+                <FlowPane alignment="CENTER_LEFT" hgap="5.0" AnchorPane.bottomAnchor="0.0"
+                          AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0">
+                    <ToggleButton fx:id="logToggle" text="%show_hide_logs"/>
                 </FlowPane>
-                <FlowPane alignment="CENTER_RIGHT" hgap="5.0" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                <FlowPane alignment="CENTER_RIGHT" hgap="5.0" AnchorPane.bottomAnchor="0.0"
+                          AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                     <children>
-                        <ToggleButton fx:id="legendButton" text="Legend" />
-                        <Button fx:id="closeButton" text="%close_data_source" />
+                        <ToggleButton fx:id="legendButton" text="Legend"/>
+                        <Button fx:id="closeButton" text="%close_data_source"/>
                     </children>
                 </FlowPane>
             </children>
             <padding>
-                <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                <Insets bottom="5.0" left="5.0" right="5.0" top="5.0"/>
             </padding>
         </AnchorPane>
     </top>
     <left>
         <StackPane fx:id="leftPane">
-            <ListView fx:id="logList" />
+            <ListView fx:id="logList"/>
         </StackPane>
     </left>
     <center>
@@ -43,8 +46,9 @@
     </center>
     <right>
         <StackPane fx:id="sidebar" maxWidth="240">
-            <ListView fx:id="legend" fixedCellSize="0.0" style="-fx-background-color: #ccc;" visible="false">
-                <Label text="Legend goes here." />
+            <ListView fx:id="legend" fixedCellSize="0.0" style="-fx-background-color: #ccc;"
+                      visible="false">
+                <Label text="Legend goes here."/>
             </ListView>
             <BorderPane>
                 <center>
@@ -53,14 +57,17 @@
                 </center>
                 <top>
                     <AnchorPane>
-                        <TextField fx:id="filterText" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0"/>
-                        <FlowPane fx:id="filterPane" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="30.0">
-                            <CheckBox fx:id="elementFilter" selected="true" text="Elemente" />
-                            <CheckBox fx:id="trainFilter" selected="true" text="Züge anzeigen" />
+                        <TextField fx:id="filterText" AnchorPane.leftAnchor="0.0"
+                                   AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0"/>
+                        <FlowPane fx:id="filterPane" hgap="4" vgap="4" AnchorPane.bottomAnchor="0.0"
+                                  AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
+                                  AnchorPane.topAnchor="30.0">
+                            <CheckBox fx:id="elementFilter" selected="true" text="Elemente"/>
+                            <CheckBox fx:id="trainFilter" selected="true" text="Züge anzeigen"/>
                         </FlowPane>
-                  <padding>
-                     <Insets bottom="5.0" />
-                  </padding>
+                        <padding>
+                            <Insets bottom="5.0"/>
+                        </padding>
                     </AnchorPane>
                 </top>
             </BorderPane>
