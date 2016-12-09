@@ -25,7 +25,6 @@ public abstract class GraphShapeBase<T, S extends Shape> implements GraphShape<T
         this.represented = represented;
         this.parentTransform = parentTransform;
         this.adapter = adapter;
-        // TODO create
     }
 
     @Override
