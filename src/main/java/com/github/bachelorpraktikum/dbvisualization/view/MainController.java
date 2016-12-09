@@ -274,8 +274,8 @@ public class MainController {
 
     private void fitGraphToCenter(Graph graph) {
         Bounds graphBounds = graph.getBounds();
-        double widthFactor = (centerPane.getWidth() - 20) / graphBounds.getWidth();
-        double heightFactor = (centerPane.getHeight() - 20) / graphBounds.getHeight();
+        double widthFactor = (centerPane.getWidth()) / graphBounds.getWidth();
+        double heightFactor = (centerPane.getHeight()) / graphBounds.getHeight();
 
         double scaleFactor = Math.min(widthFactor, heightFactor);
 

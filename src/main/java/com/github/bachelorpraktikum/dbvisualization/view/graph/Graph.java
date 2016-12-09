@@ -57,12 +57,22 @@ public final class Graph {
         this.coordinatesAdapter = Objects.requireNonNull(coordinatesAdapter);
         this.transformProperty = new ReadOnlyObjectWrapper<>();
 
-        boundsShape = Node.in(context).getAll().parallelStream()
+        Shape boundsShape = Node.in(context).getAll().parallelStream()
                 .map(Node::getCoordinates)
                 .map(coordinatesAdapter)
                 .map(point -> (Shape) new Circle(point.getX(), point.getY(), 0.7))
                 .reduce(Shape::union)
                 .orElseThrow(IllegalStateException::new);
+
+        // Temporary hack to leave extra space around the graph
+        Bounds bounds = boundsShape.getBoundsInLocal();
+        Circle up = new Circle(0, bounds.getMinY(), 0.7);
+        Circle down = new Circle(0, bounds.getMaxY(), 0.7);
+        Circle left = new Circle(bounds.getMinX(), 0, 0.7);
+        Circle right = new Circle(bounds.getMaxX(), 0, 0.7);
+        boundsShape = Shape.union(left, Shape.union(right, Shape.union(down, Shape.union(boundsShape, up))));
+        this.boundsShape = boundsShape;
+
         transformProperty.bind(boundsShape.localToParentTransformProperty());
 
         this.nodes = new LinkedHashMap<>(128);
