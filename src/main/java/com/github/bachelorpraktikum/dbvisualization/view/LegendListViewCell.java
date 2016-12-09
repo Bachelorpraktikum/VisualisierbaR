@@ -51,6 +51,7 @@ class LegendListViewCell<T> extends ListCell<T> {
                 name = Train.class.getSimpleName();
                 imageURL = Element.class.getResource(String.format("symbols/%s.png", name)).toExternalForm();
             }
+            imageURL = Element.class.getResource(String.format("symbols/%s.png", "test")).toExternalForm();
             Image img = new Image(imageURL);
 
             eleImage.setFitHeight(img.getHeight() / 10);
