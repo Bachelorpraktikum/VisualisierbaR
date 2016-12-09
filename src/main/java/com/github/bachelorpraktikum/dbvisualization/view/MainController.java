@@ -13,9 +13,11 @@ import com.github.bachelorpraktikum.dbvisualization.view.legend.LegendItem;
 import com.github.bachelorpraktikum.dbvisualization.view.legend.LegendListViewCell;
 
 import java.io.IOException;
+import java.net.URL;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 import java.util.ResourceBundle;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -101,6 +103,10 @@ public class MainController {
 
         legendButton.selectedProperty().addListener((observable, oldValue, newValue) -> {
             legend.setVisible(newValue);
+            if (newValue) {
+                legend.toFront();
+            } else
+                legend.toBack();
         });
 
         // Hide logList by default
@@ -174,16 +180,47 @@ public class MainController {
         stage.centerOnScreen();
     }
 
+    URL getUrl(Element.Type type) {
+        String f;
+        switch (type) {
+            case HauptSignalImpl:
+                f = "haupt";
+                break;
+            case GefahrenPunktImpl:
+                f = "achs";
+                break;
+            case MagnetImpl:
+                f = "magnet";
+                break;
+            case VorSignalImpl:
+                f = "vor";
+                break;
+            case SichtbarkeitsPunktImpl:
+                f = "sicht";
+                break;
+            default:
+                return null;
+        }
+
+        return Element.class.getResource(String.format("symbols/%s.png", f));
+    }
+
     private void showLegend() {
         Context context = ContextHolder.getInstance().getContext();
         Stream<LegendItem> str = Element.in(context).getAll().stream()
                 .map(Element::getType)
                 .distinct()
-                .map(type -> new LegendItem(LegendItem.Type.ELEMENT, type.getName()));
+                .map(type -> {
+                    URL url = getUrl(type);
+                    if (url == null) return null;
+                    return new LegendItem(url, type.getName());
+                })
+                .filter(Objects::nonNull);
 
         legend.setItems(FXCollections.observableArrayList(str.collect(Collectors.toList())));
         Train t = Train.in(context).getAll().stream().iterator().next();
-        legend.getItems().add(new LegendItem(LegendItem.Type.TRAIN, t.getName()));
+        legend.getItems().add(new LegendItem(Element.class.getResource(String.format("symbols/%s.png", "train")), t.getName()));
+
         legend.setCellFactory(studentListView -> new LegendListViewCell());
     }
 

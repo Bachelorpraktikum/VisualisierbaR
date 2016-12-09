@@ -42,7 +42,6 @@ public class LegendListViewCell extends ListCell<LegendItem> {
 
             String name = element.getName();
             URL imageURL = element.getImageUrl();
-
             Image img = new Image(imageURL.toExternalForm());
 
             eleImage.setFitHeight(img.getHeight() / 10);

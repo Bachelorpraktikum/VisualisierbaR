@@ -8,12 +8,12 @@ import javafx.beans.property.Property;
 import javafx.beans.property.SimpleObjectProperty;
 
 public class LegendItem {
-    private final Type type;
+    private final URL url;
     private final Property<State> stateProperty;
     private final String name;
 
-    public LegendItem(Type type, String name) {
-        this.type = type;
+    public LegendItem(URL url, String name) {
+        this.url = url;
         this.stateProperty = new SimpleObjectProperty<>(State.AUTO);
         this.name = name;
     }
@@ -27,11 +27,7 @@ public class LegendItem {
     }
 
     public URL getImageUrl() {
-        return Element.class.getResource(String.format("symbols/%s.png", "test"));
-    }
-
-    public Type getType() {
-        return type;
+        return url;
     }
 
     public String getName() {
