@@ -18,6 +18,8 @@ public final class Elements {
 
     public static Collection<GraphShape<Element>> create(Node node, ReadOnlyProperty<Transform> parentTransform, CoordinatesAdapter adapter) {
         List<GraphShape<Element>> shapes = new ArrayList<>(node.getElements().size());
+        // TODO temporary hack to layout multiple elements
+        int count = 0;
         for (Element element : node.getElements()) {
             switch (element.getType()) {
                 case MagnetImpl:
@@ -26,7 +28,7 @@ public final class Elements {
                 case SichtbarkeitsPunktImpl:
                 case VorSignalImpl:
                 case GefahrenPunktImpl:
-                    shapes.add(new PathElement(element, parentTransform, adapter));
+                    shapes.add(new DefaultOffsetElement(element, parentTransform, adapter, count++));
                     break;
                 case WeichenPunktImpl:
                     if (element.equals(element.getSwitch().get().getMainElement()))
@@ -36,13 +38,13 @@ public final class Elements {
                     shapes.add(new StellwerkWechselElement(element, parentTransform, adapter));
                     break;
                 case HauptSignalImpl:
-                    shapes.add(new HauptsignalElement(element, parentTransform, adapter));
+                    shapes.add(new HauptsignalElement(element, parentTransform, adapter, count++));
                     break;
                 case GeschwindigkeitsAnzeigerImpl:
                     // included in Hauptsignal
                     break;
                 default:
-                    shapes.add(new DummyElement(element, parentTransform, adapter));
+                    shapes.add(new DummyElement(element, parentTransform, adapter, count++));
             }
         }
         return shapes;

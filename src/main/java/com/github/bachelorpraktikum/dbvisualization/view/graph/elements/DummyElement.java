@@ -11,8 +11,11 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.transform.Transform;
 
 final class DummyElement extends ElementBase<Rectangle> {
-    DummyElement(Element element, ReadOnlyProperty<Transform> parentTransform, CoordinatesAdapter adapter) {
+    private final int count;
+
+    DummyElement(Element element, ReadOnlyProperty<Transform> parentTransform, CoordinatesAdapter adapter, int count) {
         super(element, parentTransform, adapter);
+        this.count = count;
     }
 
     @Override
@@ -20,6 +23,13 @@ final class DummyElement extends ElementBase<Rectangle> {
         Point2D pos = getNodePosition().add(getOffset());
         shape.setX(pos.getX() - shape.getWidth() / 2);
         shape.setY(pos.getY() - shape.getHeight() / 2);
+    }
+
+    @Override
+    protected Point2D getOffset() {
+        Point2D point = super.getOffset();
+        point = point.add(point.multiply(count));
+        return point;
     }
 
     @Override

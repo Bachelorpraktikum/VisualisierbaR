@@ -8,9 +8,9 @@ import java.net.URL;
 import javafx.beans.property.ReadOnlyProperty;
 import javafx.scene.transform.Transform;
 
-final class HauptsignalElement extends PathElement {
-    HauptsignalElement(Element element, ReadOnlyProperty<Transform> parentTransform, CoordinatesAdapter adapter) {
-        super(element, parentTransform, adapter);
+final class HauptsignalElement extends DefaultOffsetElement {
+    HauptsignalElement(Element element, ReadOnlyProperty<Transform> parentTransform, CoordinatesAdapter adapter, int count) {
+        super(element, parentTransform, adapter, count);
     }
 
     private boolean hasGeschwindigkeit() {
