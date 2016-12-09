@@ -218,8 +218,7 @@ public class MainController {
                 .filter(Objects::nonNull);
 
         legend.setItems(FXCollections.observableArrayList(str.collect(Collectors.toList())));
-        Train t = Train.in(context).getAll().stream().iterator().next();
-        legend.getItems().add(new LegendItem(Element.class.getResource(String.format("symbols/%s.png", "train")), t.getName()));
+        legend.getItems().add(new LegendItem(Element.class.getResource(String.format("symbols/%s.png", "train")), "Züge"));
 
         legend.setCellFactory(studentListView -> new LegendListViewCell());
     }
@@ -230,7 +229,7 @@ public class MainController {
         Stream<String> elements = Element.in(context).getAll().stream()
                 .map(Element::getName).filter(el -> elementFilter.isSelected());
         Stream<String> trains = Train.in(context).getAll().stream()
-                .map(Train::getName).filter(el -> trainFilter.isSelected());
+                .map(Train::getReadableName).filter(el -> trainFilter.isSelected());
 
         ObservableList<String> items = FXCollections.observableList(
                 Stream.concat(elements, trains)

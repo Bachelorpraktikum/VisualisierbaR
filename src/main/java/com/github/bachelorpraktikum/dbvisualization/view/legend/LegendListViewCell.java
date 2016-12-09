@@ -44,7 +44,7 @@ public class LegendListViewCell extends ListCell<LegendItem> {
             URL imageURL = element.getImageUrl();
             Image img = new Image(imageURL.toExternalForm());
 
-            int space = 25;
+            int space = 20;
             eleImage.setFitHeight(space);
             eleImage.setFitWidth(space);
 
