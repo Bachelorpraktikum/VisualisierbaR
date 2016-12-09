@@ -10,11 +10,15 @@ import com.github.bachelorpraktikum.dbvisualization.model.train.Train;
 import com.github.bachelorpraktikum.dbvisualization.view.graph.Graph;
 import com.github.bachelorpraktikum.dbvisualization.view.graph.Shapeable;
 import com.github.bachelorpraktikum.dbvisualization.view.graph.adapter.SimpleCoordinatesAdapter;
+import com.github.bachelorpraktikum.dbvisualization.view.legend.LegendItem;
+import com.github.bachelorpraktikum.dbvisualization.view.legend.LegendListViewCell;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ResourceBundle;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import javax.annotation.Nonnull;
@@ -48,11 +52,11 @@ import javafx.util.Callback;
 import javafx.util.StringConverter;
 
 public class MainController {
-    public ListView elementList;
+    public ListView<String> elementList;
     @FXML
     private StackPane sidebar;
     @FXML
-    private ListView legend;
+    private ListView<LegendItem> legend;
     @FXML
     private ToggleButton legendButton;
     @FXML
@@ -162,25 +166,30 @@ public class MainController {
 
     private void showLegend() {
         Context context = ContextHolder.getInstance().getContext();
-        Stream str = Element.in(context).getAll().stream().map(Element::getType).distinct();
+        Stream<LegendItem> str = Element.in(context).getAll().stream()
+                .map(Element::getType)
+                .distinct()
+                .map(type -> new LegendItem(LegendItem.Type.ELEMENT, type.getName()));
 
-        legend.setItems(FXCollections.observableArrayList(str.toArray()));
+        legend.setItems(FXCollections.observableArrayList(str.collect(Collectors.toList())));
         Train t = Train.in(context).getAll().stream().iterator().next();
-        legend.getItems().add(t);
+        legend.getItems().add(new LegendItem(LegendItem.Type.TRAIN, t.getName()));
         legend.setCellFactory(studentListView -> new LegendListViewCell());
     }
 
     private void showElements() {
         Context context = ContextHolder.getInstance().getContext();
 
-        ObservableList<Element> elements = FXCollections.observableArrayList(Element.in(context).getAll());
-        ObservableList<Train> trains = FXCollections.observableArrayList(Train.in(context).getAll());
-        ObservableList<Edge> edges = FXCollections.observableArrayList(Edge.in(context).getAll());
+        Stream<String> elements = Element.in(context).getAll().stream()
+                .map(Element::getName);
+        Stream<String> trains = Train.in(context).getAll().stream()
+                .map(Train::getName);
 
-        ObservableList lists = FXCollections.observableArrayList(elements, trains, edges);
-        ObservableList content = new CompositeObservableList(lists);
+        ObservableList<String> items = FXCollections.observableList(
+                Stream.concat(elements, trains).collect(Collectors.toList())
+        );
 
-        elementList.setItems(content);
+        elementList.setItems(items);
         // legend.setCellFactory();
     }
 

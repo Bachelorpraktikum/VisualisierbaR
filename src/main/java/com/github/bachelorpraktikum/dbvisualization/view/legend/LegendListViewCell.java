@@ -1,12 +1,11 @@
-package com.github.bachelorpraktikum.dbvisualization.view;
-
-import com.github.bachelorpraktikum.dbvisualization.model.Element;
-import com.github.bachelorpraktikum.dbvisualization.model.train.Train;
+package com.github.bachelorpraktikum.dbvisualization.view.legend;
 
 import java.io.IOException;
+import java.net.URL;
 
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
@@ -15,7 +14,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.shape.Rectangle;
 
-class LegendListViewCell<T> extends ListCell<T> {
+public class LegendListViewCell extends ListCell<LegendItem> {
     @FXML
     private Label eleName;
     @FXML
@@ -25,7 +24,7 @@ class LegendListViewCell<T> extends ListCell<T> {
     @FXML
     private AnchorPane cell;
 
-    protected void updateItem(T element, boolean empty) {
+    protected void updateItem(LegendItem element, boolean empty) {
         super.updateItem(element, empty);
         if (empty) {
             setText(null);
@@ -36,23 +35,15 @@ class LegendListViewCell<T> extends ListCell<T> {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("legendCell.fxml"));
             loader.setController(this);
             try {
-                loader.load();
+                Node listCell = loader.load();
             } catch (IOException e) {
                 e.printStackTrace();
             }
 
-            String name = "";
-            String imageURL = "";
+            String name = element.getName();
+            URL imageURL = element.getImageUrl();
 
-            if (element instanceof Element.Type) {
-                name = ((Element.Type) element).getName();
-                // imageURL = ((Element.Type) element).getImageUrl();
-            } else if (element instanceof Train) {
-                name = Train.class.getSimpleName();
-                // imageURL = Element.class.getResource(String.format("symbols/%s.png", name)).toExternalForm();
-            }
-            imageURL = Element.class.getResource(String.format("symbols/%s.png", "test")).toExternalForm();
-            Image img = new Image(imageURL);
+            Image img = new Image(imageURL.toExternalForm());
 
             eleImage.setFitHeight(img.getHeight() / 10);
             eleImage.setFitWidth(cell.getWidth() / 20);
