@@ -8,21 +8,21 @@ import com.github.bachelorpraktikum.dbvisualization.view.graph.adapter.Coordinat
 import java.util.List;
 import java.util.stream.Collectors;
 
-import javafx.beans.Observable;
 import javafx.beans.property.ReadOnlyProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.WeakChangeListener;
 import javafx.geometry.Point2D;
 import javafx.scene.shape.Shape;
 import javafx.scene.transform.Transform;
 
 abstract class ElementBase<T extends Shape> extends GraphShapeBase<Element, T> {
 
+    private final ChangeListener<Element.State> listener;
+
     ElementBase(Element element, ReadOnlyProperty<Transform> parentTransform, CoordinatesAdapter adapter) {
         super(element, parentTransform, adapter);
-    }
-
-    @Override
-    protected final Observable[] getDependencies() {
-        return new Observable[]{getRepresented().stateProperty()};
+        listener = (observable, oldValue, newValue) -> displayState(getShape());
+        getRepresented().stateProperty().addListener(new WeakChangeListener<>(listener));
     }
 
     final Point2D getNodePosition() {
@@ -54,8 +54,13 @@ abstract class ElementBase<T extends Shape> extends GraphShapeBase<Element, T> {
         return nearVec.multiply(-1.0).multiply(super.getOffset().magnitude());
     }
 
-
     @Override
+    public T initializeShape() {
+        T shape = super.initializeShape();
+        displayState(shape);
+        return shape;
+    }
+
     protected final void displayState(T shape) {
         shape.setFill(getRepresented().getState().getColor());
     }

@@ -5,7 +5,6 @@ import com.github.bachelorpraktikum.dbvisualization.view.graph.adapter.Coordinat
 
 import javax.annotation.Nonnull;
 
-import javafx.beans.Observable;
 import javafx.beans.property.ReadOnlyProperty;
 import javafx.geometry.Point2D;
 import javafx.scene.shape.Line;
@@ -30,15 +29,6 @@ final class Rail extends GraphShapeBase<Edge, Line> {
     @Override
     protected void resize(Line line) {
         line.setStrokeWidth(getCalibrationBase() * 0.05);
-    }
-
-    @Override
-    protected void displayState(Line shape) {
-    }
-
-    @Override
-    protected Observable[] getDependencies() {
-        return new Observable[0];
     }
 
     @Nonnull

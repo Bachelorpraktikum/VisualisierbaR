@@ -267,12 +267,8 @@ public class MainController {
     private void addToCenter(Collection<? extends GraphShape<?>> values) {
         ObservableList<Node> children = centerPane.getChildren();
         for (GraphShape<?> graphShape : values) {
-            Shape shape = graphShape.getValue();
+            Shape shape = graphShape.getShape();
             children.add(shape);
-            graphShape.addListener((observable, oldValue, newValue) -> {
-                children.remove(oldValue);
-                children.add(newValue);
-            });
         }
     }
 

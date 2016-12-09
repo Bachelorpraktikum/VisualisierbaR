@@ -34,15 +34,6 @@ final class Junction extends GraphShapeBase<Node, Circle> {
         shape.setRadius(radius);
     }
 
-    @Override
-    protected void displayState(Circle shape) {
-    }
-
-    @Override
-    protected Observable[] getDependencies() {
-        return new Observable[0];
-    }
-
     @Nonnull
     @Override
     public Circle createShape() {
