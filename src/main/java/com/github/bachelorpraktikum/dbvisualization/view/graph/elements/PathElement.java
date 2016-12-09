@@ -5,6 +5,7 @@ import com.github.bachelorpraktikum.dbvisualization.view.graph.adapter.Coordinat
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.List;
 
 import javax.annotation.Nonnull;
 
@@ -47,18 +48,17 @@ class PathElement extends ElementBase<Shape> {
         shape.setScaleY(scale);
     }
 
-    protected URL[] getImageUrls() {
+    protected List<URL> getImageUrls() {
         return getRepresented().getType().getImageUrls();
     }
 
     @Nonnull
     @Override
     protected Shape createShape() {
-        URL[] urls = getImageUrls();
         try {
             Shape shape = null;
 
-            for (URL url : urls) {
+            for (URL url : getImageUrls()) {
                 FXMLLoader loader = new FXMLLoader(url);
                 if (shape == null) {
                     shape = loader.load();

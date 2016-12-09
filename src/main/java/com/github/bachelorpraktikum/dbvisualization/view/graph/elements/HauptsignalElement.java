@@ -4,6 +4,7 @@ import com.github.bachelorpraktikum.dbvisualization.model.Element;
 import com.github.bachelorpraktikum.dbvisualization.view.graph.adapter.CoordinatesAdapter;
 
 import java.net.URL;
+import java.util.List;
 
 import javafx.beans.property.ReadOnlyProperty;
 import javafx.scene.transform.Transform;
@@ -25,7 +26,7 @@ final class HauptsignalElement extends DefaultOffsetElement {
     }
 
     @Override
-    protected URL[] getImageUrls() {
+    protected List<URL> getImageUrls() {
         if (hasGeschwindigkeit()) {
             return Element.Type.GeschwindigkeitsAnzeigerImpl.getImageUrls();
         } else {

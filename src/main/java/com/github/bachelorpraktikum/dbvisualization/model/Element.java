@@ -1,9 +1,11 @@
 package com.github.bachelorpraktikum.dbvisualization.model;
 
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
@@ -90,14 +92,16 @@ public final class Element {
         SwWechselImpl("SwWechselImpl", "SwWechselImpl2", "SwWechselImpl3", "SwWechselImpl4"),
         GeschwindigkeitsAnzeigerImpl("HauptsignalGeschwindigkeitImpl");
 
-        private final URL[] imageUrls;
+        private final List<URL> imageUrls;
 
         Type(String... imageNames) {
-            imageUrls = new URL[imageNames.length];
+            List<URL> imageUrls = new ArrayList<>(imageNames.length);
 
-            for (int i = 0; i < imageNames.length; i++) {
-                imageUrls[i] = Element.class.getResource(String.format("symbols/%s.fxml", imageNames[i]));
+            for (String imageName : imageNames) {
+                imageUrls.add(Element.class.getResource(String.format("symbols/%s.fxml", imageName)));
             }
+
+            this.imageUrls = Collections.unmodifiableList(imageUrls);
         }
 
         /**
@@ -117,7 +121,7 @@ public final class Element {
          * @return the image URLs
          */
         @Nonnull
-        public URL[] getImageUrls() {
+        public List<URL> getImageUrls() {
             return imageUrls;
         }
 
