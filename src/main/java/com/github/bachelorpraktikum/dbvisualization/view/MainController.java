@@ -55,7 +55,9 @@ import javafx.scene.control.cell.TextFieldListCell;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.Priority;
 import javafx.scene.layout.StackPane;
 import javafx.scene.shape.Shape;
 import javafx.stage.Stage;
@@ -91,6 +93,10 @@ public class MainController {
     private ToggleButton logToggle;
     @FXML
     private ListView<Event> logList;
+    @FXML
+    private TextField timeText;
+    @FXML
+    private HBox rightSpacer;
 
     @FXML
     private Pane centerPane;
@@ -102,6 +108,7 @@ public class MainController {
 
     @FXML
     private void initialize() {
+        HBox.setHgrow(rightSpacer, Priority.ALWAYS);
         this.listeners = new WeakHashMap<>();
         fireOnEnterPress(closeButton);
         fireOnEnterPress(logToggle);
@@ -158,9 +165,10 @@ public class MainController {
             }
         };
         logList.setCellFactory(listCellFactory);
-        logList.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) ->
-                Element.in(ContextHolder.getInstance().getContext()).setTime(newValue.getTime())
-        );
+        logList.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+            Element.in(ContextHolder.getInstance().getContext()).setTime(newValue.getTime());
+            timeText.setText(String.format("%dms", newValue.getTime()));
+        });
 
         ChangeListener<Number> boundsListener = (observable, oldValue, newValue) -> {
             if (ContextHolder.getInstance().hasContext()) {
