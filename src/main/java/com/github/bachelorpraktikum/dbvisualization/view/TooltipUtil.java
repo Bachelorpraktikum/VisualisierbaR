@@ -1,53 +1,38 @@
 package com.github.bachelorpraktikum.dbvisualization.view;
 
+import java.util.function.Consumer;
 import java.util.function.Supplier;
 
-import javafx.animation.KeyFrame;
-import javafx.animation.Timeline;
+import javax.annotation.Nonnull;
+
 import javafx.geometry.Bounds;
 import javafx.scene.Node;
 import javafx.scene.control.Tooltip;
-import javafx.util.Duration;
 
+@Nonnull
 public final class TooltipUtil {
     private TooltipUtil() {
     }
 
     public static void install(Node node, Tooltip tooltip) {
-        Timeline waitForHide = new Timeline(new KeyFrame(
-                Duration.millis(300),
-                ae -> tooltip.hide()
-        ));
-
-        node.setOnMouseEntered(event -> {
-            waitForHide.stop();
-            Bounds bounds = node.localToScreen(node.getBoundsInLocal());
-            tooltip.show(node, bounds.getMinX(), bounds.getMaxY());
-        });
-
-        node.setOnMouseExited(event -> {
-            waitForHide.play();
+        install(node, tooltip, t -> {
+            // Tooltip is already initialized with text, nothing to do here
         });
     }
 
     public static void install(Node node, Supplier<String> textSupplier) {
-        Tooltip tooltip = new Tooltip();
+        install(node, new Tooltip(), t -> t.setText(textSupplier.get()));
+    }
 
-        Timeline waitForHide = new Timeline(new KeyFrame(
-                Duration.millis(300),
-                ae -> tooltip.hide()
-        ));
-
+    private static void install(Node node, Tooltip tooltip, Consumer<Tooltip> tooltipPreparer) {
         node.setOnMouseEntered(event -> {
-            waitForHide.stop();
             Bounds bounds = node.localToScreen(node.getBoundsInLocal());
-            tooltip.setText(textSupplier.get());
-            tooltip.show(node, bounds.getMinX(), bounds.getMaxY());
+            tooltipPreparer.accept(tooltip);
+            tooltip.show(node, bounds.getMinX(), bounds.getMaxY() + 5);
         });
 
         node.setOnMouseExited(event -> {
-            waitForHide.play();
+            tooltip.hide();
         });
-
     }
 }

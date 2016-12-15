@@ -1,22 +1,20 @@
 package com.github.bachelorpraktikum.dbvisualization.view.graph;
 
 import com.github.bachelorpraktikum.dbvisualization.model.Node;
+import com.github.bachelorpraktikum.dbvisualization.view.TooltipUtil;
 import com.github.bachelorpraktikum.dbvisualization.view.graph.adapter.CoordinatesAdapter;
 
 import javax.annotation.Nonnull;
 
-import javafx.beans.Observable;
-import javafx.beans.property.ReadOnlyProperty;
 import javafx.geometry.Point2D;
+import javafx.scene.control.Tooltip;
 import javafx.scene.shape.Circle;
-import javafx.scene.shape.Shape;
-import javafx.scene.transform.Transform;
 
-final class Junction extends GraphShapeBase<Node, Circle> {
+final class Junction extends SingleGraphShapeBase<Node, Circle> {
     private static final double CALIBRATION_COEFFICIENT = 0.1;
 
-    Junction(Node node, ReadOnlyProperty<Transform> parentTransform, CoordinatesAdapter adapter) {
-        super(node, parentTransform, adapter);
+    Junction(Node node, CoordinatesAdapter adapter) {
+        super(node, adapter);
     }
 
     @Override
@@ -32,6 +30,11 @@ final class Junction extends GraphShapeBase<Node, Circle> {
     protected void resize(Circle shape) {
         double radius = getCalibrationBase() * CALIBRATION_COEFFICIENT;
         shape.setRadius(radius);
+    }
+
+    @Override
+    protected void initializedShape(Circle circle) {
+        TooltipUtil.install(circle, new Tooltip(getRepresented().getName()));
     }
 
     @Nonnull

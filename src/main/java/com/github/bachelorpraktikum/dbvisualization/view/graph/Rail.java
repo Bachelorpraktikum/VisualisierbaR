@@ -5,16 +5,14 @@ import com.github.bachelorpraktikum.dbvisualization.view.graph.adapter.Coordinat
 
 import javax.annotation.Nonnull;
 
-import javafx.beans.property.ReadOnlyProperty;
 import javafx.geometry.Point2D;
 import javafx.scene.shape.Line;
-import javafx.scene.transform.Transform;
 
-final class Rail extends GraphShapeBase<Edge, Line> {
+final class Rail extends SingleGraphShapeBase<Edge, Line> {
     private static final double CALIBRATION_COEFFICIENT = 0.05;
 
-    protected Rail(Edge edge, ReadOnlyProperty<Transform> parentTransform, CoordinatesAdapter adapter) {
-        super(edge, parentTransform, adapter);
+    protected Rail(Edge edge, CoordinatesAdapter adapter) {
+        super(edge, adapter);
     }
 
     @Override

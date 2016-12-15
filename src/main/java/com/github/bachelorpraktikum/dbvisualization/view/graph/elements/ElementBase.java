@@ -1,11 +1,11 @@
 package com.github.bachelorpraktikum.dbvisualization.view.graph.elements;
 
 import com.github.bachelorpraktikum.dbvisualization.model.Element;
-import com.github.bachelorpraktikum.dbvisualization.model.Node;
 import com.github.bachelorpraktikum.dbvisualization.view.TooltipUtil;
 import com.github.bachelorpraktikum.dbvisualization.view.graph.GraphShapeBase;
 import com.github.bachelorpraktikum.dbvisualization.view.graph.adapter.CoordinatesAdapter;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -13,31 +13,48 @@ import javafx.beans.property.ReadOnlyProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.WeakChangeListener;
 import javafx.geometry.Point2D;
+import javafx.scene.Node;
 import javafx.scene.control.Tooltip;
 import javafx.scene.shape.Shape;
 import javafx.scene.transform.Transform;
 
-abstract class ElementBase<T extends Shape> extends GraphShapeBase<Element, T> {
+abstract class ElementBase<T extends Node> extends GraphShapeBase<Element, T> {
+    private final List<Element> elements;
+    private final com.github.bachelorpraktikum.dbvisualization.model.Node node;
+    private final List<ChangeListener<Element.State>> listeners;
 
-    private final ChangeListener<Element.State> listener;
+    ElementBase(List<Element> elements, com.github.bachelorpraktikum.dbvisualization.model.Node node, CoordinatesAdapter adapter) {
+        super(adapter);
+        this.elements = new ArrayList<>(elements);
+        this.node = node;
+        listeners = new ArrayList<>(elements.size());
+        for (Element element : elements) {
+            ChangeListener<Element.State> listener = (observable, oldValue, newValue) -> displayState(element);
+            listeners.add(listener);
+            element.stateProperty().addListener(new WeakChangeListener<>(listener));
+        }
+    }
 
-    ElementBase(Element element, ReadOnlyProperty<Transform> parentTransform, CoordinatesAdapter adapter) {
-        super(element, parentTransform, adapter);
-        listener = (observable, oldValue, newValue) -> displayState(getShape());
-        getRepresented().stateProperty().addListener(new WeakChangeListener<>(listener));
+    @Override
+    public List<Element> getRepresentedObjects() {
+        return elements;
+    }
+
+    private com.github.bachelorpraktikum.dbvisualization.model.Node getNode() {
+        return node;
     }
 
     final Point2D getNodePosition() {
-        return getCoordinatesAdapter().apply(getRepresented().getNode().getCoordinates());
+        return getCoordinatesAdapter().apply(getNode().getCoordinates());
     }
 
     @Override
     protected Point2D getOffset() {
-        Node node = getRepresented().getNode();
+        com.github.bachelorpraktikum.dbvisualization.model.Node node = getNode();
 
         List<Point2D> otherVecs = node.getEdges().stream()
                 .map(edge -> edge.getNode1().equals(node) ? edge.getNode2() : edge.getNode1())
-                .map(Node::getCoordinates)
+                .map(n -> n.getCoordinates())
                 .map(getCoordinatesAdapter())
                 .map(point -> point.subtract(getNodePosition()))
                 .map(Point2D::normalize)
@@ -63,20 +80,16 @@ abstract class ElementBase<T extends Shape> extends GraphShapeBase<Element, T> {
         return nearVec.multiply(-1.0).multiply(super.getOffset().magnitude());
     }
 
-    private void attachTooltip(T shape) {
-        Tooltip tooltip = new Tooltip(getRepresented().getName());
-        TooltipUtil.install(shape, tooltip);
-    }
-
     @Override
-    public T initializeShape() {
-        T shape = super.initializeShape();
-        displayState(shape);
-        attachTooltip(shape);
-        return shape;
+    protected void initializedShape(T t) {
+        for (Element element : elements) {
+            Shape shape = getShape(element);
+            TooltipUtil.install(shape, new Tooltip(element.getName()));
+            displayState(element);
+        }
     }
 
-    protected final void displayState(T shape) {
-        shape.setFill(getRepresented().getState().getColor());
+    protected final void displayState(Element element) {
+        getShape(element).setFill(element.getState().getColor());
     }
 }

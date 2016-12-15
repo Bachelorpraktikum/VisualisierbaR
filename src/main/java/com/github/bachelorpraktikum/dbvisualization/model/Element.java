@@ -84,14 +84,14 @@ public final class Element {
      * Every type is associated with an image file containing the symbol for the element.
      */
     public enum Type {
-        HauptSignalImpl("HauptsignalImpl"),
+        GeschwindigkeitsAnzeigerImpl("HauptsignalGeschwindigkeitImpl"),
         VorSignalImpl("VorsignalImpl"),
+        HauptSignalImpl("HauptsignalImpl"),
         SichtbarkeitsPunktImpl("SichtbarkeitspunktImpl", "SichtbarkeitspunktImpl2"),
         GefahrenPunktImpl("GefahrenpunktImpl"),
         MagnetImpl("MagnetImpl"),
         WeichenPunktImpl,
-        SwWechselImpl("SwWechselImpl", "SwWechselImpl2", "SwWechselImpl3", "SwWechselImpl4"),
-        GeschwindigkeitsAnzeigerImpl("HauptsignalGeschwindigkeitImpl");
+        SwWechselImpl("SwWechselImpl", "SwWechselImpl2", "SwWechselImpl3", "SwWechselImpl4");
 
         private final List<URL> imageUrls;
 

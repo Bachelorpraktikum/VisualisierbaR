@@ -9,50 +9,36 @@ import javafx.beans.property.ReadOnlyProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.WeakChangeListener;
 import javafx.geometry.Point2D;
-import javafx.scene.shape.Shape;
+import javafx.scene.Node;
 import javafx.scene.transform.Transform;
 
-public abstract class GraphShapeBase<T, S extends Shape> implements GraphShape<T> {
-    private final T represented;
-    private final ReadOnlyProperty<Transform> parentTransform;
+public abstract class GraphShapeBase<R, S extends Node> implements GraphShape<R> {
     private final CoordinatesAdapter adapter;
     private ChangeListener<Transform> listener;
 
     @Nullable
     private S shape;
 
-    protected GraphShapeBase(T represented, ReadOnlyProperty<Transform> parentTransform, CoordinatesAdapter adapter) {
-        this.represented = represented;
-        this.parentTransform = parentTransform;
+    protected GraphShapeBase(CoordinatesAdapter adapter) {
         this.adapter = adapter;
-    }
-
-    @Override
-    public final T getRepresented() {
-        return represented;
     }
 
     protected S initializeShape() {
         S shape = createShape();
         resize(shape);
         relocate(shape);
-        shape.getTransforms().add(parentTransform.getValue());
-        listener = (observable, oldValue, newValue) -> {
-            if (oldValue != null) {
-                shape.getTransforms().remove(oldValue);
-            }
-            shape.getTransforms().add(newValue);
-            relocate(shape);
-        };
-        parentTransform.addListener(new WeakChangeListener<>(listener));
-        shape.setOnMouseClicked(event -> System.out.println("CLICK: " + getRepresented()));
+        // shape.setOnMouseClicked(event -> System.out.println("CLICK: " + getRepresented()));
         return shape;
+    }
+
+    protected void initializedShape(S s) {
     }
 
     @Override
     public final S getShape() {
         if (shape == null) {
             shape = initializeShape();
+            initializedShape(shape);
         }
 
         return shape;
@@ -68,10 +54,6 @@ public abstract class GraphShapeBase<T, S extends Shape> implements GraphShape<T
 
     protected Point2D getOffset() {
         return new Point2D(0.4, 0.4).multiply(getCalibrationBase());
-    }
-
-    protected final ReadOnlyProperty<Transform> parentTransformProperty() {
-        return parentTransform;
     }
 
     protected abstract void relocate(S shape);

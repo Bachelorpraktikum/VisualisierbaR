@@ -1,6 +1,7 @@
 package com.github.bachelorpraktikum.dbvisualization.view.graph.elements;
 
 import com.github.bachelorpraktikum.dbvisualization.model.Element;
+import com.github.bachelorpraktikum.dbvisualization.model.Node;
 import com.github.bachelorpraktikum.dbvisualization.view.graph.adapter.CoordinatesAdapter;
 
 import javax.annotation.Nonnull;
@@ -10,11 +11,11 @@ import javafx.geometry.Point2D;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.transform.Transform;
 
-final class DummyElement extends ElementBase<Rectangle> {
+final class DummyElement extends SingleElementBase<Rectangle> {
     private final int count;
 
-    DummyElement(Element element, ReadOnlyProperty<Transform> parentTransform, CoordinatesAdapter adapter, int count) {
-        super(element, parentTransform, adapter);
+    DummyElement(Element element, Node node, CoordinatesAdapter adapter, int count) {
+        super(element, node, adapter);
         this.count = count;
     }
 

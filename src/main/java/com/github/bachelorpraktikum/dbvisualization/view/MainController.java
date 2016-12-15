@@ -8,10 +8,26 @@ import com.github.bachelorpraktikum.dbvisualization.model.Element;
 import com.github.bachelorpraktikum.dbvisualization.model.Event;
 import com.github.bachelorpraktikum.dbvisualization.model.train.Train;
 import com.github.bachelorpraktikum.dbvisualization.view.graph.Graph;
-import com.github.bachelorpraktikum.dbvisualization.view.graph.GraphShape;
 import com.github.bachelorpraktikum.dbvisualization.view.graph.adapter.SimpleCoordinatesAdapter;
 import com.github.bachelorpraktikum.dbvisualization.view.legend.LegendItem;
 import com.github.bachelorpraktikum.dbvisualization.view.legend.LegendListViewCell;
+
+import java.io.IOException;
+import java.sql.SQLException;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.ResourceBundle;
+import java.util.WeakHashMap;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import javafx.beans.binding.Binding;
 import javafx.beans.binding.Bindings;
 import javafx.beans.value.ChangeListener;
@@ -24,28 +40,28 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Bounds;
 import javafx.scene.Group;
-import javafx.scene.Node;
 import javafx.scene.Scene;
-import javafx.scene.control.*;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
+import javafx.scene.control.ButtonBase;
+import javafx.scene.control.CheckBox;
+import javafx.scene.control.ListCell;
+import javafx.scene.control.ListView;
+import javafx.scene.control.TextField;
+import javafx.scene.control.ToggleButton;
 import javafx.scene.control.cell.TextFieldListCell;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
-import javafx.scene.layout.*;
-import javafx.scene.shape.Shape;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 import javafx.util.Callback;
 import javafx.util.StringConverter;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import java.io.IOException;
-import java.sql.SQLException;
-import java.util.*;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public class MainController {
     private Map<Context, List<ObservableValue>> listeners;
@@ -88,8 +104,6 @@ public class MainController {
 
     private Stage stage;
 
-    private Group rootGroup;
-
     private double SCALE_DELTA = 1.1;
 
     private double mousePressedX = -1;
@@ -100,7 +114,6 @@ public class MainController {
     private void initialize() {
         HBox.setHgrow(rightSpacer, Priority.ALWAYS);
         this.listeners = new WeakHashMap<>();
-        this.rootGroup = new Group();
         this.legendStates = new HashMap<>(256);
         fireOnEnterPress(closeButton);
         fireOnEnterPress(logToggle);
@@ -159,17 +172,20 @@ public class MainController {
         centerPane.setOnScroll(new EventHandler<ScrollEvent>() {
             @Override
             public void handle(ScrollEvent event) {
-                Bounds bounds = rootGroup.localToScene(rootGroup.getBoundsInLocal());
-                double oldScale = rootGroup.getScaleX();
-                double scaleFactor = oldScale * ((event.getDeltaY() > 0) ? SCALE_DELTA : 1 / SCALE_DELTA);
-                double translateX = event.getScreenX() - (bounds.getWidth() / 2 + bounds.getMinX());
-                double translateY = event.getScreenY() - (bounds.getHeight() / 2 + bounds.getMinY());
-                double f = (scaleFactor / oldScale) - 1;
+                if (graph != null) {
+                    Group group = graph.getGroup();
+                    Bounds bounds = group.localToScene(group.getBoundsInLocal());
+                    double oldScale = group.getScaleX();
+                    double scaleFactor = oldScale * ((event.getDeltaY() > 0) ? SCALE_DELTA : 1 / SCALE_DELTA);
+                    double translateX = event.getScreenX() - (bounds.getWidth() / 2 + bounds.getMinX());
+                    double translateY = event.getScreenY() - (bounds.getHeight() / 2 + bounds.getMinY());
+                    double f = (scaleFactor / oldScale) - 1;
 
-                rootGroup.setScaleX(scaleFactor);
-                rootGroup.setScaleY(scaleFactor);
-                rootGroup.setTranslateX(rootGroup.getTranslateX() - f * translateX);
-                rootGroup.setTranslateY(rootGroup.getTranslateY() - f * translateY);
+                    group.setScaleX(scaleFactor);
+                    group.setScaleY(scaleFactor);
+                    group.setTranslateX(group.getTranslateX() - f * translateX);
+                    group.setTranslateY(group.getTranslateY() - f * translateY);
+                }
             }
         });
         centerPane.setOnMouseReleased(new EventHandler<MouseEvent>() {
@@ -336,33 +352,22 @@ public class MainController {
         if (graph == null) {
             Context context = ContextHolder.getInstance().getContext();
             graph = new Graph(context, new SimpleCoordinatesAdapter());
-            addToCenter(graph.getNodes().values());
-            addToCenter(graph.getEdges().values());
-            addToCenter(graph.getElements().values());
-            centerPane.getChildren().add(rootGroup);
+            centerPane.getChildren().add(graph.getGroup());
             showLegend();
-            graph.getElements().values()
-                    .forEach(element -> {
-                        ObservableValue<LegendItem.State> state = legendStates.get(GraphObject.element(element.getRepresented().getType()));
+            graph.getElements().entrySet()
+                    .forEach(entry -> {
+                        Element element = entry.getKey();
+                        ObservableValue<LegendItem.State> state = legendStates.get(GraphObject.element(element.getType()));
                         Binding<Boolean> binding = Bindings.createBooleanBinding(() -> state.getValue() != LegendItem.State.DISABLED, state);
                         listeners.get(context).add(binding);
-                        element.getShape().visibleProperty().bind(binding);
+                        entry.getValue().getShape().visibleProperty().bind(binding);
                     });
         }
         return graph;
     }
 
-    private void addToCenter(Collection<? extends GraphShape<?>> values) {
-        ObservableList<Node> children = centerPane.getChildren();
-        for (GraphShape<?> graphShape : values) {
-            Shape shape = graphShape.getShape();
-            //children.add(shape);
-            rootGroup.getChildren().add(shape);
-        }
-    }
-
     private void fitGraphToCenter(Graph graph) {
-        Bounds graphBounds = graph.getBounds();
+        Bounds graphBounds = graph.getGroup().getBoundsInParent();
         double widthFactor = (centerPane.getWidth()) / graphBounds.getWidth();
         double heightFactor = (centerPane.getHeight()) / graphBounds.getHeight();
 
@@ -381,7 +386,7 @@ public class MainController {
     }
 
     private void moveGraphToCenter(Graph graph) {
-        Bounds graphBounds = graph.getBounds();
+        Bounds graphBounds = graph.getGroup().getBoundsInParent();
 
         double finalX = (centerPane.getWidth() - graphBounds.getWidth()) / 2;
         double xTranslate = finalX - graphBounds.getMinX();
@@ -393,7 +398,10 @@ public class MainController {
     }
 
     private void showSourceChooser() {
-        graph = null;
+        if (graph != null) {
+            centerPane.getChildren().remove(graph.getGroup());
+            graph = null;
+        }
         ContextHolder.getInstance().setContext(null);
         FXMLLoader loader = new FXMLLoader(getClass().getResource("SourceChooser.fxml"));
         loader.setResources(ResourceBundle.getBundle("bundles.localization"));

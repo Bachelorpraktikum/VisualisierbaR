@@ -7,45 +7,48 @@ import com.github.bachelorpraktikum.dbvisualization.view.graph.adapter.Coordinat
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.LinkedList;
 import java.util.List;
-
-import javafx.beans.property.ReadOnlyProperty;
-import javafx.scene.transform.Transform;
 
 public final class Elements {
     private Elements() {
     }
 
-    public static Collection<GraphShape<Element>> create(Node node, ReadOnlyProperty<Transform> parentTransform, CoordinatesAdapter adapter) {
+    public static Collection<GraphShape<Element>> create(Node node, CoordinatesAdapter adapter) {
         List<GraphShape<Element>> shapes = new ArrayList<>(node.getElements().size());
         // TODO temporary hack to layout multiple elements
         int count = 0;
+
+        List<Element> compositeElements = new LinkedList<>();
+
         for (Element element : node.getElements()) {
             switch (element.getType()) {
                 case MagnetImpl:
-                    shapes.add(new MagnetElement(element, parentTransform, adapter));
+                    shapes.add(new MagnetElement(element, node, adapter));
                     break;
                 case SichtbarkeitsPunktImpl:
-                case VorSignalImpl:
                 case GefahrenPunktImpl:
-                    shapes.add(new DefaultOffsetElement(element, parentTransform, adapter, count++));
+                    shapes.add(new DefaultOffsetElement(element, node, adapter, count++));
                     break;
                 case WeichenPunktImpl:
                     if (element.equals(element.getSwitch().get().getMainElement()))
-                        shapes.add(new WeichenpunktElement(element, parentTransform, adapter));
+                        shapes.add(new WeichenpunktElement(element, node, adapter));
                     break;
                 case SwWechselImpl:
-                    shapes.add(new StellwerkWechselElement(element, parentTransform, adapter));
+                    shapes.add(new StellwerkWechselElement(element, node, adapter));
                     break;
+                case VorSignalImpl:
                 case HauptSignalImpl:
-                    shapes.add(new HauptsignalElement(element, parentTransform, adapter, count++));
-                    break;
                 case GeschwindigkeitsAnzeigerImpl:
-                    // included in Hauptsignal
+                    System.out.println("ELEMENT: " + element); // TODO delete
+                    compositeElements.add(element);
                     break;
                 default:
-                    shapes.add(new DummyElement(element, parentTransform, adapter, count++));
+                    shapes.add(new DummyElement(element, node, adapter, count++));
             }
+        }
+        if (!compositeElements.isEmpty()) {
+            shapes.add(new CompositeElement(compositeElements, node, adapter));
         }
         return shapes;
     }

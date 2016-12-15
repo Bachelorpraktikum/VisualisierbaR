@@ -1,7 +1,6 @@
 package com.github.bachelorpraktikum.dbvisualization.view.graph;
 
 import com.github.bachelorpraktikum.dbvisualization.model.Context;
-import com.github.bachelorpraktikum.dbvisualization.model.Coordinates;
 import com.github.bachelorpraktikum.dbvisualization.model.Edge;
 import com.github.bachelorpraktikum.dbvisualization.model.Element;
 import com.github.bachelorpraktikum.dbvisualization.model.Node;
@@ -15,12 +14,7 @@ import java.util.Objects;
 import javax.annotation.Nonnull;
 import javax.annotation.ParametersAreNonnullByDefault;
 
-import javafx.beans.property.ReadOnlyObjectWrapper;
-import javafx.geometry.Bounds;
-import javafx.geometry.Point2D;
-import javafx.scene.shape.Circle;
-import javafx.scene.shape.Shape;
-import javafx.scene.transform.Transform;
+import javafx.scene.Group;
 
 @ParametersAreNonnullByDefault
 public final class Graph {
@@ -30,9 +24,7 @@ public final class Graph {
     private final CoordinatesAdapter coordinatesAdapter;
 
     @Nonnull
-    private final Shape boundsShape;
-    @Nonnull
-    private final ReadOnlyObjectWrapper<Transform> transformProperty;
+    private final Group group;
 
     @Nonnull
     private final Map<Node, GraphShape<Node>> nodes;
@@ -55,65 +47,43 @@ public final class Graph {
     public Graph(Context context, CoordinatesAdapter coordinatesAdapter) {
         this.context = Objects.requireNonNull(context);
         this.coordinatesAdapter = Objects.requireNonNull(coordinatesAdapter);
-        this.transformProperty = new ReadOnlyObjectWrapper<>();
-
-        Shape boundsShape = Node.in(context).getAll().parallelStream()
-                .map(Node::getCoordinates)
-                .map(coordinatesAdapter)
-                .map(point -> (Shape) new Circle(point.getX(), point.getY(), 0.7))
-                .reduce(Shape::union)
-                .orElseThrow(IllegalStateException::new);
-
-        // Temporary hack to leave extra space around the graph
-        Bounds bounds = boundsShape.getBoundsInLocal();
-        Circle up = new Circle(0, bounds.getMinY(), 0.7);
-        Circle down = new Circle(0, bounds.getMaxY(), 0.7);
-        Circle left = new Circle(bounds.getMinX(), 0, 0.7);
-        Circle right = new Circle(bounds.getMaxX(), 0, 0.7);
-        boundsShape = Shape.union(left, Shape.union(right, Shape.union(down, Shape.union(boundsShape, up))));
-        this.boundsShape = boundsShape;
-
-        transformProperty.bind(boundsShape.localToParentTransformProperty());
-
         this.nodes = new LinkedHashMap<>(128);
         this.elements = new LinkedHashMap<>(256);
+        this.group = new Group();
         for (Node node : Node.in(context).getAll()) {
-            GraphShape<Node> shape = new Junction(node, transformProperty, coordinatesAdapter);
+            GraphShape<Node> shape = new Junction(node, coordinatesAdapter);
             nodes.put(node, shape);
+            group.getChildren().add(shape.getShape());
 
-            for (GraphShape<Element> elementShape : Elements.create(node, transformProperty, coordinatesAdapter)) {
-                elements.put(elementShape.getRepresented(), elementShape);
+            for (GraphShape<Element> elementShape : Elements.create(node, coordinatesAdapter)) {
+                for (Element element : elementShape.getRepresentedObjects()) {
+                    elements.put(element, elementShape);
+                }
+                group.getChildren().add(elementShape.getShape());
             }
         }
 
         this.edges = new LinkedHashMap<>(256);
         for (Edge edge : Edge.in(context).getAll()) {
-            GraphShape<Edge> shape = new Rail(edge, transformProperty, coordinatesAdapter);
+            GraphShape<Edge> shape = new Rail(edge, coordinatesAdapter);
             edges.put(edge, shape);
+            group.getChildren().add(shape.getShape());
         }
     }
 
     public void scale(double factor) {
-        double scale = boundsShape.getScaleX() * factor;
-        boundsShape.setScaleX(scale);
-        boundsShape.setScaleY(scale);
+        double scale = group.getScaleX() * factor;
+        group.setScaleX(scale);
+        group.setScaleY(scale);
     }
 
     public void move(double x, double y) {
-        boundsShape.setTranslateX(boundsShape.getTranslateX() + x);
-        boundsShape.setTranslateY(boundsShape.getTranslateY() + y);
+        group.setTranslateX(group.getTranslateX() + x);
+        group.setTranslateY(group.getTranslateY() + y);
     }
 
-    public Point2D getPosition(Point2D localPosition) {
-        return transformProperty.getValue().transform(localPosition);
-    }
-
-    public Point2D getPosition(Coordinates coordinates) {
-        return getPosition(coordinatesAdapter.apply(coordinates));
-    }
-
-    public Bounds getBounds() {
-        return boundsShape.getBoundsInParent();
+    public Group getGroup() {
+        return group;
     }
 
     public Map<Node, GraphShape<Node>> getNodes() {

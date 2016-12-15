@@ -1,6 +1,7 @@
 package com.github.bachelorpraktikum.dbvisualization.view.graph.elements;
 
 import com.github.bachelorpraktikum.dbvisualization.model.Element;
+import com.github.bachelorpraktikum.dbvisualization.model.Node;
 import com.github.bachelorpraktikum.dbvisualization.model.Switch;
 import com.github.bachelorpraktikum.dbvisualization.view.graph.adapter.CoordinatesAdapter;
 
@@ -12,20 +13,20 @@ import javafx.geometry.Point2D;
 import javafx.scene.shape.Polygon;
 import javafx.scene.transform.Transform;
 
-final class WeichenpunktElement extends ElementBase<Polygon> {
-    WeichenpunktElement(Element element, ReadOnlyProperty<Transform> parentTransform, CoordinatesAdapter adapter) {
-        super(element, parentTransform, adapter);
+final class WeichenpunktElement extends SingleElementBase<Polygon> {
+    WeichenpunktElement(Element element, Node node, CoordinatesAdapter adapter) {
+        super(element, node, adapter);
     }
 
     @Override
     protected void relocate(Polygon shape) {
-        Switch swit = getRepresented().getSwitch().get();
+        Switch swit = getElement().getSwitch().get();
 
         CoordinatesAdapter adapter = getCoordinatesAdapter();
         Point2D[] others = new Point2D[2];
         int i = 0;
         for (Element element : swit.getElements()) {
-            if (!element.equals(getRepresented())) {
+            if (!element.equals(getElement())) {
                 others[i++] = adapter.apply(element.getNode().getCoordinates());
             }
         }
