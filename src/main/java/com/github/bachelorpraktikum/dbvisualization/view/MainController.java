@@ -13,13 +13,12 @@ import com.github.bachelorpraktikum.dbvisualization.view.legend.LegendItem;
 import com.github.bachelorpraktikum.dbvisualization.view.legend.LegendListViewCell;
 
 import java.io.IOException;
-import java.net.URL;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.ResourceBundle;
 import java.util.WeakHashMap;
 import java.util.function.Predicate;
@@ -29,6 +28,7 @@ import java.util.stream.Stream;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import javafx.beans.binding.Binding;
 import javafx.beans.binding.Bindings;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -105,11 +105,13 @@ public class MainController {
 
     private Stage stage;
 
+    private Map<GraphObject<?>, ObservableValue<LegendItem.State>> legendStates;
 
     @FXML
     private void initialize() {
         HBox.setHgrow(rightSpacer, Priority.ALWAYS);
         this.listeners = new WeakHashMap<>();
+        this.legendStates = new HashMap<>(256);
         fireOnEnterPress(closeButton);
         fireOnEnterPress(logToggle);
         closeButton.setOnAction(new EventHandler<ActionEvent>() {
@@ -192,46 +194,23 @@ public class MainController {
         stage.centerOnScreen();
     }
 
-    URL getUrl(Element.Type type) {
-        String f;
-        switch (type) {
-            case HauptSignalImpl:
-                f = "haupt";
-                break;
-            case GefahrenPunktImpl:
-                f = "achs";
-                break;
-            case MagnetImpl:
-                f = "magnet";
-                break;
-            case VorSignalImpl:
-                f = "vor";
-                break;
-            case SichtbarkeitsPunktImpl:
-                f = "sicht";
-                break;
-            default:
-                return null;
-        }
-
-        return Element.class.getResource(String.format("symbols/%s.png", f));
-    }
-
     private void showLegend() {
         Context context = ContextHolder.getInstance().getContext();
-        Stream<LegendItem> str = Element.in(context).getAll().stream()
-                .map(Element::getType)
-                .distinct()
-                .map(type -> {
-                    URL url = getUrl(type);
-                    if (url == null) return null;
-                    return new LegendItem(url, type.getName());
-                })
-                .filter(Objects::nonNull);
+        ObservableList<LegendItem> items = FXCollections.observableList(
+                Stream.concat(Stream.of(new LegendItem(GraphObject.trains())),
+                        Element.in(context).getAll().stream()
+                                .map(Element::getType)
+                                .distinct()
+                                .map(GraphObject::element)
+                                .map(LegendItem::new)
+                ).collect(Collectors.toList())
+        );
 
-        legend.setItems(FXCollections.observableArrayList(str.collect(Collectors.toList())));
-        legend.getItems().add(new LegendItem(Element.class.getResource(String.format("symbols/%s.png", "train")), "Züge"));
+        for (LegendItem item : items) {
+            legendStates.put(item.getGraphObject(), item.stateProperty());
+        }
 
+        legend.setItems(items);
         legend.setCellFactory(studentListView -> new LegendListViewCell());
     }
 
@@ -304,7 +283,6 @@ public class MainController {
                 return;
         }
 
-        showLegend();
         showElements();
     }
 
@@ -323,6 +301,14 @@ public class MainController {
             addToCenter(graph.getNodes().values());
             addToCenter(graph.getEdges().values());
             addToCenter(graph.getElements().values());
+            showLegend();
+            graph.getElements().values()
+                    .forEach(element -> {
+                        ObservableValue<LegendItem.State> state = legendStates.get(GraphObject.element(element.getRepresented().getType()));
+                        Binding<Boolean> binding = Bindings.createBooleanBinding(() -> state.getValue() != LegendItem.State.DISABLED, state);
+                        listeners.get(context).add(binding);
+                        element.getShape().visibleProperty().bind(binding);
+                    });
         }
         return graph;
     }

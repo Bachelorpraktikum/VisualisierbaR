@@ -1,6 +1,6 @@
 package com.github.bachelorpraktikum.dbvisualization.view.legend;
 
-import com.github.bachelorpraktikum.dbvisualization.model.Element;
+import com.github.bachelorpraktikum.dbvisualization.view.GraphObject;
 
 import java.net.URL;
 
@@ -8,18 +8,12 @@ import javafx.beans.property.Property;
 import javafx.beans.property.SimpleObjectProperty;
 
 public class LegendItem {
-    private final URL url;
+    private final GraphObject<?> graphObject;
     private final Property<State> stateProperty;
-    private final String name;
 
-    public LegendItem(URL url, String name) {
-        this.url = url;
+    public LegendItem(GraphObject<?> graphObject) {
+        this.graphObject = graphObject;
         this.stateProperty = new SimpleObjectProperty<>(State.AUTO);
-        this.name = name;
-    }
-
-    public enum Type {
-        TRAIN, ELEMENT
     }
 
     public enum State {
@@ -27,14 +21,18 @@ public class LegendItem {
     }
 
     public URL getImageUrl() {
-        return url;
+        return graphObject.getImageUrl();
     }
 
     public String getName() {
-        return name;
+        return graphObject.getName();
     }
 
     public Property<State> stateProperty() {
         return stateProperty;
+    }
+
+    public GraphObject<?> getGraphObject() {
+        return graphObject;
     }
 }

@@ -3,6 +3,8 @@ package com.github.bachelorpraktikum.dbvisualization.view.legend;
 import java.io.IOException;
 import java.net.URL;
 
+import javafx.beans.binding.Binding;
+import javafx.beans.binding.Bindings;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
@@ -23,6 +25,8 @@ public class LegendListViewCell extends ListCell<LegendItem> {
     private CheckBox checkbox;
     @FXML
     private AnchorPane cell;
+
+    private Binding<LegendItem.State> binding;
 
     protected void updateItem(LegendItem element, boolean empty) {
         super.updateItem(element, empty);
@@ -54,6 +58,17 @@ public class LegendListViewCell extends ListCell<LegendItem> {
             // load with fxml
 
             setGraphic(cell);
+
+            binding = Bindings.createObjectBinding(() -> {
+                if (checkbox.isIndeterminate()) {
+                    return LegendItem.State.AUTO;
+                } else if (checkbox.isSelected()) {
+                    return LegendItem.State.ENABLED;
+                } else {
+                    return LegendItem.State.DISABLED;
+                }
+            }, checkbox.selectedProperty(), checkbox.indeterminateProperty());
+            element.stateProperty().bind(binding);
         }
     }
 }
