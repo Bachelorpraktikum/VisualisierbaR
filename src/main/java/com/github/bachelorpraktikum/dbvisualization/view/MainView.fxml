@@ -7,33 +7,32 @@
 <?import javafx.scene.control.ListView?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.ToggleButton?>
+<?import javafx.scene.control.ToolBar?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.FlowPane?>
+<?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.StackPane?>
 <BorderPane fx:id="rootPane" prefHeight="600" prefWidth="800"
             xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="com.github.bachelorpraktikum.dbvisualization.view.MainController">
     <top>
-        <AnchorPane>
+        <StackPane>
             <children>
-                <FlowPane alignment="CENTER_LEFT" hgap="5.0" AnchorPane.bottomAnchor="0.0"
-                          AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0">
-                    <ToggleButton fx:id="logToggle" text="%show_hide_logs"/>
-                </FlowPane>
-                <FlowPane alignment="CENTER_RIGHT" hgap="5.0" AnchorPane.bottomAnchor="0.0"
-                          AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                    <children>
+                <ToolBar>
+                    <items>
+                        <ToggleButton fx:id="logToggle" text="%show_hide_logs"/>
+                        <Label text="%current_simulation_time"/>
+                        <TextField fx:id="timeText" editable="false" prefHeight="25.0"
+                                   prefWidth="100.0" text="0ms"/>
+                        <HBox fx:id="rightSpacer" alignment="CENTER_RIGHT"/>
                         <ToggleButton fx:id="legendButton" text="%legend"/>
                         <Button fx:id="closeButton" text="%close_data_source"/>
-                    </children>
-                </FlowPane>
+                    </items>
+                </ToolBar>
             </children>
-            <padding>
-                <Insets bottom="5.0" left="5.0" right="5.0" top="5.0"/>
-            </padding>
-        </AnchorPane>
+        </StackPane>
     </top>
     <left>
         <StackPane fx:id="leftPane">
