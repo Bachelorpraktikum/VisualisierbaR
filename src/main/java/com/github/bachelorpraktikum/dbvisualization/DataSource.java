@@ -24,7 +24,8 @@ public final class DataSource {
         /**
          * An output log-file from an ABS-simulation.
          */
-        LOG_FILE
+        LOG_FILE,
+        DATABASE
     }
 
     /**
