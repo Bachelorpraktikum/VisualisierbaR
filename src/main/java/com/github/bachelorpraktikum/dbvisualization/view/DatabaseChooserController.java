@@ -14,12 +14,16 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 public class DatabaseChooserController implements SourceChooser {
+    @FXML
     public BorderPane rootPane;
+    @FXML
     public TextField urlField;
+    @FXML
     public Label urlError;
 
     private ReadOnlyObjectWrapper<URL> databaseURLProperty;
 
+    @FXML
     public void initialize() {
         databaseURLProperty = new ReadOnlyObjectWrapper<>();
 
