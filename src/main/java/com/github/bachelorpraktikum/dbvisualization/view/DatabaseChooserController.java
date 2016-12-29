@@ -3,6 +3,7 @@ package com.github.bachelorpraktikum.dbvisualization.view;
 import com.github.bachelorpraktikum.dbvisualization.DataSource;
 import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.beans.property.ReadOnlyObjectWrapper;
+import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.BorderPane;
@@ -39,6 +40,7 @@ public class DatabaseChooserController implements SourceChooser {
             } catch (MalformedURLException e) {
                 isValid = false;
             } finally {
+                // Display the error message if the URL is incorrect
                 urlError.setVisible(!isValid);
             }
         });
