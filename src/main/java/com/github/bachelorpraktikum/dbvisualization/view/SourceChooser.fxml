@@ -15,6 +15,9 @@
             <Tab text="%log_file">
                 <fx:include fx:id="fileChooserTab" source="FileChooserTab.fxml"/>
             </Tab>
+            <Tab text="%database">
+                <fx:include fx:id="databaseChooserTab" source="DatabaseChooserTab.fxml" />
+            </Tab>
         </TabPane>
     </center>
     <bottom>
