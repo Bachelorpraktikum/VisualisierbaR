@@ -4,7 +4,7 @@ public class DatabaseUser {
     private final String user;
     private final String password;
 
-    DatabaseUser(String user, String password) {
+    public DatabaseUser(String user, String password) {
         this.user = user;
         this.password = password;
     }

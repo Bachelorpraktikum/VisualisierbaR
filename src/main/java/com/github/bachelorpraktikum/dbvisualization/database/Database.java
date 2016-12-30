@@ -9,7 +9,7 @@ import java.sql.SQLException;
 public class Database implements AutoCloseable {
     private HikariDataSource connection;
 
-    Database(URL url, DatabaseUser user) {
+    public Database(URL url, DatabaseUser user) {
         HikariConfig config = new HikariConfig();
         config.setJdbcUrl("jdbc:mysql://" + url);
         config.setUsername(user.getUser());
