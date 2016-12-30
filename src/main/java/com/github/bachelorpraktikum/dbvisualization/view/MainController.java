@@ -1,6 +1,7 @@
 package com.github.bachelorpraktikum.dbvisualization.view;
 
 import com.github.bachelorpraktikum.dbvisualization.DataSource;
+import com.github.bachelorpraktikum.dbvisualization.database.Database;
 import com.github.bachelorpraktikum.dbvisualization.logparser.GraphParser;
 import com.github.bachelorpraktikum.dbvisualization.model.Context;
 import com.github.bachelorpraktikum.dbvisualization.model.Element;
@@ -13,6 +14,7 @@ import com.github.bachelorpraktikum.dbvisualization.view.legend.LegendItem;
 import com.github.bachelorpraktikum.dbvisualization.view.legend.LegendListViewCell;
 
 import java.io.IOException;
+import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
@@ -325,6 +327,18 @@ public class MainController {
                 fitGraphToCenter(getGraph());
 
                 break;
+            case DATABASE:
+                Database db;
+                try {
+                    db = new Database(source.getUrl());
+                    db.testConnection();
+                } catch (SQLException e) {
+                    if (e.getMessage().contains("ACCESS_DENIED")) {
+                        showLoginWindow();
+                    } else {
+                        System.out.println(e.getMessage());
+                    }
+                }
             default:
                 return;
         }
@@ -412,6 +426,21 @@ public class MainController {
             return;
         }
         SourceController controller = loader.getController();
+        controller.setStage(stage);
+    }
+
+    private void showLoginWindow() {
+        graph = null;
+        ContextHolder.getInstance().setContext(null);
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("LoginWindow.fxml"));
+        loader.setResources(ResourceBundle.getBundle("bundles.localization"));
+        try {
+            loader.load();
+        } catch (IOException e) {
+            // This should never happen, because the location is set (see load function)
+            return;
+        }
+        LoginController controller = loader.getController();
         controller.setStage(stage);
     }
 }
