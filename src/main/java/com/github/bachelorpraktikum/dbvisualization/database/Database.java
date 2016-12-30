@@ -9,6 +9,10 @@ import java.sql.SQLException;
 public class Database implements AutoCloseable {
     private HikariDataSource connection;
 
+    public Database(URL url) {
+        new Database(url, new DatabaseUser("", ""));
+    }
+
     public Database(URL url, DatabaseUser user) {
         HikariConfig config = new HikariConfig();
         config.setJdbcUrl("jdbc:mysql://" + url.toExternalForm());
@@ -20,12 +24,8 @@ public class Database implements AutoCloseable {
         connection = new HikariDataSource(config);
     }
 
-    boolean testConnection() {
-        try {
-            connection.getConnection().getClientInfo();
-        } catch (SQLException ignored) {
-            return false;
-        }
+    public boolean testConnection() throws SQLException {
+        connection.getConnection().getClientInfo();
 
         return true;
     }
