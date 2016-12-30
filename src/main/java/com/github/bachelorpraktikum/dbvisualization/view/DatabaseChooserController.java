@@ -33,15 +33,14 @@ public class DatabaseChooserController implements SourceChooser {
                 databaseURLProperty.set(null);
                 return;
             }
-            boolean isValid = true;
+            URL url = null;
             try {
-                URL url = new URL(newValue);
+                url = new URL(newValue);
                 databaseURLProperty.set(url);
-            } catch (MalformedURLException e) {
-                isValid = false;
+            } catch (MalformedURLException ignored) {
             } finally {
-                // Display the error message if the URL is incorrect
-                urlError.setVisible(!isValid);
+                // Display the error message if the URL hasn't been set
+                urlError.setVisible(url == null);
             }
         });
     }
