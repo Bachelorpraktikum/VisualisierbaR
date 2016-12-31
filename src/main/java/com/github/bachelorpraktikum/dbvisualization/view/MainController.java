@@ -12,24 +12,6 @@ import com.github.bachelorpraktikum.dbvisualization.view.graph.GraphShape;
 import com.github.bachelorpraktikum.dbvisualization.view.graph.adapter.SimpleCoordinatesAdapter;
 import com.github.bachelorpraktikum.dbvisualization.view.legend.LegendItem;
 import com.github.bachelorpraktikum.dbvisualization.view.legend.LegendListViewCell;
-
-import java.io.IOException;
-import java.sql.SQLException;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.ResourceBundle;
-import java.util.WeakHashMap;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
 import javafx.beans.binding.Binding;
 import javafx.beans.binding.Bindings;
 import javafx.beans.value.ChangeListener;
@@ -44,28 +26,26 @@ import javafx.geometry.Bounds;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
-import javafx.scene.control.ButtonBase;
-import javafx.scene.control.CheckBox;
-import javafx.scene.control.ListCell;
-import javafx.scene.control.ListView;
-import javafx.scene.control.TextField;
-import javafx.scene.control.ToggleButton;
+import javafx.scene.control.*;
 import javafx.scene.control.cell.TextFieldListCell;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Pane;
-import javafx.scene.layout.Priority;
-import javafx.scene.layout.StackPane;
+import javafx.scene.layout.*;
 import javafx.scene.shape.Shape;
 import javafx.stage.Stage;
 import javafx.util.Callback;
 import javafx.util.StringConverter;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.io.IOException;
+import java.sql.SQLException;
+import java.util.*;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class MainController {
     private Map<Context, List<ObservableValue>> listeners;
@@ -300,7 +280,7 @@ public class MainController {
             case LOG_FILE:
                 Context context = null;
                 try {
-                    context = new GraphParser(source.getUri().getFile()).parse();
+                    context = new GraphParser(source.getUri().toURL().getFile()).parse();
                 } catch (IOException | RuntimeException e) {
                     Alert alert = new Alert(Alert.AlertType.ERROR);
                     String headerText = ResourceBundle.getBundle("bundles.localization").getString("parse_error_header");
