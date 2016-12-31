@@ -1,12 +1,39 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.layout.AnchorPane?>
-<?import javafx.scene.control.TextField?>
-<?import javafx.scene.control.PasswordField?>
 <?import javafx.scene.control.Button?>
-<AnchorPane xmlns:fx="http://javafx.com/fxml/1" fx:id="rootPane"
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.geometry.Insets?>
+<BorderPane fx:id="rootPane" prefHeight="130.0" prefWidth="393.0" xmlns:fx="http://javafx.com/fxml/1"
+            xmlns="http://javafx.com/javafx/8.0.112-ea"
             fx:controller="com.github.bachelorpraktikum.dbvisualization.view.LoginController">
-    <TextField fx:id="userField" text="%login_user"/>
-    <PasswordField fx:id="passwordField" text="%login_password"/>
-    <Button fx:id="openButton" text="%login"/>
-</AnchorPane>
+    <right>
+        <AnchorPane prefHeight="124.0" prefWidth="160.0" AnchorPane.rightAnchor="0.0">
+            <TextField fx:id="userField" AnchorPane.topAnchor="0.0"/>
+            <PasswordField fx:id="passwordField" AnchorPane.topAnchor="45.0"/>
+            <BorderPane.margin>
+                <Insets top="6.0" right="6.0"/>
+            </BorderPane.margin>
+        </AnchorPane>
+    </right>
+    <bottom>
+        <Button fx:id="openButton" text="%login" BorderPane.alignment="CENTER">
+            <BorderPane.margin>
+                <Insets bottom="6.0" top="6.0"/>
+            </BorderPane.margin>
+        </Button>
+    </bottom>
+    <left>
+        <AnchorPane AnchorPane.leftAnchor="0.0">
+            <Label text="%login_user" AnchorPane.topAnchor="5.0"/>
+            <Label text="%login_password" AnchorPane.topAnchor="50.0"/>
+            <BorderPane.margin>
+                <Insets left="6.0" top="6.0"/>
+            </BorderPane.margin>
+        </AnchorPane>
+    </left>
+</BorderPane>
