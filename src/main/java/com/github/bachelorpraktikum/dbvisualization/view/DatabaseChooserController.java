@@ -10,37 +10,36 @@ import javafx.scene.layout.BorderPane;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import javax.xml.transform.Source;
-import java.net.MalformedURLException;
-import java.net.URL;
+import java.net.URI;
+import java.net.URISyntaxException;
 
 public class DatabaseChooserController implements SourceChooser {
     @FXML
     public BorderPane rootPane;
     @FXML
-    public TextField urlField;
+    public TextField uriField;
     @FXML
-    public Label urlError;
+    public Label uriError;
 
-    private ReadOnlyObjectWrapper<URL> databaseURLProperty;
+    private ReadOnlyObjectWrapper<URI> databaseURIProperty;
 
     @FXML
     public void initialize() {
-        databaseURLProperty = new ReadOnlyObjectWrapper<>();
+        databaseURIProperty = new ReadOnlyObjectWrapper<>();
 
-        urlField.textProperty().addListener((o, oldValue, newValue) -> {
+        uriField.textProperty().addListener((o, oldValue, newValue) -> {
             if (newValue == null || newValue.trim().isEmpty()) {
-                databaseURLProperty.set(null);
+                databaseURIProperty.set(null);
                 return;
             }
-            URL url = null;
+            URI uri = null;
             try {
-                url = new URL(newValue);
-                databaseURLProperty.set(url);
-            } catch (MalformedURLException ignored) {
+                uri = new URI(newValue);
+                databaseURIProperty.set(uri);
+            } catch (URISyntaxException ignored) {
             } finally {
-                // Display the error message if the URL hasn't been set
-                urlError.setVisible(url == null);
+                // Display the error message if the URI hasn't been set
+                uriError.setVisible(uri == null);
             }
         });
     }
@@ -50,8 +49,8 @@ public class DatabaseChooserController implements SourceChooser {
      */
     @Nullable
     @Override
-    public URL getResourceURL() {
-        return databaseURLProperty.getValue();
+    public URI getResourceURI() {
+        return databaseURIProperty.getValue();
     }
 
     /**
@@ -59,8 +58,8 @@ public class DatabaseChooserController implements SourceChooser {
      */
     @Nonnull
     @Override
-    public ReadOnlyObjectProperty<URL> resourceURLProperty() {
-        return databaseURLProperty.getReadOnlyProperty();
+    public ReadOnlyObjectProperty<URI> resourceURIProperty() {
+        return databaseURIProperty.getReadOnlyProperty();
     }
 
     /**

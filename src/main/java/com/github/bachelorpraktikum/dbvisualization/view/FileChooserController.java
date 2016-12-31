@@ -1,14 +1,6 @@
 package com.github.bachelorpraktikum.dbvisualization.view;
 
 import com.github.bachelorpraktikum.dbvisualization.DataSource;
-
-import java.io.File;
-import java.net.MalformedURLException;
-import java.net.URL;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
 import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.fxml.FXML;
@@ -18,6 +10,11 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.Pane;
 import javafx.stage.FileChooser;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.io.File;
+import java.net.URI;
 
 
 public class FileChooserController implements SourceChooser {
@@ -30,11 +27,11 @@ public class FileChooserController implements SourceChooser {
     private Button explorerButton;
     private FileChooser fileChooser;
 
-    private ReadOnlyObjectWrapper<URL> fileURLProperty;
+    private ReadOnlyObjectWrapper<URI> fileURIProperty;
 
     @FXML
     private void initialize() {
-        fileURLProperty = new ReadOnlyObjectWrapper<>();
+        fileURIProperty = new ReadOnlyObjectWrapper<>();
         fileChooser = new FileChooser();
         fileChooser.setInitialDirectory(new File(System.getProperty("user.home")));
         explorerButton.setOnAction(event -> updatePath(openFileChooser()));
@@ -47,16 +44,11 @@ public class FileChooserController implements SourceChooser {
 
         pathField.textProperty().addListener((o, oldValue, newValue) -> {
             if (newValue == null || newValue.trim().isEmpty()) {
-                fileURLProperty.set(null);
+                fileURIProperty.set(null);
                 return;
             }
-            try {
-                URL url = new File(newValue).getAbsoluteFile().toURI().toURL();
-                fileURLProperty.set(url);
-            } catch (MalformedURLException e) {
-                // ignore.
-                // This won't ever happen, because File.toURI().toURL() won't ever create an URL with an invalid protocol.
-            }
+            URI uri = new File(newValue).getAbsoluteFile().toURI();
+            fileURIProperty.set(uri);
         });
 
         pathField.addEventHandler(KeyEvent.KEY_PRESSED, event -> {
@@ -95,8 +87,8 @@ public class FileChooserController implements SourceChooser {
      */
     @Nullable
     @Override
-    public URL getResourceURL() {
-        return fileURLProperty.getValue();
+    public URI getResourceURI() {
+        return fileURIProperty.getValue();
     }
 
     /**
@@ -104,8 +96,8 @@ public class FileChooserController implements SourceChooser {
      */
     @Nonnull
     @Override
-    public ReadOnlyObjectProperty<URL> resourceURLProperty() {
-        return fileURLProperty.getReadOnlyProperty();
+    public ReadOnlyObjectProperty<URI> resourceURIProperty() {
+        return fileURIProperty.getReadOnlyProperty();
     }
 
     /**

@@ -1,13 +1,11 @@
 package com.github.bachelorpraktikum.dbvisualization.view;
 
 import com.github.bachelorpraktikum.dbvisualization.DataSource;
-
-import java.net.URL;
+import javafx.beans.property.ReadOnlyProperty;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-
-import javafx.beans.property.ReadOnlyProperty;
+import java.net.URI;
 
 /**
  * Represents a chooser for a data source.<br>The user can input a URL by which the data source can
@@ -26,7 +24,7 @@ interface SourceChooser {
      * @return URL for the resource
      */
     @Nullable
-    URL getResourceURL();
+    URI getResourceURI();
 
     /**
      * Returns the property for the resource url.
@@ -34,7 +32,7 @@ interface SourceChooser {
      * @return Property for the resource url
      */
     @Nonnull
-    ReadOnlyProperty<URL> resourceURLProperty();
+    ReadOnlyProperty<URI> resourceURIProperty();
 
     /**
      * Returns the id of the root pane.

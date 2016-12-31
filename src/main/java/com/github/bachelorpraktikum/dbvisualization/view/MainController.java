@@ -37,7 +37,6 @@ import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
-import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -53,7 +52,6 @@ import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleButton;
-import javafx.scene.control.Tooltip;
 import javafx.scene.control.cell.TextFieldListCell;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
@@ -302,7 +300,7 @@ public class MainController {
             case LOG_FILE:
                 Context context = null;
                 try {
-                    context = new GraphParser(source.getUrl().getFile()).parse();
+                    context = new GraphParser(source.getUri().getFile()).parse();
                 } catch (IOException | RuntimeException e) {
                     Alert alert = new Alert(Alert.AlertType.ERROR);
                     String headerText = ResourceBundle.getBundle("bundles.localization").getString("parse_error_header");
@@ -330,7 +328,7 @@ public class MainController {
             case DATABASE:
                 Database db;
                 try {
-                    db = new Database(source.getUrl());
+                    db = new Database(source.getUri());
                     db.testConnection();
                 } catch (SQLException e) {
                     if (e.getMessage().contains("ACCESS_DENIED")) {

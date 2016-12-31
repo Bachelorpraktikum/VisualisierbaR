@@ -1,13 +1,12 @@
 package com.github.bachelorpraktikum.dbvisualization;
 
-import java.net.URL;
-import java.util.Objects;
-
 import javax.annotation.Nonnull;
 import javax.annotation.ParametersAreNonnullByDefault;
+import java.net.URI;
+import java.util.Objects;
 
 /**
- * Represents a data source for a graph. The way the {@link #getUrl() url} is loaded should be
+ * Represents a data source for a graph. The way the {@link #getUri() uri} is loaded should be
  * determined by another class based on the {@link #getType() type} of this data source.
  */
 @ParametersAreNonnullByDefault
@@ -15,7 +14,7 @@ public final class DataSource {
     @Nonnull
     private final Type type;
     @Nonnull
-    private final URL url;
+    private final URI uri;
 
     /**
      * The type of a data source.
@@ -35,12 +34,12 @@ public final class DataSource {
      * Creates a new instance.
      *
      * @param type the type of the data source
-     * @param url  the URL to the resource
-     * @throws NullPointerException if type or url is null
+     * @param uri  the URL to the resource
+     * @throws NullPointerException if type or uri is null
      */
-    public DataSource(Type type, URL url) {
+    public DataSource(Type type, URI uri) {
         this.type = Objects.requireNonNull(type);
-        this.url = Objects.requireNonNull(url);
+        this.uri = Objects.requireNonNull(uri);
     }
 
     /**
@@ -59,8 +58,8 @@ public final class DataSource {
      * @return the URL
      */
     @Nonnull
-    public URL getUrl() {
-        return url;
+    public URI getUri() {
+        return uri;
     }
 
     @Override
@@ -70,14 +69,13 @@ public final class DataSource {
 
         DataSource that = (DataSource) obj;
 
-        if (type != that.type) return false;
-        return url.toExternalForm().equals(that.url.toExternalForm());
+        return type == that.type && uri.equals(that.uri);
     }
 
     @Override
     public int hashCode() {
         int result = type.hashCode();
-        result = 31 * result + url.toExternalForm().hashCode();
+        result = 31 * result + uri.hashCode();
         return result;
     }
 
@@ -85,7 +83,7 @@ public final class DataSource {
     public String toString() {
         return "DataSource{"
                 + "type=" + type
-                + ", url=" + url
+                + ", uri=" + uri
                 + '}';
     }
 }
