@@ -1,11 +1,13 @@
 package com.github.bachelorpraktikum.dbvisualization.view.graph;
 
 import com.github.bachelorpraktikum.dbvisualization.model.Edge;
+import com.github.bachelorpraktikum.dbvisualization.view.TooltipUtil;
 import com.github.bachelorpraktikum.dbvisualization.view.graph.adapter.CoordinatesAdapter;
 
 import javax.annotation.Nonnull;
 
 import javafx.geometry.Point2D;
+import javafx.scene.control.Tooltip;
 import javafx.scene.shape.Line;
 
 final class Rail extends SingleGraphShapeBase<Edge, Line> {
@@ -29,6 +31,11 @@ final class Rail extends SingleGraphShapeBase<Edge, Line> {
     @Override
     protected void resize(Line line) {
         line.setStrokeWidth(getCalibrationBase() * CALIBRATION_COEFFICIENT);
+    }
+
+    @Override
+    protected void initializedShape(Line line) {
+        TooltipUtil.install(line, new Tooltip(getRepresented().getName()));
     }
 
     @Nonnull
