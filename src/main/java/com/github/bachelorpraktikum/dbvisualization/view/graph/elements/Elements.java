@@ -28,7 +28,7 @@ public final class Elements {
                     break;
                 case SichtbarkeitsPunktImpl:
                 case GefahrenPunktImpl:
-                    shapes.add(new DefaultOffsetElement(element, node, adapter, count++));
+                    shapes.add(new RotatedDefaultOffsetElement(element, node, adapter, count++));
                     break;
                 case WeichenPunktImpl:
                     if (element.equals(element.getSwitch().get().getMainElement()))
