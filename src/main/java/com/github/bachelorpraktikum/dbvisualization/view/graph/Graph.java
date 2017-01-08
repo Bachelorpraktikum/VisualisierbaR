@@ -1,6 +1,7 @@
 package com.github.bachelorpraktikum.dbvisualization.view.graph;
 
 import com.github.bachelorpraktikum.dbvisualization.model.Context;
+import com.github.bachelorpraktikum.dbvisualization.model.Coordinates;
 import com.github.bachelorpraktikum.dbvisualization.model.Edge;
 import com.github.bachelorpraktikum.dbvisualization.model.Element;
 import com.github.bachelorpraktikum.dbvisualization.model.Node;
@@ -14,6 +15,7 @@ import java.util.Objects;
 import javax.annotation.Nonnull;
 import javax.annotation.ParametersAreNonnullByDefault;
 
+import javafx.geometry.Point2D;
 import javafx.scene.Group;
 
 @ParametersAreNonnullByDefault
@@ -96,5 +98,9 @@ public final class Graph {
 
     public Map<Element, GraphShape<Element>> getElements() {
         return elements;
+    }
+
+    public Point2D translate(Coordinates coordinates) {
+        return coordinatesAdapter.apply(coordinates);
     }
 }

@@ -11,6 +11,7 @@ import com.github.bachelorpraktikum.dbvisualization.view.graph.Graph;
 import com.github.bachelorpraktikum.dbvisualization.view.graph.adapter.SimpleCoordinatesAdapter;
 import com.github.bachelorpraktikum.dbvisualization.view.legend.LegendItem;
 import com.github.bachelorpraktikum.dbvisualization.view.legend.LegendListViewCell;
+import com.github.bachelorpraktikum.dbvisualization.view.train.TrainView;
 
 import java.io.IOException;
 import java.sql.SQLException;
@@ -30,6 +31,8 @@ import javax.annotation.Nullable;
 
 import javafx.beans.binding.Binding;
 import javafx.beans.binding.Bindings;
+import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -110,6 +113,9 @@ public class MainController {
     private double mousePressedY = -1;
     private Map<GraphObject<?>, ObservableValue<LegendItem.State>> legendStates;
 
+    private List<TrainView> trains;
+    private IntegerProperty simulationTime;
+
     @FXML
     private void initialize() {
         HBox.setHgrow(rightSpacer, Priority.ALWAYS);
@@ -158,8 +164,7 @@ public class MainController {
         };
         logList.setCellFactory(listCellFactory);
         logList.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
-            Element.in(ContextHolder.getInstance().getContext()).setTime(newValue.getTime());
-            timeText.setText(String.format("%dms", newValue.getTime()));
+            simulationTime.set(newValue.getTime());
         });
 
         ChangeListener<Number> boundsListener = (observable, oldValue, newValue) -> {
@@ -214,7 +219,17 @@ public class MainController {
                 event.consume();
             }
         });
+        this.trains = new LinkedList<>();
+        simulationTime = new SimpleIntegerProperty();
+        simulationTime.addListener((observable, oldValue, newValue) -> {
+            if (ContextHolder.getInstance().hasContext()) {
+                Context context = ContextHolder.getInstance().getContext();
+                timeText.setText(String.format("%dms", newValue.intValue()));
+                Element.in(context).setTime(newValue.intValue());
+            }
+        });
     }
+
 
     /**
      * Adds an EventHandler to the button which fires the button on pressing enter
@@ -362,6 +377,11 @@ public class MainController {
                         listeners.get(context).add(binding);
                         entry.getValue().getShape().visibleProperty().bind(binding);
                     });
+            for (Train train : Train.in(context).getAll()) {
+                TrainView trainView = new TrainView(train, graph);
+                trainView.timeProperty().bind(simulationTime);
+                trains.add(trainView);
+            }
         }
         return graph;
     }
@@ -402,6 +422,7 @@ public class MainController {
             centerPane.getChildren().remove(graph.getGroup());
             graph = null;
         }
+        trains.clear();
         ContextHolder.getInstance().setContext(null);
         FXMLLoader loader = new FXMLLoader(getClass().getResource("SourceChooser.fxml"));
         loader.setResources(ResourceBundle.getBundle("bundles.localization"));
