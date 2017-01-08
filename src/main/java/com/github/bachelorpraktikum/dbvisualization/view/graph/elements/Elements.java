@@ -40,7 +40,6 @@ public final class Elements {
                 case VorSignalImpl:
                 case HauptSignalImpl:
                 case GeschwindigkeitsAnzeigerImpl:
-                    System.out.println("ELEMENT: " + element); // TODO delete
                     compositeElements.add(element);
                     break;
                 default:

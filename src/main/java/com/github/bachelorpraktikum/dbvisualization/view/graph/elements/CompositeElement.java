@@ -60,6 +60,7 @@ final class CompositeElement extends ElementBase<Group> {
         double y = nodePos.getY() - bounds.getHeight() / 2;
 
         group.relocate(x, y);
+        rotateAccordingToOffset(group);
     }
 
     @Override

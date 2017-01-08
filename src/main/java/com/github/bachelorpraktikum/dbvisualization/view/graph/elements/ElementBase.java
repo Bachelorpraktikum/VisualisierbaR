@@ -9,14 +9,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import javafx.beans.property.ReadOnlyProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.WeakChangeListener;
 import javafx.geometry.Point2D;
 import javafx.scene.Node;
 import javafx.scene.control.Tooltip;
 import javafx.scene.shape.Shape;
-import javafx.scene.transform.Transform;
 
 abstract class ElementBase<T extends Node> extends GraphShapeBase<Element, T> {
     private final List<Element> elements;
@@ -91,5 +89,18 @@ abstract class ElementBase<T extends Node> extends GraphShapeBase<Element, T> {
 
     protected final void displayState(Element element) {
         getShape(element).setFill(element.getState().getColor());
+    }
+
+    protected final void rotateAccordingToOffset(T t) {
+        rotateAccordingToOffset(t, getOffset());
+    }
+
+    protected final void rotateAccordingToOffset(T t, Point2D offset) {
+        double angle = new Point2D(0, 1).angle(offset);
+        if (offset.getX() > 0) {
+            angle = -angle;
+        }
+        angle += 180;
+        t.setRotate(angle);
     }
 }
