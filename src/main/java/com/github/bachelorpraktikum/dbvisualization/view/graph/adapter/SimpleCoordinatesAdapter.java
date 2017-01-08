@@ -1,7 +1,6 @@
 package com.github.bachelorpraktikum.dbvisualization.view.graph.adapter;
 
 import com.github.bachelorpraktikum.dbvisualization.model.Coordinates;
-import com.github.bachelorpraktikum.dbvisualization.model.Node;
 
 import javax.annotation.Nonnull;
 

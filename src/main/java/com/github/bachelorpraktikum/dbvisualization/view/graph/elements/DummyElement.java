@@ -6,10 +6,8 @@ import com.github.bachelorpraktikum.dbvisualization.view.graph.adapter.Coordinat
 
 import javax.annotation.Nonnull;
 
-import javafx.beans.property.ReadOnlyProperty;
 import javafx.geometry.Point2D;
 import javafx.scene.shape.Rectangle;
-import javafx.scene.transform.Transform;
 
 final class DummyElement extends SingleElementBase<Rectangle> {
     private final int count;

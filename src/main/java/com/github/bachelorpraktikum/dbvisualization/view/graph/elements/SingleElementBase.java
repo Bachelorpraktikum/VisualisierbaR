@@ -6,9 +6,7 @@ import com.github.bachelorpraktikum.dbvisualization.view.graph.adapter.Coordinat
 
 import java.util.Collections;
 
-import javafx.beans.property.ReadOnlyProperty;
 import javafx.scene.shape.Shape;
-import javafx.scene.transform.Transform;
 
 abstract class SingleElementBase<S extends Shape> extends ElementBase<S> {
     SingleElementBase(Element element, Node node, CoordinatesAdapter adapter) {

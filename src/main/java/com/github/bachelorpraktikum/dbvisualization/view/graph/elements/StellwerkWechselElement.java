@@ -4,10 +4,8 @@ import com.github.bachelorpraktikum.dbvisualization.model.Element;
 import com.github.bachelorpraktikum.dbvisualization.model.Node;
 import com.github.bachelorpraktikum.dbvisualization.view.graph.adapter.CoordinatesAdapter;
 
-import javafx.beans.property.ReadOnlyProperty;
 import javafx.geometry.Point2D;
 import javafx.scene.shape.Shape;
-import javafx.scene.transform.Transform;
 
 class StellwerkWechselElement extends PathElement {
     StellwerkWechselElement(Element element, Node node, CoordinatesAdapter adapter) {

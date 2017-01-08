@@ -5,9 +5,7 @@ import com.github.bachelorpraktikum.dbvisualization.view.graph.adapter.Coordinat
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import javafx.beans.property.ReadOnlyProperty;
 import javafx.beans.value.ChangeListener;
-import javafx.beans.value.WeakChangeListener;
 import javafx.geometry.Point2D;
 import javafx.scene.Node;
 import javafx.scene.transform.Transform;

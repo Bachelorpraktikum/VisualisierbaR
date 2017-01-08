@@ -7,11 +7,9 @@ import com.github.bachelorpraktikum.dbvisualization.view.graph.adapter.Coordinat
 
 import javax.annotation.Nonnull;
 
-import javafx.beans.property.ReadOnlyProperty;
 import javafx.collections.ObservableList;
 import javafx.geometry.Point2D;
 import javafx.scene.shape.Polygon;
-import javafx.scene.transform.Transform;
 
 final class WeichenpunktElement extends SingleElementBase<Polygon> {
     WeichenpunktElement(Element element, Node node, CoordinatesAdapter adapter) {

@@ -10,12 +10,10 @@ import java.util.List;
 
 import javax.annotation.Nonnull;
 
-import javafx.beans.property.ReadOnlyProperty;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Bounds;
 import javafx.geometry.Point2D;
 import javafx.scene.shape.Shape;
-import javafx.scene.transform.Transform;
 
 class PathElement extends SingleElementBase<Shape> {
     PathElement(Element element, Node node, CoordinatesAdapter adapter) {
