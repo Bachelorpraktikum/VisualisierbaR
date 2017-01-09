@@ -23,6 +23,8 @@ import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.WeakHashMap;
 import java.util.function.Predicate;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -181,13 +183,20 @@ public class MainController {
             simulationTime.set(newValue.getTime());
         });
 
+        String timePatternString = "(\\d+)";
+        Pattern timePattern = Pattern.compile(timePatternString);
         timeText.textProperty().addListener((observable, oldValue, newValue) -> {
-            String finalNewValue = newValue.replace("ms", "");
-            int newTime = finalNewValue.length() > 0 ? Integer.valueOf(finalNewValue) : 0;
+            Matcher timeMatch = timePattern.matcher(newValue);
+            int newTime = 0;
+            if (timeMatch.find()) {
+                newTime = Integer.parseInt(timeMatch.group(0));
+            }
             int closestValue = closest(newTime, logList.getItems().parallelStream().map(Event::getTime).collect(Collectors.toList()));
 
             FilteredList l = logList.getItems().filtered(event -> event.getTime() == closestValue);
-            logList.getSelectionModel().select((Event) l.get(0));
+            Event event = (Event) l.get(0);
+            logList.getSelectionModel().select(event);
+            logList.scrollTo(event);
         });
 
         ChangeListener<Number> boundsListener = (observable, oldValue, newValue) -> {
