@@ -121,7 +121,10 @@ public class MainController {
 
     private double mousePressedX = -1;
     private double mousePressedY = -1;
+
     private boolean manualInput = false;
+    private Pattern timePattern;
+
     private Map<GraphObject<?>, ObservableValue<LegendItem.State>> legendStates;
 
     private List<TrainView> trains;
@@ -131,6 +134,7 @@ public class MainController {
 
     @FXML
     private void initialize() {
+        timePattern = Pattern.compile("(\\d+)(m?s?|h)?$");
         HBox.setHgrow(rightSpacer, Priority.ALWAYS);
         this.listeners = new WeakHashMap<>();
         this.legendStates = new HashMap<>(256);
@@ -188,21 +192,17 @@ public class MainController {
             }
         });
 
-        String timePatternString = "(\\d+)";
-        Pattern timePattern = Pattern.compile(timePatternString);
-
-        timeText.setOnKeyPressed(event -> {
-            manualInput = true;
-        });
+        timeText.setOnKeyPressed(event -> manualInput = true);
         timeText.textProperty().addListener((observable, oldValue, newValue) -> {
             if (!manualInput) {
                 return;
             }
             Matcher timeMatch = timePattern.matcher(newValue);
             int newTime = 0;
+
             if (timeMatch.find()) {
                 try {
-                    newTime = Integer.parseInt(timeMatch.group(0));
+                    newTime = getMsFromString(newValue);
                 } catch (NumberFormatException e) {
                     newTime = Integer.MAX_VALUE;
                 }
@@ -213,6 +213,7 @@ public class MainController {
             Event event = (Event) l.get(0);
             logList.getSelectionModel().select(event);
             logList.scrollTo(event);
+
             manualInput = false;
         });
 
@@ -317,9 +318,30 @@ public class MainController {
         int ms = -1;
 
         Matcher timeMatch = timePattern.matcher(timeString);
+        String type = "ms";
+        int time = ms;
 
-        for (int i = 0; timeMatch.find() && i < timeMatch.groupCount(); i++) {
-            System.out.println(timeMatch.group(i));
+        if (timeMatch.find()) {
+            String typeMatch = timeMatch.group(2);
+            if (typeMatch != null) {
+                type = typeMatch;
+            }
+
+            time = Integer.valueOf(timeMatch.group(1));
+        }
+
+        switch (type) {
+            case "s":
+                ms = time * 1000;
+                break;
+            case "m":
+                ms = time * 1000 * 60;
+                break;
+            case "h":
+                ms = time * 1000 * 60 * 60;
+                break;
+            default:
+                ms = time;
         }
 
         return ms;
