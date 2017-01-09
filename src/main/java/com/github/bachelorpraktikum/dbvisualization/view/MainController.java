@@ -313,6 +313,18 @@ public class MainController {
         return closest;
     }
 
+    private int getMsFromString(String timeString) {
+        int ms = -1;
+
+        Matcher timeMatch = timePattern.matcher(timeString);
+
+        for (int i = 0; timeMatch.find() && i < timeMatch.groupCount(); i++) {
+            System.out.println(timeMatch.group(i));
+        }
+
+        return ms;
+    }
+
     /**
      * Adds an EventHandler to the button which fires the button on pressing enter
      *
