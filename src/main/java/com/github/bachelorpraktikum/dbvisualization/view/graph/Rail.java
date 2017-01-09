@@ -35,7 +35,7 @@ final class Rail extends SingleGraphShapeBase<Edge, Line> {
 
     @Override
     protected void initializedShape(Line line) {
-        TooltipUtil.install(line, new Tooltip(getRepresented().getName()));
+        TooltipUtil.install(line, new Tooltip(getRepresented().getName() + " " + getRepresented().getLength() + "m"));
     }
 
     @Nonnull
