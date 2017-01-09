@@ -121,6 +121,7 @@ public class MainController {
 
     private double mousePressedX = -1;
     private double mousePressedY = -1;
+    private boolean manualInput = false;
     private Map<GraphObject<?>, ObservableValue<LegendItem.State>> legendStates;
 
     private List<TrainView> trains;
@@ -178,18 +179,33 @@ public class MainController {
                 return result;
             }
         };
+
         logList.setCellFactory(listCellFactory);
         logList.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
-            simulationTime.set(newValue.getTime());
+            if (!manualInput) {
+                simulationTime.set(newValue.getTime());
+                timeText.setText(String.format("%dms", newValue.getTime()));
+            }
         });
 
         String timePatternString = "(\\d+)";
         Pattern timePattern = Pattern.compile(timePatternString);
+
+        timeText.setOnKeyPressed(event -> {
+            manualInput = true;
+        });
         timeText.textProperty().addListener((observable, oldValue, newValue) -> {
+            if (!manualInput) {
+                return;
+            }
             Matcher timeMatch = timePattern.matcher(newValue);
             int newTime = 0;
             if (timeMatch.find()) {
-                newTime = Integer.parseInt(timeMatch.group(0));
+                try {
+                    newTime = Integer.parseInt(timeMatch.group(0));
+                } catch (NumberFormatException e) {
+                    newTime = Integer.MAX_VALUE;
+                }
             }
             int closestValue = closest(newTime, logList.getItems().parallelStream().map(Event::getTime).collect(Collectors.toList()));
 
@@ -197,6 +213,7 @@ public class MainController {
             Event event = (Event) l.get(0);
             logList.getSelectionModel().select(event);
             logList.scrollTo(event);
+            manualInput = false;
         });
 
         ChangeListener<Number> boundsListener = (observable, oldValue, newValue) -> {
