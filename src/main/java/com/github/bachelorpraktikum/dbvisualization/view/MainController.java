@@ -181,6 +181,15 @@ public class MainController {
             simulationTime.set(newValue.getTime());
         });
 
+        timeText.textProperty().addListener((observable, oldValue, newValue) -> {
+            String finalNewValue = newValue.replace("ms", "");
+            int newTime = finalNewValue.length() > 0 ? Integer.valueOf(finalNewValue) : 0;
+            int closestValue = closest(newTime, logList.getItems().parallelStream().map(Event::getTime).collect(Collectors.toList()));
+
+            FilteredList l = logList.getItems().filtered(event -> event.getTime() == closestValue);
+            logList.getSelectionModel().select((Event) l.get(0));
+        });
+
         ChangeListener<Number> boundsListener = (observable, oldValue, newValue) -> {
             if (ContextHolder.getInstance().hasContext()) {
                 fitGraphToCenter(getGraph());
