@@ -4,6 +4,7 @@ import com.github.bachelorpraktikum.dbvisualization.model.Coordinates;
 import com.github.bachelorpraktikum.dbvisualization.model.Edge;
 import com.github.bachelorpraktikum.dbvisualization.model.Node;
 import com.github.bachelorpraktikum.dbvisualization.model.train.Train;
+import com.github.bachelorpraktikum.dbvisualization.view.TooltipUtil;
 import com.github.bachelorpraktikum.dbvisualization.view.graph.Graph;
 
 import java.util.Iterator;
@@ -14,6 +15,7 @@ import java.util.function.Function;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.geometry.Point2D;
+import javafx.scene.control.Tooltip;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.LineTo;
 import javafx.scene.shape.MoveTo;
@@ -40,6 +42,8 @@ public final class TrainView {
 
         timeProperty.addListener(((observable, oldValue, newValue) -> updateTrain(newValue.intValue())));
         updateTrain(0);
+
+        TooltipUtil.install(path, new Tooltip(train.getReadableName() + " " + train.getLength()));
     }
 
     public Train getTrain() {
@@ -52,38 +56,57 @@ public final class TrainView {
 
     private void updateTrain(int time) {
         path.getElements().clear();
-        Train.Position start = train.getState(time).getPosition();
+        Train.Position trainPosition = train.getState(time).getPosition();
 
         List<PathElement> elements = new LinkedList<>();
-        Iterator<Edge> iterator = start.getEdges().iterator();
+        Iterator<Edge> iterator = trainPosition.getEdges().iterator();
         Edge last = iterator.next();
+        Point2D lastPosition;
         if (iterator.hasNext()) {
             Edge next = iterator.next();
-            Point2D position = toPos(findNextNode(next, last));
-            elements.add(new MoveTo(position.getX(), position.getY()));
+            Point2D frontStart = toPos(findNextNode(next, last));
+            Point2D commonPosition = toPos(findCommonNode(next, last));
 
-            position = toPos(findCommonNode(next, last));
-            elements.add(new LineTo(position.getX(), position.getY()));
+            Point2D frontVector = commonPosition.subtract(frontStart);
+            double frontEdgeLength = frontVector.magnitude();
+            double distance = ((next.getLength() - trainPosition.getFrontDistance()) / next.getLength()) * frontEdgeLength;
+            Point2D startPosition = frontStart
+                    .add(frontVector
+                            .normalize()
+                            .multiply(distance));
 
-            position = toPos(findNextNode(last, next));
-            elements.add(new LineTo(position.getX(), position.getY()));
+            elements.add(new MoveTo(startPosition.getX(), startPosition.getY()));
+            elements.add(new LineTo(commonPosition.getX(), commonPosition.getY()));
+
+            Point2D nextPosition = toPos(findNextNode(last, next));
+            elements.add(new LineTo(nextPosition.getX(), nextPosition.getY()));
 
             last = next;
+            lastPosition = nextPosition;
         } else {
             Point2D position = toPos(last.getNode1());
             elements.add(new MoveTo(position.getX(), position.getY()));
 
             position = toPos(last.getNode2());
             elements.add(new LineTo(position.getX(), position.getY()));
+            lastPosition = position;
         }
-
 
         while (iterator.hasNext()) {
             Edge current = iterator.next();
             Node nextNode = findNextNode(last, current);
             Point2D position = toPos(nextNode);
+
+            if (!iterator.hasNext()) {
+                Point2D backVector = position.subtract(lastPosition);
+                double backEdgeLength = backVector.magnitude();
+                double distance = (trainPosition.getBackDistance() / current.getLength()) * backEdgeLength;
+                position = lastPosition.add(backVector.normalize().multiply(distance));
+            }
+
             elements.add(new LineTo(position.getX(), position.getY()));
             last = current;
+            lastPosition = position;
         }
 
         path.getElements().addAll(elements);
