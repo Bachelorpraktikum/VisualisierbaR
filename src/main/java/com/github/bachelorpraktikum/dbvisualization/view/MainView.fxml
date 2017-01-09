@@ -29,7 +29,7 @@
                     <items>
                         <ToggleButton fx:id="logToggle" text="%show_hide_logs"/>
                         <Label text="%current_simulation_time"/>
-                        <TextField fx:id="timeText" editable="false" prefHeight="25.0"
+                        <TextField fx:id="timeText" prefHeight="25.0"
                                    prefWidth="100.0" text="0ms"/>
                         <Label text="%velocity"/>
                         <TextField fx:id="velocityText" prefWidth="100.0" text="1000"/>
