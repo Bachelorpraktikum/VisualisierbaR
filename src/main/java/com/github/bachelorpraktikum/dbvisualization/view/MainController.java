@@ -29,6 +29,9 @@ import java.util.stream.Stream;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import javafx.animation.Animation;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.beans.binding.Binding;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.IntegerProperty;
@@ -64,6 +67,7 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 import javafx.util.Callback;
+import javafx.util.Duration;
 import javafx.util.StringConverter;
 
 public class MainController {
@@ -84,6 +88,10 @@ public class MainController {
     private ListView<LegendItem> legend;
     @FXML
     private ToggleButton legendButton;
+    @FXML
+    private TextField velocityText;
+    @FXML
+    private ToggleButton playToggle;
     @FXML
     private Button closeButton;
     @FXML
@@ -115,12 +123,18 @@ public class MainController {
 
     private List<TrainView> trains;
     private IntegerProperty simulationTime;
+    private IntegerProperty velocity;
+    private Animation simulation;
 
     @FXML
     private void initialize() {
         HBox.setHgrow(rightSpacer, Priority.ALWAYS);
         this.listeners = new WeakHashMap<>();
         this.legendStates = new HashMap<>(256);
+        this.simulation = new Timeline(new KeyFrame(Duration.millis(200), event -> {
+            simulationTime.set((int) (simulationTime.get() + (velocity.get() * 0.2)));
+        }));
+        simulation.setCycleCount(Animation.INDEFINITE);
         fireOnEnterPress(closeButton);
         fireOnEnterPress(logToggle);
         closeButton.setOnAction(event -> showSourceChooser());
@@ -226,6 +240,24 @@ public class MainController {
                 Context context = ContextHolder.getInstance().getContext();
                 timeText.setText(String.format("%dms", newValue.intValue()));
                 Element.in(context).setTime(newValue.intValue());
+            }
+        });
+
+        velocity = new SimpleIntegerProperty(1000);
+        velocityText.textProperty().addListener((observable, oldValue, newValue) -> {
+            try {
+                int newVelocity = Integer.parseUnsignedInt(newValue);
+                velocity.set(newVelocity);
+            } catch (NumberFormatException e) {
+                velocityText.setText(oldValue);
+            }
+        });
+
+        playToggle.selectedProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue) {
+                simulation.playFromStart();
+            } else {
+                simulation.stop();
             }
         });
     }

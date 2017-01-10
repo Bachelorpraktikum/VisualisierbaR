@@ -31,6 +31,9 @@
                         <Label text="%current_simulation_time"/>
                         <TextField fx:id="timeText" editable="false" prefHeight="25.0"
                                    prefWidth="100.0" text="0ms"/>
+                        <Label text="%velocity"/>
+                        <TextField fx:id="velocityText" prefWidth="100.0" text="1000"/>
+                        <ToggleButton fx:id="playToggle" text="%play_simulation"/>
                         <HBox fx:id="rightSpacer" alignment="CENTER_RIGHT"/>
                         <ToggleButton fx:id="legendButton" text="%legend"/>
                         <Button fx:id="closeButton" text="%close_data_source"/>
