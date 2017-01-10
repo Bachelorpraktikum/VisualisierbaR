@@ -112,7 +112,7 @@ abstract class TrainEvent implements Event {
         public String getDescription() {
             return getTrain().getReadableName() + ": Speed{"
                     + "time=" + getTime()
-                    + ", totalDistance=" + getTotalDistance()
+                    + ", distance=" + getDistance()
                     + ", speed=" + getSpeed()
                     + "}";
         }
@@ -262,7 +262,7 @@ abstract class TrainEvent implements Event {
             return getTrain().getReadableName() + ": Leave{"
                     + "time=" + getTime()
                     + ", distance=" + getDistance()
-                    + ", left=" + left.getName()
+                    + ", backEdge=" + left.getName()
                     + "}";
         }
     }

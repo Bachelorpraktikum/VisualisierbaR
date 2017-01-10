@@ -21,6 +21,7 @@ import javafx.scene.shape.LineTo;
 import javafx.scene.shape.MoveTo;
 import javafx.scene.shape.Path;
 import javafx.scene.shape.PathElement;
+import javafx.scene.shape.StrokeLineCap;
 
 public final class TrainView {
     private final Train train;
@@ -36,6 +37,7 @@ public final class TrainView {
         this.path = new Path();
         path.setStrokeWidth(0.3);
         path.setStroke(Color.GREEN);
+        path.setStrokeLineCap(StrokeLineCap.BUTT);
         path.setOpacity(0.5);
         graph.getGroup().getChildren().add(path);
         path.toBack();
@@ -57,56 +59,62 @@ public final class TrainView {
     private void updateTrain(int time) {
         path.getElements().clear();
         Train.Position trainPosition = train.getState(time).getPosition();
-
+        List<Edge> edges = trainPosition.getEdges();
         List<PathElement> elements = new LinkedList<>();
-        Iterator<Edge> iterator = trainPosition.getEdges().iterator();
-        Edge last = iterator.next();
-        Point2D lastPosition;
-        if (iterator.hasNext()) {
-            Edge next = iterator.next();
-            Point2D frontStart = toPos(findNextNode(next, last));
-            Point2D commonPosition = toPos(findCommonNode(next, last));
 
-            Point2D frontVector = commonPosition.subtract(frontStart);
-            double frontEdgeLength = frontVector.magnitude();
-            double distance = ((next.getLength() - trainPosition.getFrontDistance()) / next.getLength()) * frontEdgeLength;
-            Point2D startPosition = frontStart
-                    .add(frontVector
-                            .normalize()
-                            .multiply(distance));
+        if (edges.size() == 1) {
+            // just let the train go from node 1 to node 2
+            Edge edge = edges.get(0);
+            Point2D pos1 = toPos(edge.getNode1());
+            Point2D vector = toPos(edge.getNode2()).subtract(pos1);
+            double edgeLength = vector.magnitude();
+            vector = vector.normalize();
 
-            elements.add(new MoveTo(startPosition.getX(), startPosition.getY()));
-            elements.add(new LineTo(commonPosition.getX(), commonPosition.getY()));
+            double backDistance = ((double) trainPosition.getBackDistance()) / edge.getLength() * edgeLength;
+            Point2D back = pos1.add(vector.multiply(backDistance));
+            elements.add(new MoveTo(back.getX(), back.getY()));
 
-            Point2D nextPosition = toPos(findNextNode(last, next));
-            elements.add(new LineTo(nextPosition.getX(), nextPosition.getY()));
-
-            last = next;
-            lastPosition = nextPosition;
+            double frontDistance = ((double) trainPosition.getFrontDistance()) / edge.getLength() * edgeLength;
+            Point2D front = pos1.add(vector.multiply(frontDistance));
+            elements.add(new LineTo(front.getX(), front.getY()));
         } else {
-            Point2D position = toPos(last.getNode1());
-            elements.add(new MoveTo(position.getX(), position.getY()));
+            // Look at the next edge to determine where the front is coming from
+            Iterator<Edge> iterator = edges.iterator();
+            Edge first = iterator.next();
+            Edge second = iterator.next();
+            Point2D start = toPos(findCommonNode(first, second));
+            Point2D end = toPos(findNextNode(second, first));
+            Point2D vector = end.subtract(start);
+            double edgeLength = vector.magnitude();
+            vector = vector.normalize();
 
-            position = toPos(last.getNode2());
-            elements.add(new LineTo(position.getX(), position.getY()));
-            lastPosition = position;
-        }
-
-        while (iterator.hasNext()) {
-            Edge current = iterator.next();
-            Node nextNode = findNextNode(last, current);
-            Point2D position = toPos(nextNode);
-
-            if (!iterator.hasNext()) {
-                Point2D backVector = position.subtract(lastPosition);
-                double backEdgeLength = backVector.magnitude();
-                double distance = (trainPosition.getBackDistance() / current.getLength()) * backEdgeLength;
-                position = lastPosition.add(backVector.normalize().multiply(distance));
+            double frontDistance = ((double) trainPosition.getFrontDistance()) / first.getLength() * edgeLength;
+            Point2D front = start.add(vector.multiply(frontDistance));
+            elements.add(new MoveTo(front.getX(), front.getY()));
+            if (!front.equals(start)) {
+                elements.add(new LineTo(start.getX(), start.getY()));
             }
 
-            elements.add(new LineTo(position.getX(), position.getY()));
-            last = current;
-            lastPosition = position;
+            Edge last = first;
+            Edge current = second;
+            while (iterator.hasNext()) {
+                // if there is a next edge, this edge can be fully covered
+                Edge nextEdge = iterator.next();
+                Point2D nextPos = toPos(findCommonNode(current, nextEdge));
+                elements.add(new LineTo(nextPos.getX(), nextPos.getY()));
+                last = current;
+                current = nextEdge;
+            }
+
+            // the last edge should not be fully covered
+            start = toPos(findCommonNode(last, current));
+            end = toPos(findNextNode(last, current));
+            vector = end.subtract(start);
+            edgeLength = vector.magnitude();
+            vector = vector.normalize();
+            double backDistance = ((double) trainPosition.getBackDistance()) / current.getLength() * edgeLength;
+            Point2D back = start.add(vector.multiply(backDistance));
+            elements.add(new LineTo(back.getX(), back.getY()));
         }
 
         path.getElements().addAll(elements);
@@ -148,14 +156,5 @@ public final class TrainView {
         } else {
             throw new IllegalArgumentException("no common node");
         }
-    }
-
-    private void addEdge(Path path, Edge edge) {
-        Point2D start = coordinatesTranslator.apply(edge.getNode1().getCoordinates());
-        Point2D end = coordinatesTranslator.apply(edge.getNode2().getCoordinates());
-        path.getElements().addAll(
-                new MoveTo(start.getX(), start.getY()),
-                new LineTo(end.getX(), end.getY())
-        );
     }
 }

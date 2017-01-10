@@ -25,6 +25,15 @@ final class TrainPosition implements Train.Position {
         this.frontDistance = frontDistance;
 
         int trainLength = train.getLength() - getFrontDistance();
+
+        if (trainLength <= 0) {
+            this.backDistance = Math.abs(trainLength);
+            Edge edge = edges.getFirst();
+            edges.clear();
+            edges.add(edge);
+            return;
+        }
+
         int backDistance = 0;
         Iterator<Edge> iterator = edges.listIterator(1);
         Edge edge;
