@@ -41,7 +41,6 @@ public class GraphParserTest {
         assertNotNull(context);
     }
 
-    @Ignore("Currently not parseable due to the unknown Element type 'GeschwindigkeitsVorAnzeiger'")
     @Test
     public void testLog6() throws IOException {
         Context context = new GraphParser("src/test/resources/test6.zug").parse();
