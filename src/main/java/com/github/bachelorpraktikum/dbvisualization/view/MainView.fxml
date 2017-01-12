@@ -47,7 +47,7 @@
     </left>
     <right>
         <StackPane fx:id="sidebar" maxWidth="240" style="-fx-background-color: #f4f4f4;">
-            <AnchorPane fx:id="detail" style="-fx-background-color: #ffffff;">
+            <AnchorPane fx:id="detail" style="-fx-background-color: #f4f4f4;">
                 <fx:include fx:id="detailBox" source="detail/ElementDetails.fxml"
                             AnchorPane.rightAnchor="0" AnchorPane.leftAnchor="0"
                             AnchorPane.topAnchor="0"/>
@@ -62,7 +62,7 @@
                     <ListView fx:id="elementList" style="-fx-padding: 1px;"/>
                 </center>
                 <top>
-                    <AnchorPane style="-fx-background-color: #ffffff">
+                    <AnchorPane style="-fx-background-color: #f4f4f4">
                         <TextField fx:id="filterText" promptText="%filter"
                                    AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
                                    AnchorPane.topAnchor="0.0"/>
