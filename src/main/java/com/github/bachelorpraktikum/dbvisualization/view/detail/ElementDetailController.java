@@ -37,6 +37,10 @@ public class ElementDetailController {
     private Label lengthValue;
 
     public void setDetail(ElementDetailBase detail) {
+        if (detail == null) {
+            return;
+        }
+
         this.detail = detail;
 
         trainBox.setVisible(detail.isTrain());
@@ -56,7 +60,9 @@ public class ElementDetailController {
     }
 
     public void setTime(int time) {
-        detail.setTime(time);
-        setDetail(detail);
+        if (detail != null) {
+            detail.setTime(time);
+            setDetail(detail);
+        }
     }
 }
