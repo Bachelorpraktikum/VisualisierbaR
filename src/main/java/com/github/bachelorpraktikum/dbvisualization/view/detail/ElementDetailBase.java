@@ -2,14 +2,19 @@ package com.github.bachelorpraktikum.dbvisualization.view.detail;
 
 import com.github.bachelorpraktikum.dbvisualization.model.Coordinates;
 
+import java.io.IOException;
 import java.net.URL;
+import java.util.List;
+
+import javafx.fxml.FXMLLoader;
+import javafx.scene.shape.Shape;
 
 public abstract class ElementDetailBase {
     private int time;
 
     abstract String getName();
 
-    abstract URL getImageURL();
+    abstract List<URL> getImageUrls();
 
     abstract Coordinates getCoordinates();
 
@@ -27,5 +32,25 @@ public abstract class ElementDetailBase {
 
     int getTime() {
         return time;
+    }
+
+    protected Shape getShape() {
+        try {
+            Shape shape = null;
+
+            for (URL url : getImageUrls()) {
+                FXMLLoader loader = new FXMLLoader(url);
+                if (shape == null) {
+                    shape = loader.load();
+                } else {
+                    shape = Shape.union(shape, loader.load());
+                }
+            }
+
+            return shape;
+        } catch (IOException e) {
+            e.printStackTrace();
+            throw new IllegalStateException(e);
+        }
     }
 }

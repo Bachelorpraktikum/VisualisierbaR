@@ -27,13 +27,8 @@ public class ElementDetail extends ElementDetailBase {
 
     @Override
     @Nullable
-    URL getImageURL() {
-        List<URL> imageUrls = element.getType().getImageUrls();
-        if (imageUrls.size() > 0) {
-            return null;
-        }
-
-        return imageUrls.get(0);
+    List<URL> getImageUrls() {
+        return element.getType().getImageUrls();
     }
 
     @Override

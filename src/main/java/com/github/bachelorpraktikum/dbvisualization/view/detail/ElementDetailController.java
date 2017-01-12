@@ -3,10 +3,12 @@ package com.github.bachelorpraktikum.dbvisualization.view.detail;
 import com.github.bachelorpraktikum.dbvisualization.model.train.Train;
 
 import javafx.fxml.FXML;
+import javafx.geometry.Bounds;
+import javafx.scene.Group;
 import javafx.scene.chart.LineChart;
 import javafx.scene.control.Label;
-import javafx.scene.image.ImageView;
 import javafx.scene.layout.VBox;
+import javafx.scene.shape.Shape;
 
 public class ElementDetailController {
     @FXML
@@ -18,7 +20,7 @@ public class ElementDetailController {
     @FXML
     private Label elementName;
     @FXML
-    private ImageView elementImage;
+    private Group elementImage;
     @FXML
     private Label coordinateValue;
     @FXML
@@ -47,7 +49,11 @@ public class ElementDetailController {
         elementBox.setVisible(!detail.isTrain());
 
         elementName.textProperty().setValue(detail.getName());
-        // elementImage.setImage(new Image(detail.getImageURL().toExternalForm()));
+        // elementImage.setImage(new Image(detail.getImageUrls().toExternalForm()));
+        Shape shape = detail.getShape();
+        resizeShape(shape, 20);
+
+        elementImage.getChildren().add(shape);
         coordinateValue.textProperty().setValue(String.valueOf(detail.getCoordinatesString()));
 
         if (detail.isTrain()) {
@@ -57,6 +63,14 @@ public class ElementDetailController {
         } else {
             stateValue.textProperty().setValue(String.valueOf(((ElementDetail) detail).getState()));
         }
+    }
+
+    private void resizeShape(Shape shape, double max) {
+        Bounds shapeBounds = shape.getBoundsInParent();
+        double maxShape = Math.max(shapeBounds.getWidth(), shapeBounds.getHeight());
+        double factor = max / maxShape;
+        shape.setScaleX(shape.getScaleX() * factor);
+        shape.setScaleY(shape.getScaleY() * factor);
     }
 
     public void setTime(int time) {
