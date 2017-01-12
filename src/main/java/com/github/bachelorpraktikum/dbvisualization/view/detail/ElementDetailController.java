@@ -14,23 +14,26 @@ import javafx.scene.layout.VBox;
 
 public class ElementDetailController {
     @FXML
-    public VBox detailBox;
+    private VBox detailBox;
     @FXML
-    public Label elementName;
+    private Label elementName;
     @FXML
-    public ImageView elementImage;
+    private ImageView elementImage;
     @FXML
-    public Label coordinateValue;
+    private Label coordinateValue;
     @FXML
-    public Label custom;
+    private LineChart vt_chart;
     @FXML
-    public Label customValue;
+    private LineChart vd_chart;
     @FXML
-    public LineChart vt_chart;
+    private LineChart dt_chart;
     @FXML
-    public LineChart vd_chart;
+    private VBox trainBox;
     @FXML
-    public LineChart dt_chart;
+    private Label speedValue;
+    private Train train;
+    @FXML
+    private Label lengthValue;
 
     void setElement(Element e, int time) {
         elementName.textProperty().setValue(e.getType().getName());
