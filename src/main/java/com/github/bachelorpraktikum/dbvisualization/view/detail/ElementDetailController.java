@@ -1,7 +1,5 @@
 package com.github.bachelorpraktikum.dbvisualization.view.detail;
 
-import com.github.bachelorpraktikum.dbvisualization.model.train.Train;
-
 import javafx.fxml.FXML;
 import javafx.geometry.Bounds;
 import javafx.scene.Group;
@@ -15,8 +13,6 @@ public class ElementDetailController {
     private VBox elementBox;
     @FXML
     private Label stateValue;
-    @FXML
-    private VBox detailBox;
     @FXML
     private Label elementName;
     @FXML
@@ -33,7 +29,6 @@ public class ElementDetailController {
     private VBox trainBox;
     @FXML
     private Label speedValue;
-    private Train train;
     private ElementDetailBase detail;
     @FXML
     private Label lengthValue;
