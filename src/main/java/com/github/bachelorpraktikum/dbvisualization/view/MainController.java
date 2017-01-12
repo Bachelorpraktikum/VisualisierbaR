@@ -207,13 +207,8 @@ public class MainController {
                     newTime = Integer.MAX_VALUE;
                 }
             }
-            int closestValue = closest(newTime, logList.getItems().parallelStream().map(Event::getTime).collect(Collectors.toList()));
 
-            FilteredList l = logList.getItems().filtered(event -> event.getTime() == closestValue);
-            Event event = (Event) l.get(0);
-            logList.getSelectionModel().select(event);
-            logList.scrollTo(event);
-
+            simulationTime.set(newTime);
             manualInput = false;
         });
 
@@ -296,22 +291,6 @@ public class MainController {
                 simulation.stop();
             }
         });
-    }
-
-    private int closest(int of, List<Integer> in) {
-        int min = Integer.MAX_VALUE;
-        int closest = of;
-
-        for (int v : in) {
-            final int diff = Math.abs(v - of);
-
-            if (diff < min) {
-                min = diff;
-                closest = v;
-            }
-        }
-
-        return closest;
     }
 
     private int getMsFromString(String timeString) {
