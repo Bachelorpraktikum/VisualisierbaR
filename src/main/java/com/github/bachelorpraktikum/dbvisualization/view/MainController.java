@@ -203,9 +203,13 @@ public class MainController {
             public ListCell<Event> call(ListView<Event> param) {
                 ListCell<Event> result = factory.call(param);
                 result.itemProperty().addListener(((observable, oldValue, newValue) -> {
-                    if (newValue != null && !newValue.getWarnings().isEmpty()) {
-                        result.setBackground(
-                                new Background(new BackgroundFill(Color.YELLOW, null, null)));
+                    if (newValue != null) {
+                        if (newValue.getWarnings().isEmpty()) {
+                            result.setBackground(null);
+                        } else {
+                            result.setBackground(
+                                    new Background(new BackgroundFill(Color.YELLOW, null, null)));
+                        }
                     }
                 }));
 
