@@ -1,6 +1,9 @@
 package com.github.bachelorpraktikum.dbvisualization.view;
 
 import com.github.bachelorpraktikum.dbvisualization.model.Element;
+import com.github.bachelorpraktikum.dbvisualization.model.train.Train;
+
+import java.net.URL;
 
 import javafx.fxml.FXML;
 import javafx.scene.chart.LineChart;
@@ -29,15 +32,26 @@ public class ElementDetailController {
     @FXML
     public LineChart dt_chart;
 
-    void setElement(Element e) {
-        elementName.textProperty().setValue(e.getName());
+    void setElement(Element e, int time) {
+        elementName.textProperty().setValue(e.getType().getName());
 
         try {
-            Image image = new Image(e.getType().getImageUrls().get(0).getPath());
+            String path = e.getType().getImageUrls().get(0).toExternalForm().replace("fxml", "png");
+            Image image = new Image(path);
+            System.out.println(path);
             elementImage.setImage(image);
         } catch (IndexOutOfBoundsException ignored) {
 
         }
         coordinateValue.textProperty().setValue(e.getNode().getCoordinates().toString());
+    }
+
+    void setTrain(Train t, int time) {
+        elementName.textProperty().setValue(t.getReadableName());
+        URL path = t.getClass().getResource(String.format("symbols/%s.png", "train"));
+        Image image = new Image(path.toExternalForm());
+        elementImage.setImage(image);
+
+        t.getState(0);
     }
 }
