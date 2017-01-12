@@ -12,6 +12,7 @@ import javafx.beans.property.Property;
 import javafx.beans.property.ReadOnlyProperty;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
@@ -114,8 +115,21 @@ public class ElementTest {
     public void testAddEventNegativeTime() {
         Element element = createElement();
 
-        expected.expect(IllegalArgumentException.class);
+        // Should get corrected to time 0
         element.addEvent(Element.State.FAHRT, -1);
+        boolean hasZeroTime = false;
+        boolean zeroTimeHasWarnings = false;
+        for (Event event : Element.in(context).getEvents()) {
+            assertFalse(event.getTime() < 0);
+            if (event.getTime() == 0) {
+                hasZeroTime = true;
+                if (!event.getWarnings().isEmpty()) {
+                    zeroTimeHasWarnings = true;
+                }
+            }
+        }
+        assertTrue(hasZeroTime);
+        assertTrue(zeroTimeHasWarnings);
     }
 
     @Test
@@ -123,8 +137,11 @@ public class ElementTest {
         Element element = createElement();
         element.addEvent(Element.State.FAHRT, 10);
 
-        expected.expect(IllegalStateException.class);
+        // Expected to be added at time 10 with warning
         element.addEvent(Element.State.STOP, 9);
+        Event event = Element.in(context).getEvents().get(1);
+        assertEquals(10, event.getTime());
+        assertFalse(event.getWarnings().isEmpty());
     }
 
     @Test

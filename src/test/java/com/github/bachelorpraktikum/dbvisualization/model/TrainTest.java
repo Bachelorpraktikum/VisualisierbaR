@@ -9,6 +9,7 @@ import org.junit.rules.ExpectedException;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
@@ -384,8 +385,8 @@ public class TrainTest {
         Edge edge = createEdges(50)[0];
         train.eventFactory().init(edge);
         train.eventFactory().terminate(5, 0);
-        expected.expect(IllegalStateException.class);
         train.eventFactory().speed(10, 10, 10);
+        assertFalse(train.getEvents().get(train.getEvents().size() - 1).getWarnings().isEmpty());
     }
 
     @Test
@@ -394,8 +395,8 @@ public class TrainTest {
         Edge edge = createEdges(50)[0];
         train.eventFactory().init(edge);
         train.eventFactory().terminate(5, 0);
-        expected.expect(IllegalStateException.class);
         train.eventFactory().reach(10, edge, 10);
+        assertFalse(train.getEvents().get(train.getEvents().size() - 1).getWarnings().isEmpty());
     }
 
     @Test
@@ -404,8 +405,8 @@ public class TrainTest {
         Edge edge = createEdges(50)[0];
         train.eventFactory().init(edge);
         train.eventFactory().terminate(5, 0);
-        expected.expect(IllegalStateException.class);
         train.eventFactory().leave(10, edge, 10);
+        assertFalse(train.getEvents().get(train.getEvents().size() - 1).getWarnings().isEmpty());
     }
 
     @Test
@@ -414,8 +415,8 @@ public class TrainTest {
         Edge edge = createEdges(50)[0];
         train.eventFactory().init(edge);
         train.eventFactory().terminate(5, 0);
-        expected.expect(IllegalStateException.class);
         train.eventFactory().terminate(10, 10);
+        assertFalse(train.getEvents().get(train.getEvents().size() - 1).getWarnings().isEmpty());
     }
 
     @Test
@@ -424,7 +425,10 @@ public class TrainTest {
         Edge edge = createEdges(50)[0];
         train.eventFactory().init(edge);
         train.eventFactory().speed(10, 10, 20);
-        expected.expect(IllegalStateException.class);
         train.eventFactory().speed(5, 10, 10);
+        Event event = train.getEvents().get(2);
+        assertFalse(event.getWarnings().isEmpty());
+        assertEquals(10, event.getTime());
+        assertEquals(train.getEvents().get(1).getTime(), event.getTime());
     }
 }
