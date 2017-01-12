@@ -80,6 +80,7 @@ public class FileChooserController implements SourceChooser {
         }
 
         pathField.setText(file.getAbsolutePath());
+        ((Button) rootPane.getScene().lookup("#openSource")).fire();
     }
 
     /**

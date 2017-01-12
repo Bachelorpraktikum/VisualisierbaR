@@ -1,4 +1,4 @@
-package com.github.bachelorpraktikum.dbvisualization.view;
+package com.github.bachelorpraktikum.dbvisualization.view.detail;
 
 import com.github.bachelorpraktikum.dbvisualization.model.Element;
 import com.github.bachelorpraktikum.dbvisualization.model.train.Train;
@@ -35,26 +35,39 @@ public class ElementDetailController {
     @FXML
     private Label lengthValue;
 
-    void setElement(Element e, int time) {
+    public void setElement(Element e) {
+        trainBox.setVisible(false);
         elementName.textProperty().setValue(e.getType().getName());
 
         try {
             String path = e.getType().getImageUrls().get(0).toExternalForm().replace("fxml", "png");
             Image image = new Image(path);
-            System.out.println(path);
             elementImage.setImage(image);
         } catch (IndexOutOfBoundsException ignored) {
 
         }
         coordinateValue.textProperty().setValue(e.getNode().getCoordinates().toString());
+        train = null;
     }
 
-    void setTrain(Train t, int time) {
-        elementName.textProperty().setValue(t.getReadableName());
-        URL path = t.getClass().getResource(String.format("symbols/%s.png", "train"));
+    public void setTrain(Train train, int time) {
+        // trainBox.setVisible(true);
+        elementName.textProperty().setValue(train.getReadableName());
+        URL path = Train.class.getResource(String.format("../symbols/%s.png", "train"));
         Image image = new Image(path.toExternalForm());
         elementImage.setImage(image);
 
-        t.getState(0);
+        Train.State s = train.getState(time);
+        coordinateValue.textProperty().setValue(String.valueOf(train.getState(time).getPosition().getFrontEdge().getNode1().getCoordinates()));
+        lengthValue.textProperty().setValue(String.format("%dm", train.getLength()));
+        speedValue.textProperty().setValue(train.getName());
+        speedValue.textProperty().setValue(String.format("%dkm/h", s.getSpeed()));
+        this.train = train;
+    }
+
+    public void setTime(int time) {
+        if (train != null) {
+            setTrain(train, time);
+        }
     }
 }
