@@ -207,6 +207,11 @@ public class MainController {
 
             simulationTime.set(newTime);
         });
+        timeText.focusedProperty().addListener((observable, oldValue, newValue) -> {
+            if(!newValue) {
+                timeText.setText(simulationTime.get() + "ms");
+            }
+        });
 
         ChangeListener<Number> boundsListener = (observable, oldValue, newValue) -> {
             if (ContextHolder.getInstance().hasContext()) {
