@@ -172,15 +172,7 @@ public class MainController {
             } else
                 legend.toBack();
         });
-        closeDetailButton.setOnAction(event -> {
-            // TODO
-            detail.toBack();
-            // detail.setVisible(false);
-            // detailBox.setVisible(false);
-            detailBox.toBack();
-            legendButton.fire();
-            legendButton.fire();
-        });
+        closeDetailButton.setOnAction(event -> hideDetailView());
 
         // Hide logList by default
         rootPane.setLeft(null);
@@ -217,12 +209,7 @@ public class MainController {
             if (!autoChange) {
                 simulationTime.set(newValue.getTime());
             }
-
-            // ElementDetail
             Element.in(ContextHolder.getInstance().getContext()).setTime(newValue.getTime());
-            time = newValue.getTime();
-            timeText.setText(String.format("%dms", time));
-            updateDetailView(time);
         });
 
         timeText.setOnAction(event -> {
@@ -307,6 +294,9 @@ public class MainController {
                 Context context = ContextHolder.getInstance().getContext();
                 timeText.setText(String.format("%dms", newValue.intValue()));
                 Element.in(context).setTime(newValue.intValue());
+                selectClosestLogEntry(newValue.intValue());
+
+                updateDetailView(newValue.intValue());
             }
         });
 
@@ -329,7 +319,6 @@ public class MainController {
             timeText.setDisable(newValue);
         });
 
-        // ElementDetail
         elementList.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
             Context context = ContextHolder.getInstance().getContext();
             ElementDetailBase detail;
@@ -400,6 +389,11 @@ public class MainController {
         detail.toFront();
         legend.toBack();
         elementList.toBack();
+    }
+
+    private void hideDetailView() {
+        detail.toBack();
+        elementList.toFront();
     }
 
     private void updateDetailView(int time) {
