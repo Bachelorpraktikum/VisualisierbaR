@@ -14,7 +14,6 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.StackPane?>
-<?import javafx.scene.layout.VBox?>
 <BorderPane fx:id="rootPane" prefHeight="600" prefWidth="800"
             xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="com.github.bachelorpraktikum.dbvisualization.view.MainController">
@@ -48,16 +47,19 @@
     </left>
     <right>
         <StackPane fx:id="sidebar" maxWidth="240" style="-fx-background-color: #f4f4f4;">
-            <VBox fx:id="detailBox" style="-fx-background-color: #ffffff;">
-                <fx:include fx:id="detailView" source="ElementDetails.fxml"/>
-            </VBox>
+            <AnchorPane fx:id="detail" style="-fx-background-color: #ffffff;">
+                <fx:include fx:id="detailBox" source="detail/ElementDetails.fxml"
+                            AnchorPane.rightAnchor="0" AnchorPane.leftAnchor="0"
+                            AnchorPane.topAnchor="0"/>
+                <Button fx:id="closeDetailButton" text="%close_detail" AnchorPane.rightAnchor="5"
+                        AnchorPane.bottomAnchor="5"/>
+            </AnchorPane>
             <ListView fx:id="legend" fixedCellSize="0.0" style="-fx-background-color: #ccc;">
                 <Label text="Legend goes here."/>
             </ListView>
             <BorderPane>
                 <center>
-                    <ListView fx:id="elementList" style="-fx-padding: 1px;">
-                    </ListView>
+                    <ListView fx:id="elementList" style="-fx-padding: 1px;"/>
                 </center>
                 <top>
                     <AnchorPane>
