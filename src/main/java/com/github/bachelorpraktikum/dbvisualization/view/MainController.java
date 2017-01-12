@@ -204,9 +204,7 @@ public class MainController {
                 }
             }
 
-            autoChange = true;
             simulationTime.set(newTime);
-            autoChange = false;
         });
 
         ChangeListener<Number> boundsListener = (observable, oldValue, newValue) -> {
@@ -268,6 +266,7 @@ public class MainController {
                 Context context = ContextHolder.getInstance().getContext();
                 timeText.setText(String.format("%dms", newValue.intValue()));
                 Element.in(context).setTime(newValue.intValue());
+                selectClosestLogEntry(newValue.intValue());
             }
         });
 
@@ -288,6 +287,25 @@ public class MainController {
                 simulation.stop();
             }
         });
+    }
+
+    private void selectClosestLogEntry(int time) {
+        autoChange = true;
+
+        Event last = null;
+        for (Event event : logList.getItems()) {
+            if (event.getTime() > time) {
+                break;
+            }
+            last = event;
+        }
+        if (last == null) {
+            last = logList.getItems().get(0);
+        }
+        logList.getSelectionModel().select(last);
+        logList.scrollTo(last);
+
+        autoChange = false;
     }
 
     private int getMsFromString(String timeString) {
