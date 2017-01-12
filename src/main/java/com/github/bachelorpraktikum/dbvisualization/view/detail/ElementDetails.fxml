@@ -11,18 +11,14 @@
       xmlns:fx="http://javafx.com/fxml/1"
       fx:controller="com.github.bachelorpraktikum.dbvisualization.view.detail.ElementDetailController">
     <AnchorPane>
-        <Label fx:id="elementName" AnchorPane.leftAnchor="0">
-            ElementName
-        </Label>
+        <Label fx:id="elementName" AnchorPane.leftAnchor="0"/>
         <Group fx:id="elementImage" AnchorPane.rightAnchor="0" AnchorPane.topAnchor="0"/>
         <VBox.margin>
             <Insets bottom="3" left="10" right="10" top="3"/>
         </VBox.margin>
     </AnchorPane>
     <AnchorPane>
-        <Label AnchorPane.leftAnchor="0">
-            Coordinate
-        </Label>
+        <Label AnchorPane.leftAnchor="0" text="%coordinate"/>
         <Label fx:id="coordinateValue" AnchorPane.rightAnchor="0"/>
         <VBox.margin>
             <Insets bottom="3" left="10" right="10" top="3"/>
@@ -30,9 +26,7 @@
     </AnchorPane>
     <VBox fx:id="elementBox">
         <AnchorPane>
-            <Label AnchorPane.leftAnchor="0">
-                State
-            </Label>
+            <Label AnchorPane.leftAnchor="0" text="%state"/>
             <Label fx:id="stateValue" AnchorPane.rightAnchor="0"/>
             <VBox.margin>
                 <Insets bottom="3" left="10" right="10" top="3"/>
@@ -41,18 +35,14 @@
     </VBox>
     <VBox fx:id="trainBox">
         <AnchorPane>
-            <Label AnchorPane.leftAnchor="0">
-                Speed
-            </Label>
+            <Label AnchorPane.leftAnchor="0" text="%speed"/>
             <Label fx:id="speedValue" AnchorPane.rightAnchor="0"/>
             <VBox.margin>
                 <Insets bottom="3" left="10" right="10" top="3"/>
             </VBox.margin>
         </AnchorPane>
         <AnchorPane>
-            <Label AnchorPane.leftAnchor="0">
-                Length
-            </Label>
+            <Label AnchorPane.leftAnchor="0" text="%length"/>
             <Label fx:id="lengthValue" AnchorPane.rightAnchor="0"/>
             <VBox.margin>
                 <Insets bottom="3" left="10" right="10" top="3"/>
