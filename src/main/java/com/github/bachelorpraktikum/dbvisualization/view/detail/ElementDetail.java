@@ -47,7 +47,6 @@ public class ElementDetail extends ElementDetailBase {
     }
 
     Element.State getState() {
-        System.out.println(element.getState());
         return element.getState();
     }
 }
