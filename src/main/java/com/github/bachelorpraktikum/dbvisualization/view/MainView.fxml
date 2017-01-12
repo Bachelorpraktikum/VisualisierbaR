@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
+<?import javafx.scene.chart.LineChart?>
+<?import javafx.scene.chart.NumberAxis?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.Label?>
@@ -8,19 +10,19 @@
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.ToggleButton?>
 <?import javafx.scene.control.ToolBar?>
+<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.FlowPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
 <BorderPane fx:id="rootPane" prefHeight="600" prefWidth="800"
-            xmlns="http://javafx.com/javafx/8.0.60" xmlns:fx="http://javafx.com/fxml/1"
+            xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="com.github.bachelorpraktikum.dbvisualization.view.MainController">
     <center>
-        <Pane fx:id="centerPane">
-
-        </Pane>
+        <Pane fx:id="centerPane"/>
     </center>
     <top>
         <StackPane>
@@ -49,8 +51,72 @@
     </left>
     <right>
         <StackPane fx:id="sidebar" maxWidth="240" style="-fx-background-color: #f4f4f4;">
-            <ListView fx:id="legend" fixedCellSize="0.0" style="-fx-background-color: #ccc;"
-                      visible="false">
+            <VBox fx:id="detailBox" style="-fx-background-color: #ffffff;">
+                <AnchorPane>
+                    <Label id="elementName" AnchorPane.leftAnchor="0">
+                        ElementName
+                    </Label>
+                    <ImageView id="elementImage" AnchorPane.rightAnchor="0"/>
+                    <VBox.margin>
+                        <Insets bottom="3" left="10" right="10" top="3"/>
+                    </VBox.margin>
+                </AnchorPane>
+                <AnchorPane>
+                    <Label AnchorPane.leftAnchor="0">
+                        Coordinate
+                    </Label>
+                    <Label id="coordinateValue" AnchorPane.rightAnchor="0"/>
+                    <VBox.margin>
+                        <Insets bottom="3" left="10" right="10" top="3"/>
+                    </VBox.margin>
+                </AnchorPane>
+                <AnchorPane>
+                    <Label AnchorPane.leftAnchor="0">
+                        Time
+                    </Label>
+                    <Label text="timeValue" AnchorPane.rightAnchor="0"/>
+                    <VBox.margin>
+                        <Insets bottom="3" left="10" right="10" top="3"/>
+                    </VBox.margin>
+                </AnchorPane>
+                <AnchorPane>
+                    <Label id="custom" AnchorPane.leftAnchor="0">
+                        Custom
+                    </Label>
+                    <Label id="customValue" AnchorPane.rightAnchor="0"/>
+                    <VBox.margin>
+                        <Insets bottom="3" left="10" right="10" top="3"/>
+                    </VBox.margin>
+                </AnchorPane>
+                <LineChart fx:id="vt_chart" createSymbols="false"
+                           legendVisible="false" prefHeight="0.0" prefWidth="0.0" title="%title_vt">
+                    <xAxis>
+                        <NumberAxis side="BOTTOM"/>
+                    </xAxis>
+                    <yAxis>
+                        <NumberAxis side="LEFT"/>
+                    </yAxis>
+                </LineChart>
+                <LineChart fx:id="vd_chart" createSymbols="false"
+                           legendVisible="false" prefHeight="0.0" prefWidth="0.0" title="%title_vd">
+                    <xAxis>
+                        <NumberAxis side="BOTTOM"/>
+                    </xAxis>
+                    <yAxis>
+                        <NumberAxis side="LEFT"/>
+                    </yAxis>
+                </LineChart>
+                <LineChart fx:id="dt_chart" createSymbols="false"
+                           legendVisible="false" prefHeight="0.0" prefWidth="0.0" title="%title_dt">
+                    <xAxis>
+                        <NumberAxis side="BOTTOM"/>
+                    </xAxis>
+                    <yAxis>
+                        <NumberAxis side="LEFT"/>
+                    </yAxis>
+                </LineChart>
+            </VBox>
+            <ListView fx:id="legend" fixedCellSize="0.0" style="-fx-background-color: #ccc;">
                 <Label text="Legend goes here."/>
             </ListView>
             <BorderPane>
