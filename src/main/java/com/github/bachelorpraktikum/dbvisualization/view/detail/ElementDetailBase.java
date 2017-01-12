@@ -13,6 +13,8 @@ abstract class ElementDetailBase {
 
     abstract Coordinates getCoordinates();
 
+    abstract boolean isTrain();
+
     void setTime(int time) {
         this.time = time;
     }

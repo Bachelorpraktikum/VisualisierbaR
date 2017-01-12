@@ -39,4 +39,9 @@ public class ElementDetail extends ElementDetailBase {
     Coordinates getCoordinates() {
         return element.getNode().getCoordinates();
     }
+
+    @Override
+    boolean isTrain() {
+        return false;
+    }
 }

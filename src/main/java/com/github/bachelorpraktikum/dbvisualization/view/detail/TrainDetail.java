@@ -28,6 +28,11 @@ public class TrainDetail extends ElementDetailBase {
         return getState().getPosition().getFrontEdge().getNode1().getCoordinates();
     }
 
+    @Override
+    boolean isTrain() {
+        return true;
+    }
+
     Train.State getState() {
         return train.getState(getTime());
     }
