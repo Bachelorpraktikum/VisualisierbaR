@@ -1,32 +1,67 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
+<?import javafx.scene.chart.LineChart?>
+<?import javafx.scene.chart.NumberAxis?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.image.ImageView?>
-<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.VBox?>
-<VBox fx:id="detailBox" style="-fx-background-color: #ffffff;"
-      xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1">
-    <Label id="elementTitle">
-        ElementName
-        <VBox.margin>
-            <Insets bottom="3" left="3" right="3" top="3"/>
-        </VBox.margin>
-    </Label>
-    <ImageView id="elementImage">
-        <VBox.margin>
-            <Insets bottom="3" left="3" right="3" top="3"/>
-        </VBox.margin>
-    </ImageView>
-    <HBox>
-        <Label>
-            Label1
+<VBox fx:id="detailBox" prefHeight="600" xmlns="http://javafx.com/javafx/8.0.111"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.github.bachelorpraktikum.dbvisualization.view.ElementDetailController">
+    <AnchorPane>
+        <Label fx:id="elementName" AnchorPane.leftAnchor="0">
+            ElementName
         </Label>
-        <Label>
-            Label2
-        </Label>
+        <ImageView fx:id="elementImage" AnchorPane.rightAnchor="0"/>
         <VBox.margin>
-            <Insets bottom="3" left="3" right="3" top="3"/>
+            <Insets bottom="3" left="10" right="10" top="3"/>
         </VBox.margin>
-    </HBox>
+    </AnchorPane>
+    <AnchorPane>
+        <Label AnchorPane.leftAnchor="0">
+            Coordinate
+        </Label>
+        <Label fx:id="coordinateValue" AnchorPane.rightAnchor="0"/>
+        <VBox.margin>
+            <Insets bottom="3" left="10" right="10" top="3"/>
+        </VBox.margin>
+    </AnchorPane>
+    <AnchorPane>
+        <Label fx:id="custom" AnchorPane.leftAnchor="0">
+            Custom
+        </Label>
+        <Label fx:id="customValue" AnchorPane.rightAnchor="0"/>
+        <VBox.margin>
+            <Insets bottom="3" left="10" right="10" top="3"/>
+        </VBox.margin>
+    </AnchorPane>
+    <LineChart fx:id="vt_chart" createSymbols="false"
+               legendVisible="false" prefHeight="0.0" prefWidth="0.0" title="%title_vt">
+        <xAxis>
+            <NumberAxis side="BOTTOM"/>
+        </xAxis>
+        <yAxis>
+            <NumberAxis side="LEFT"/>
+        </yAxis>
+    </LineChart>
+    <LineChart fx:id="vd_chart" createSymbols="false"
+               legendVisible="false" prefHeight="0.0" prefWidth="0.0" title="%title_vd">
+        <xAxis>
+            <NumberAxis side="BOTTOM"/>
+        </xAxis>
+        <yAxis>
+            <NumberAxis side="LEFT"/>
+        </yAxis>
+    </LineChart>
+    <LineChart fx:id="dt_chart" createSymbols="false"
+               legendVisible="false" prefHeight="0.0" prefWidth="0.0" title="%title_dt">
+        <xAxis>
+            <NumberAxis side="BOTTOM"/>
+        </xAxis>
+        <yAxis>
+            <NumberAxis side="LEFT"/>
+        </yAxis>
+    </LineChart>
 </VBox>
