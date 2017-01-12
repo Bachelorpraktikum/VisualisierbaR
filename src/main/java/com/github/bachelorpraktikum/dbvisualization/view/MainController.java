@@ -122,7 +122,7 @@ public class MainController {
     private double mousePressedX = -1;
     private double mousePressedY = -1;
 
-    private boolean manualInput = false;
+    private boolean autoChange = false;
     private Pattern timePattern;
 
     private Map<GraphObject<?>, ObservableValue<LegendItem.State>> legendStates;
@@ -186,30 +186,27 @@ public class MainController {
 
         logList.setCellFactory(listCellFactory);
         logList.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
-            if (!manualInput) {
+            if (!autoChange) {
                 simulationTime.set(newValue.getTime());
-                timeText.setText(String.format("%dms", newValue.getTime()));
             }
         });
 
-        timeText.setOnKeyPressed(event -> manualInput = true);
-        timeText.textProperty().addListener((observable, oldValue, newValue) -> {
-            if (!manualInput) {
-                return;
-            }
-            Matcher timeMatch = timePattern.matcher(newValue);
+        timeText.setOnAction(event -> {
+            String text = timeText.getText();
+            Matcher timeMatch = timePattern.matcher(text);
             int newTime = 0;
 
             if (timeMatch.find()) {
                 try {
-                    newTime = getMsFromString(newValue);
+                    newTime = getMsFromString(text);
                 } catch (NumberFormatException e) {
                     newTime = Integer.MAX_VALUE;
                 }
             }
 
+            autoChange = true;
             simulationTime.set(newTime);
-            manualInput = false;
+            autoChange = false;
         });
 
         ChangeListener<Number> boundsListener = (observable, oldValue, newValue) -> {
