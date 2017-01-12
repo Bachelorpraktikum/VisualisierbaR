@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<VBox fx:id="detailBox" style="-fx-background-color: #ffffff;"
+      xmlns="http://javafx.com/javafx/8.0.112" xmlns:fx="http://javafx.com/fxml/1">
+    <Label id="elementTitle">
+        ElementName
+        <VBox.margin>
+            <Insets bottom="3" left="3" right="3" top="3"/>
+        </VBox.margin>
+    </Label>
+    <ImageView id="elementImage">
+        <VBox.margin>
+            <Insets bottom="3" left="3" right="3" top="3"/>
+        </VBox.margin>
+    </ImageView>
+    <HBox>
+        <Label>
+            Label1
+        </Label>
+        <Label>
+            Label2
+        </Label>
+        <VBox.margin>
+            <Insets bottom="3" left="3" right="3" top="3"/>
+        </VBox.margin>
+    </HBox>
+</VBox>
