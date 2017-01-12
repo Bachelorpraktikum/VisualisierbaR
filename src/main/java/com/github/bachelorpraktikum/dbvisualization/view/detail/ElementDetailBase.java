@@ -7,6 +7,7 @@ import java.net.URL;
 import java.util.List;
 
 import javafx.fxml.FXMLLoader;
+import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.Shape;
 
 public abstract class ElementDetailBase {
@@ -50,7 +51,8 @@ public abstract class ElementDetailBase {
             return shape;
         } catch (IOException e) {
             e.printStackTrace();
-            throw new IllegalStateException(e);
+            return new Rectangle(20, 20);
+            // throw new IllegalStateException(e);
         }
     }
 }
