@@ -287,6 +287,7 @@ public class MainController {
             } else {
                 simulation.stop();
             }
+            timeText.setDisable(newValue);
         });
     }
 
