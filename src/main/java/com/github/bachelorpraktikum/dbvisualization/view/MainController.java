@@ -131,8 +131,8 @@ public class MainController {
         HBox.setHgrow(rightSpacer, Priority.ALWAYS);
         this.listeners = new WeakHashMap<>();
         this.legendStates = new HashMap<>(256);
-        this.simulation = new Timeline(new KeyFrame(Duration.millis(200), event -> {
-            simulationTime.set((int) (simulationTime.get() + (velocity.get() * 0.2)));
+        this.simulation = new Timeline(new KeyFrame(Duration.millis(50), event -> {
+            simulationTime.set((int) (simulationTime.get() + (velocity.get() * 0.05)));
         }));
         simulation.setCycleCount(Animation.INDEFINITE);
         fireOnEnterPress(closeButton);
