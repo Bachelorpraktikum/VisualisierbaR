@@ -7,7 +7,10 @@ import com.github.bachelorpraktikum.dbvisualization.model.Context;
 import com.github.bachelorpraktikum.dbvisualization.model.Element;
 import com.github.bachelorpraktikum.dbvisualization.model.Event;
 import com.github.bachelorpraktikum.dbvisualization.model.train.Train;
+import com.github.bachelorpraktikum.dbvisualization.view.detail.ElementDetail;
+import com.github.bachelorpraktikum.dbvisualization.view.detail.ElementDetailBase;
 import com.github.bachelorpraktikum.dbvisualization.view.detail.ElementDetailController;
+import com.github.bachelorpraktikum.dbvisualization.view.detail.TrainDetail;
 import com.github.bachelorpraktikum.dbvisualization.view.graph.Graph;
 import com.github.bachelorpraktikum.dbvisualization.view.graph.adapter.SimpleCoordinatesAdapter;
 import com.github.bachelorpraktikum.dbvisualization.view.legend.LegendItem;
@@ -329,17 +332,15 @@ public class MainController {
         // ElementDetail
         elementList.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
             Context context = ContextHolder.getInstance().getContext();
-            Element element;
-            Train train;
+            ElementDetailBase detail;
             try {
-                element = Element.in(context).get(newValue);
-                detailBoxController.setElement(element);
+                detail = new ElementDetail(Element.in(context).get(newValue));
             } catch (IllegalArgumentException ignored) {
-                train = Train.in(context).getByReadable(newValue);
-                detailBoxController.setTrain(train, getCurrentTime());
+                detail = new TrainDetail(Train.in(context).getByReadable(newValue));
             }
 
             showDetailView();
+            detailBoxController.setDetail(detail);
         });
     }
 

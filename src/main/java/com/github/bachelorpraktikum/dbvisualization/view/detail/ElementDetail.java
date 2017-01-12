@@ -11,7 +11,7 @@ import javax.annotation.Nullable;
 public class ElementDetail extends ElementDetailBase {
     private Element element;
 
-    ElementDetail(Element element) {
+    public ElementDetail(Element element) {
         this.element = element;
     }
 

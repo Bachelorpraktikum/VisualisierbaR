@@ -4,7 +4,7 @@ import com.github.bachelorpraktikum.dbvisualization.model.Coordinates;
 
 import java.net.URL;
 
-abstract class ElementDetailBase {
+public abstract class ElementDetailBase {
     private int time;
 
     abstract String getName();
@@ -12,6 +12,12 @@ abstract class ElementDetailBase {
     abstract URL getImageURL();
 
     abstract Coordinates getCoordinates();
+
+    String getCoordinatesString() {
+        Coordinates coord = getCoordinates();
+
+        return String.format("x: %d | y: %d", coord.getX(), coord.getY());
+    }
 
     abstract boolean isTrain();
 
