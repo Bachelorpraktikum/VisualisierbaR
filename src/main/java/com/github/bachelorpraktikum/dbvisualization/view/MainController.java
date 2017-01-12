@@ -32,6 +32,10 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import javafx.scene.control.Tooltip;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundFill;
+import javafx.scene.paint.Color;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
@@ -198,7 +202,21 @@ public class MainController {
             @Override
             public ListCell<Event> call(ListView<Event> param) {
                 ListCell<Event> result = factory.call(param);
-                TooltipUtil.install(result, result::getText);
+                result.itemProperty().addListener(((observable, oldValue, newValue) -> {
+                    if (newValue != null && !newValue.getWarnings().isEmpty()) {
+                        result.setBackground(
+                                new Background(new BackgroundFill(Color.YELLOW, null, null)));
+                    }
+                }));
+
+                TooltipUtil.install(result, () -> {
+                    StringBuilder sb = new StringBuilder();
+                    sb.append(result.getItem().getDescription());
+                    for (String warning : result.getItem().getWarnings()) {
+                        sb.append(System.lineSeparator()).append("[WARN]: ").append(warning);
+                    }
+                    return sb.toString();
+                });
 
                 return result;
             }
@@ -492,6 +510,7 @@ public class MainController {
                 try {
                     context = new GraphParser(source.getUri().toURL().getFile()).parse();
                 } catch (IOException | RuntimeException e) {
+                    e.printStackTrace();
                     Alert alert = new Alert(Alert.AlertType.ERROR);
                     String headerText = ResourceBundle.getBundle("bundles.localization").getString("parse_error_header");
                     alert.setHeaderText(headerText);

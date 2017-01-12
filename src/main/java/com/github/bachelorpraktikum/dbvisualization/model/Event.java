@@ -1,5 +1,6 @@
 package com.github.bachelorpraktikum.dbvisualization.model;
 
+import java.util.List;
 import javax.annotation.Nonnull;
 
 /**
@@ -21,6 +22,9 @@ public interface Event extends Comparable<Event> {
      */
     @Nonnull
     String getDescription();
+
+    @Nonnull
+    List<String> getWarnings();
 
     default int compareTo(@Nonnull Event other) {
         return Integer.compare(getTime(), other.getTime());

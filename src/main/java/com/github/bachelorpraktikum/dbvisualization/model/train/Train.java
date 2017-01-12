@@ -8,6 +8,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -292,7 +293,7 @@ public class Train {
     @FunctionalInterface
     private interface EventCreator {
         @Nonnull
-        TrainEvent create(TrainEvent before);
+        TrainEvent create(int eventTime, TrainEvent before);
     }
 
     /**
@@ -321,14 +322,18 @@ public class Train {
             if (events.isEmpty()) {
                 throw new IllegalStateException("not initialized");
             }
+            List<String> warnings = new LinkedList<>();
             TrainEvent before = events.get(events.size() - 1);
             if (before instanceof TrainEvent.Terminate) {
-                throw new IllegalStateException("already terminated");
+                warnings.add("Event after termination!");
             }
             if (before.getTime() > time) {
-                throw new IllegalStateException("tried to insert event before last element");
+                warnings.add("tried to inserted before previous event at time: " + time);
+                time = before.getTime();
             }
-            events.add(creator.create(before));
+            TrainEvent event = creator.create(time, before);
+            warnings.forEach(event::addWarning);
+            events.add(event);
         }
 
         /**
@@ -343,7 +348,7 @@ public class Train {
          *                               event
          */
         public void speed(int time, int distance, int speedAfter) {
-            addState(time, (before) -> new TrainEvent.Speed(before, time, distance, speedAfter));
+            addState(time, (eventTime, before) -> new TrainEvent.Speed(before, eventTime, distance, speedAfter));
         }
 
         /**
@@ -358,7 +363,7 @@ public class Train {
          *                               event
          */
         public void move(int time, int distance) {
-            addState(time, (before) -> new TrainEvent.Move(before, time, distance));
+            addState(time, (eventTime, before) -> new TrainEvent.Move(before, eventTime, distance));
         }
 
         /**
@@ -374,7 +379,7 @@ public class Train {
          *                               event
          */
         public void reach(int time, Edge edge, int distance) {
-            addState(time, (before) -> new TrainEvent.Reach(before, time, distance, edge));
+            addState(time, (eventTime, before) -> new TrainEvent.Reach(before, eventTime, distance, edge));
         }
 
         /**
@@ -390,7 +395,7 @@ public class Train {
          *                               event
          */
         public void leave(int time, Edge edge, int distance) {
-            addState(time, (before) -> new TrainEvent.Leave(before, time, distance, edge));
+            addState(time, (eventTime, before) -> new TrainEvent.Leave(before, eventTime, distance, edge));
         }
 
         /**
@@ -404,7 +409,7 @@ public class Train {
          *                               event
          */
         public void terminate(int time, int distance) {
-            addState(time, (before) -> new TrainEvent.Terminate(before, time, distance));
+            addState(time, (eventTime, before) -> new TrainEvent.Terminate(before, eventTime, distance));
         }
     }
 

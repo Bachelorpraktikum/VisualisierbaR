@@ -4,6 +4,7 @@ import com.github.bachelorpraktikum.dbvisualization.model.Edge;
 import com.github.bachelorpraktikum.dbvisualization.model.Event;
 
 import com.github.bachelorpraktikum.dbvisualization.model.train.InterpolatableState.Builder;
+import java.util.LinkedList;
 import java.util.List;
 
 import javax.annotation.Nonnull;
@@ -20,6 +21,8 @@ abstract class TrainEvent implements Event {
     private final int totalDistance;
     @Nonnull
     private final TrainPosition position;
+    @Nonnull
+    private final List<String> warnings;
 
     private TrainEvent(int index, Train train, int time, int distance, int totalDistance, TrainPosition position) {
         this.index = index;
@@ -28,6 +31,17 @@ abstract class TrainEvent implements Event {
         this.distance = distance;
         this.totalDistance = totalDistance;
         this.position = position;
+        this.warnings = new LinkedList<>();
+    }
+
+    protected void addWarning(String warning) {
+        warnings.add(warning);
+    }
+
+    @Override
+    @Nonnull
+    public List<String> getWarnings() {
+        return warnings;
     }
 
     final int getIndex() {
@@ -90,7 +104,7 @@ abstract class TrainEvent implements Event {
                     before.getTotalDistance() + distance,
                     before.getPosition().move(distance)
             );
-
+            addWarning("Speed event without speed!");
         }
 
         @Nonnull

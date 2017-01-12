@@ -6,6 +6,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -283,13 +284,16 @@ public final class Element {
         }
 
         private void addEvent(Element element, State state, int time) {
+            List<String> warnings = new LinkedList<>();
             if (time < 0) {
-                throw new IllegalArgumentException("time is negative");
+                warnings.add("original time was " + time);
+                time = 0;
             }
             if (!events.isEmpty() && time < events.get(events.size() - 1).getTime()) {
-                throw new IllegalStateException("tried to add event before last event");
+                warnings.add("tried to add before last event at " + time);
+                time = events.get(events.size() - 1).getTime();
             }
-            unorderedEvents.add(new ElementEvent(element, time, state));
+            unorderedEvents.add(new ElementEvent(element, time, state, warnings));
             // maybe the states has to be updated
             if (time <= currentTime) {
                 int refreshTime = currentTime;
@@ -445,11 +449,18 @@ public final class Element {
         private final int time;
         @Nonnull
         private final State state;
+        @Nonnull
+        private final List<String> warnings;
 
         private ElementEvent(Element element, int time, State state) {
+            this(element, time, state, Collections.emptyList());
+        }
+
+        private ElementEvent(Element element, int time, State state, List<String> warnings) {
             this.element = element;
             this.time = time;
             this.state = state;
+            this.warnings = warnings;
         }
 
         @Nonnull
@@ -467,6 +478,12 @@ public final class Element {
         public String getDescription() {
             // TODO replace by something more human readable
             return toString();
+        }
+
+        @Nonnull
+        @Override
+        public List<String> getWarnings() {
+            return warnings;
         }
 
         @Nonnull
