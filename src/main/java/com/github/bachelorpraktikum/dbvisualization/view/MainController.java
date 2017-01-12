@@ -208,7 +208,11 @@ public class MainController {
                             result.setBackground(null);
                         } else {
                             result.setBackground(
-                                    new Background(new BackgroundFill(Color.YELLOW, null, null)));
+                                    new Background(
+                                            new BackgroundFill(Color.rgb(255, 0, 0, 0.2),
+                                                    null,
+                                                    null)
+                                    ));
                         }
                     }
                 }));
