@@ -31,9 +31,9 @@
     <VBox fx:id="elementBox">
         <AnchorPane>
             <Label AnchorPane.leftAnchor="0">
-                Speed
+                State
             </Label>
-            <Label fx:id="speedValue" AnchorPane.rightAnchor="0"/>
+            <Label fx:id="stateValue" AnchorPane.rightAnchor="0"/>
             <VBox.margin>
                 <Insets bottom="3" left="10" right="10" top="3"/>
             </VBox.margin>
@@ -42,9 +42,9 @@
     <VBox fx:id="trainBox">
         <AnchorPane>
             <Label AnchorPane.leftAnchor="0">
-                States
+                Speed
             </Label>
-            <Label fx:id="stateValue" AnchorPane.rightAnchor="0"/>
+            <Label fx:id="speedValue" AnchorPane.rightAnchor="0"/>
             <VBox.margin>
                 <Insets bottom="3" left="10" right="10" top="3"/>
             </VBox.margin>

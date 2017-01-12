@@ -18,7 +18,8 @@ public class ElementDetail extends ElementDetailBase {
     @Override
     String getName() {
         try {
-            return element.getName().split("_")[0];
+            String[] names = element.getName().split("_");
+            return names[names.length - 1];
         } catch (IndexOutOfBoundsException ignored) {
             return element.getName();
         }
@@ -43,5 +44,10 @@ public class ElementDetail extends ElementDetailBase {
     @Override
     boolean isTrain() {
         return false;
+    }
+
+    Element.State getState() {
+        System.out.println(element.getState());
+        return element.getState();
     }
 }
