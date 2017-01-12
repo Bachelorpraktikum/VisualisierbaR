@@ -322,6 +322,12 @@ public class MainController {
         elementList.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
             Context context = ContextHolder.getInstance().getContext();
             ElementDetailBase detail;
+
+            if (newValue == null) {
+                // Selection has been cleared
+                return;
+            }
+
             try {
                 detail = new ElementDetail(Element.in(context).get(newValue));
             } catch (IllegalArgumentException ignored) {
@@ -394,6 +400,7 @@ public class MainController {
     private void hideDetailView() {
         detail.toBack();
         elementList.toFront();
+        elementList.getSelectionModel().clearSelection();
     }
 
     private void updateDetailView(int time) {
