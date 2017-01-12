@@ -6,6 +6,7 @@ import java.net.URL;
 
 import javafx.beans.property.Property;
 import javafx.beans.property.SimpleObjectProperty;
+import javafx.scene.shape.Shape;
 
 public class LegendItem {
     private final GraphObject<?> graphObject;
@@ -20,8 +21,8 @@ public class LegendItem {
         ENABLED, DISABLED, AUTO
     }
 
-    public URL getImageUrl() {
-        return graphObject.getImageUrl();
+    public Shape getImage() {
+        return graphObject.getImage();
     }
 
     public String getName() {

@@ -1,26 +1,26 @@
 package com.github.bachelorpraktikum.dbvisualization.view.legend;
 
 import java.io.IOException;
-import java.net.URL;
 
 import javafx.beans.binding.Binding;
 import javafx.beans.binding.Bindings;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Bounds;
+import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.shape.Shape;
 
 public class LegendListViewCell extends ListCell<LegendItem> {
     @FXML
     private Label eleName;
     @FXML
-    private ImageView eleImage;
+    private Group eleImage;
     @FXML
     private CheckBox checkbox;
     @FXML
@@ -45,16 +45,13 @@ public class LegendListViewCell extends ListCell<LegendItem> {
             }
 
             String name = element.getName();
-            URL imageURL = element.getImageUrl();
-            Image img = new Image(imageURL.toExternalForm());
+            Shape shape = element.getImage();
 
-            int space = 20;
-            eleImage.setFitHeight(space);
-            eleImage.setFitWidth(space);
+            resizeShape(shape, 20);
 
             eleName.setText(name);
-            eleImage.setImage(img);
-            // eleImage.setGraphic to element.getImageURL():
+            eleImage.getChildren().clear();
+            eleImage.getChildren().add(shape);
             // load with fxml
 
             setGraphic(cell);
@@ -70,5 +67,13 @@ public class LegendListViewCell extends ListCell<LegendItem> {
             }, checkbox.selectedProperty(), checkbox.indeterminateProperty());
             element.stateProperty().bind(binding);
         }
+    }
+
+    private void resizeShape(Shape shape, double max) {
+        Bounds shapeBounds = shape.getBoundsInParent();
+        double maxShape = Math.max(shapeBounds.getWidth(), shapeBounds.getHeight());
+        double factor = max / maxShape;
+        shape.setScaleX(shape.getScaleX() * factor);
+        shape.setScaleY(shape.getScaleY() * factor);
     }
 }

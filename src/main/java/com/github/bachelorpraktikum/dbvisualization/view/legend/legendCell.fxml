@@ -2,15 +2,15 @@
 
 <?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.Group?>
 <AnchorPane fx:id="cell" xmlns="http://javafx.com/javafx/8.0.111"
             xmlns:fx="http://javafx.com/fxml/1">
     <children>
         <Label fx:id="eleName" alignment="CENTER" contentDisplay="CENTER" text="Label"
                AnchorPane.leftAnchor="0.0"/>
-        <ImageView fx:id="eleImage" fitHeight="150.0" fitWidth="200.0" pickOnBounds="true"
-                   preserveRatio="true" AnchorPane.rightAnchor="0.0"/>
+        <Group fx:id="eleImage" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="2.0" AnchorPane.bottomAnchor="2.0"/>
         <CheckBox fx:id="checkbox" alignment="CENTER" allowIndeterminate="true"
                   contentDisplay="CENTER" indeterminate="true" AnchorPane.rightAnchor="70"/>
     </children>
