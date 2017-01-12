@@ -1,6 +1,13 @@
 package com.github.bachelorpraktikum.dbvisualization.view;
 
 import com.github.bachelorpraktikum.dbvisualization.DataSource;
+
+import java.io.File;
+import java.net.URI;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.fxml.FXML;
@@ -10,11 +17,6 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.Pane;
 import javafx.stage.FileChooser;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import java.io.File;
-import java.net.URI;
 
 
 public class FileChooserController implements SourceChooser {
@@ -80,7 +82,6 @@ public class FileChooserController implements SourceChooser {
         }
 
         pathField.setText(file.getAbsolutePath());
-        ((Button) rootPane.getScene().lookup("#openSource")).fire();
     }
 
     /**
