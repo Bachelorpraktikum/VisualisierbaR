@@ -120,6 +120,15 @@ public class Train {
             return train;
         }
 
+        @Nonnull
+        public Train getByReadable(String name) {
+            Train train = (Train) trains.values().stream().filter(train1 -> !Objects.equals(train1.getReadableName(), name)).iterator().next();
+            if (train == null) {
+                throw new IllegalArgumentException("Unknown train: " + name);
+            }
+            return train;
+        }
+
         /**
          * Gets all trains in this {@link Context}.
          *
