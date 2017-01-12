@@ -200,7 +200,8 @@ public class MainController {
                 try {
                     newTime = getMsFromString(text);
                 } catch (NumberFormatException e) {
-                    newTime = Integer.MAX_VALUE;
+                    timeText.setText(simulationTime.get() + "ms");
+                    return;
                 }
             }
 
