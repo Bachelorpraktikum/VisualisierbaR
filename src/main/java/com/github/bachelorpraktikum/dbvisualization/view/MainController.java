@@ -32,10 +32,8 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import javafx.scene.control.Tooltip;
-import javafx.scene.layout.Background;
-import javafx.scene.layout.BackgroundFill;
 import javafx.scene.paint.Color;
+import javafx.scene.paint.Paint;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
@@ -202,17 +200,13 @@ public class MainController {
             @Override
             public ListCell<Event> call(ListView<Event> param) {
                 ListCell<Event> result = factory.call(param);
+                Paint textFill = result.getTextFill();
                 result.itemProperty().addListener(((observable, oldValue, newValue) -> {
                     if (newValue != null) {
                         if (newValue.getWarnings().isEmpty()) {
-                            result.setBackground(null);
+                            result.setTextFill(textFill);
                         } else {
-                            result.setBackground(
-                                    new Background(
-                                            new BackgroundFill(Color.rgb(255, 0, 0, 0.2),
-                                                    null,
-                                                    null)
-                                    ));
+                            result.setTextFill(Color.rgb(255, 0, 0));
                         }
                     }
                 }));
