@@ -22,7 +22,7 @@ public class TrainDetail extends ElementDetailBase {
     @Override
     List<URL> getImageUrls() {
         List<URL> urls = new ArrayList<URL>();
-        urls.add(Train.class.getResource(String.format("../symbols/%s.png", "train")));
+        urls.add(Train.class.getResource(String.format("../symbols/%s.fxml", "train")));
 
         return urls;
     }
