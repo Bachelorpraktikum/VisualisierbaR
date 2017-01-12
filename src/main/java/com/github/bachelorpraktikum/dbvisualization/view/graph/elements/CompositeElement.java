@@ -28,11 +28,14 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.Shape;
 
 final class CompositeElement extends ElementBase<Group> {
+
     private final Map<Element, Shape> shapes;
     private final List<ChangeListener<Element.State>> stateListeners;
+    private final int count;
 
-    CompositeElement(List<Element> elements, Node node, CoordinatesAdapter adapter) {
+    CompositeElement(List<Element> elements, Node node, CoordinatesAdapter adapter, int count) {
         super(elements, node, adapter);
+        this.count = count;
         this.stateListeners = new ArrayList<>(elements.size());
         this.shapes = new LinkedHashMap<>();
 
@@ -49,6 +52,13 @@ final class CompositeElement extends ElementBase<Group> {
             element.stateProperty().addListener(new WeakChangeListener<>(listener));
             shapes.put(element, shape);
         });
+    }
+
+    @Override
+    protected Point2D getOffset() {
+        Point2D offset = super.getOffset();
+        offset = offset.add(offset.multiply(count));
+        return offset;
     }
 
     @Override

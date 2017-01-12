@@ -47,7 +47,7 @@ public final class Elements {
             }
         }
         if (!compositeElements.isEmpty()) {
-            shapes.add(new CompositeElement(compositeElements, node, adapter));
+            shapes.add(new CompositeElement(compositeElements, node, adapter, count));
         }
         return shapes;
     }
