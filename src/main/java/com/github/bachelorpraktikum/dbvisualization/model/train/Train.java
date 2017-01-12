@@ -328,7 +328,7 @@ public class Train {
                 warnings.add("Event after termination!");
             }
             if (before.getTime() > time) {
-                warnings.add("tried to inserted before previous event at time: " + time);
+                warnings.add("tried to insert before previous event at time: " + time);
                 time = before.getTime();
             }
             TrainEvent event = creator.create(time, before);
