@@ -49,19 +49,28 @@ public class ElementDetailController {
         elementBox.setVisible(!detail.isTrain());
 
         elementName.textProperty().setValue(detail.getName());
-        // elementImage.setImage(new Image(detail.getImageUrls().toExternalForm()));
-        Shape shape = detail.getShape();
-        resizeShape(shape, 20);
-
-        elementImage.getChildren().add(shape);
         coordinateValue.textProperty().setValue(String.valueOf(detail.getCoordinatesString()));
+
+        Shape shape = detail.getShape();
 
         if (detail.isTrain()) {
             TrainDetail trainDetail = (TrainDetail) detail;
             speedValue.textProperty().setValue(String.format("%dkm/h", trainDetail.getSpeed()));
             lengthValue.textProperty().setValue(String.format("%dm", trainDetail.getLength()));
+            shape.setRotate(180);
         } else {
             stateValue.textProperty().setValue(String.valueOf(((ElementDetail) detail).getState()));
+        }
+
+        if (!elementImage.getChildren().contains(shape)) {
+            if (elementImage.getChildren().size() > 0) {
+                elementImage.getChildren().remove(0);
+            }
+        }
+
+        if (shape != null) {
+            resizeShape(shape, 20);
+            elementImage.getChildren().add(0, shape);
         }
     }
 
@@ -71,6 +80,7 @@ public class ElementDetailController {
         double factor = max / maxShape;
         shape.setScaleX(shape.getScaleX() * factor);
         shape.setScaleY(shape.getScaleY() * factor);
+        shape.setRotate(180);
     }
 
     public void setTime(int time) {
