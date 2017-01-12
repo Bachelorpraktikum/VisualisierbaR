@@ -28,12 +28,23 @@
             <Insets bottom="3" left="10" right="10" top="3"/>
         </VBox.margin>
     </AnchorPane>
-    <VBox fx:id="trainBox">
+    <VBox fx:id="elementBox">
         <AnchorPane>
             <Label AnchorPane.leftAnchor="0">
                 Speed
             </Label>
             <Label fx:id="speedValue" AnchorPane.rightAnchor="0"/>
+            <VBox.margin>
+                <Insets bottom="3" left="10" right="10" top="3"/>
+            </VBox.margin>
+        </AnchorPane>
+    </VBox>
+    <VBox fx:id="trainBox">
+        <AnchorPane>
+            <Label AnchorPane.leftAnchor="0">
+                States
+            </Label>
+            <Label fx:id="stateValue" AnchorPane.rightAnchor="0"/>
             <VBox.margin>
                 <Insets bottom="3" left="10" right="10" top="3"/>
             </VBox.margin>
