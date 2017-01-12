@@ -7,6 +7,7 @@ import com.github.bachelorpraktikum.dbvisualization.model.Context;
 import com.github.bachelorpraktikum.dbvisualization.model.Element;
 import com.github.bachelorpraktikum.dbvisualization.model.Event;
 import com.github.bachelorpraktikum.dbvisualization.model.train.Train;
+import com.github.bachelorpraktikum.dbvisualization.view.detail.ElementDetailController;
 import com.github.bachelorpraktikum.dbvisualization.view.graph.Graph;
 import com.github.bachelorpraktikum.dbvisualization.view.graph.adapter.SimpleCoordinatesAdapter;
 import com.github.bachelorpraktikum.dbvisualization.view.legend.LegendItem;
@@ -62,17 +63,25 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import javafx.util.Callback;
 import javafx.util.Duration;
 import javafx.util.StringConverter;
 
 public class MainController {
+    @FXML
+    public AnchorPane detail;
+    @FXML
+    private VBox detailBox;
+    @FXML
+    private ElementDetailController detailBoxController;
     private Map<Context, List<ObservableValue>> listeners;
 
     @FXML
@@ -88,6 +97,8 @@ public class MainController {
     private StackPane sidebar;
     @FXML
     private ListView<LegendItem> legend;
+    // @FXML
+    // private Pane detailView;
     @FXML
     private ToggleButton legendButton;
     @FXML
@@ -99,6 +110,8 @@ public class MainController {
     @FXML
     private BorderPane rootPane;
 
+    @FXML
+    private Button closeDetailButton;
     @FXML
     private Pane leftPane;
     @FXML
@@ -125,6 +138,7 @@ public class MainController {
     private boolean autoChange = false;
     private Pattern timePattern;
 
+    private int time;
     private Map<GraphObject<?>, ObservableValue<LegendItem.State>> legendStates;
 
     private List<TrainView> trains;
@@ -154,6 +168,15 @@ public class MainController {
                 legend.toFront();
             } else
                 legend.toBack();
+        });
+        closeDetailButton.setOnAction(event -> {
+            // TODO
+            detail.toBack();
+            // detail.setVisible(false);
+            // detailBox.setVisible(false);
+            detailBox.toBack();
+            legendButton.fire();
+            legendButton.fire();
         });
 
         // Hide logList by default
@@ -191,6 +214,12 @@ public class MainController {
             if (!autoChange) {
                 simulationTime.set(newValue.getTime());
             }
+
+            // ElementDetail
+            Element.in(ContextHolder.getInstance().getContext()).setTime(newValue.getTime());
+            time = newValue.getTime();
+            timeText.setText(String.format("%dms", time));
+            updateDetailView(time);
         });
 
         timeText.setOnAction(event -> {
@@ -210,7 +239,7 @@ public class MainController {
             simulationTime.set(newTime);
         });
         timeText.focusedProperty().addListener((observable, oldValue, newValue) -> {
-            if(!newValue) {
+            if (!newValue) {
                 timeText.setText(simulationTime.get() + "ms");
             }
         });
@@ -267,6 +296,7 @@ public class MainController {
                 event.consume();
             }
         });
+
         this.trains = new LinkedList<>();
         simulationTime = new SimpleIntegerProperty();
         simulationTime.addListener((observable, oldValue, newValue) -> {
@@ -294,6 +324,22 @@ public class MainController {
                 simulation.stop();
             }
             timeText.setDisable(newValue);
+        });
+
+        // ElementDetail
+        elementList.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+            Context context = ContextHolder.getInstance().getContext();
+            Element element;
+            Train train;
+            try {
+                element = Element.in(context).get(newValue);
+                detailBoxController.setElement(element);
+            } catch (IllegalArgumentException ignored) {
+                train = Train.in(context).getByReadable(newValue);
+                detailBoxController.setTrain(train, getCurrentTime());
+            }
+
+            showDetailView();
         });
     }
 
@@ -349,6 +395,16 @@ public class MainController {
         return ms;
     }
 
+    private void showDetailView() {
+        detail.toFront();
+        legend.toBack();
+        elementList.toBack();
+    }
+
+    private void updateDetailView(int time) {
+        detailBoxController.setTime(time);
+    }
+
     /**
      * Adds an EventHandler to the button which fires the button on pressing enter
      *
@@ -389,6 +445,10 @@ public class MainController {
         legend.setCellFactory(studentListView -> new LegendListViewCell());
     }
 
+    private int getCurrentTime() {
+        return time;
+    }
+
     private void showElements() {
         Context context = ContextHolder.getInstance().getContext();
 
@@ -421,7 +481,6 @@ public class MainController {
         textFilteredItems.predicateProperty().bind(textFilterBinding);
 
         elementList.setItems(textFilteredItems);
-        // legend.setCellFactory();
     }
 
     void setDataSource(@Nonnull DataSource source) {
