@@ -32,8 +32,6 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import javafx.scene.paint.Color;
-import javafx.scene.paint.Paint;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
@@ -75,6 +73,8 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
+import javafx.scene.paint.Paint;
 import javafx.stage.Stage;
 import javafx.util.Callback;
 import javafx.util.Duration;
@@ -82,7 +82,9 @@ import javafx.util.StringConverter;
 
 public class MainController {
     @FXML
-    public AnchorPane detail;
+    private AnchorPane detail;
+    @FXML
+    private ToggleButton eventTraversal;
     @FXML
     private VBox detailBox;
     @FXML
@@ -102,8 +104,6 @@ public class MainController {
     private StackPane sidebar;
     @FXML
     private ListView<LegendItem> legend;
-    // @FXML
-    // private Pane detailView;
     @FXML
     private ToggleButton legendButton;
     @FXML
@@ -143,13 +143,13 @@ public class MainController {
     private boolean autoChange = false;
     private Pattern timePattern;
 
-    private int time;
     private Map<GraphObject<?>, ObservableValue<LegendItem.State>> legendStates;
 
     private List<TrainView> trains;
     private IntegerProperty simulationTime;
     private IntegerProperty velocity;
     private Animation simulation;
+    private Timeline eventTraversalTimeline;
 
     @FXML
     private void initialize() {
@@ -357,6 +357,32 @@ public class MainController {
             showDetailView();
             detailBoxController.setDetail(detail);
         });
+
+        eventTraversalTimeline = new Timeline(new KeyFrame(Duration.seconds(1), event -> {
+            selectNextEvent(getCurrentTime());
+        }));
+        eventTraversal.selectedProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue) {
+                eventTraversalTimeline.play();
+            } else {
+                eventTraversalTimeline.stop();
+            }
+        });
+        eventTraversalTimeline.setCycleCount(Timeline.INDEFINITE);
+    }
+
+    private void selectNextEvent(int time) {
+        autoChange = false;
+        for (Event event : logList.getItems()) {
+            if (event.getTime() > time) {
+                logList.getSelectionModel().select(event);
+                logList.scrollTo(event);
+                return;
+            }
+        }
+
+        eventTraversalTimeline.stop();
+        autoChange = true;
     }
 
     private void selectClosestLogEntry(int time) {
@@ -468,7 +494,7 @@ public class MainController {
     }
 
     private int getCurrentTime() {
-        return time;
+        return simulationTime.get();
     }
 
     private void showElements() {
