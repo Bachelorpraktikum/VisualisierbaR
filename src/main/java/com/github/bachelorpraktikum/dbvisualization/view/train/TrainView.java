@@ -24,18 +24,22 @@ import javafx.scene.shape.PathElement;
 import javafx.scene.shape.StrokeLineCap;
 
 public final class TrainView {
+    private static final double TRAIN_WIDTH = 0.3;
+
     private final Train train;
     private final IntegerProperty timeProperty;
     private final Function<Node, Point2D> coordinatesTranslator;
+    private final double calibrationBase;
     private final Path path;
 
     public TrainView(Train train, Graph graph) {
         this.train = train;
-        this.coordinatesTranslator = graph::translate;
+        this.coordinatesTranslator = graph.getCoordinatesAdapter();
+        this.calibrationBase = graph.getCoordinatesAdapter().getCalibrationBase();
         this.timeProperty = new SimpleIntegerProperty(0);
 
         this.path = new Path();
-        path.setStrokeWidth(0.3);
+        path.setStrokeWidth(TRAIN_WIDTH * calibrationBase);
         path.setStroke(Color.GREEN);
         path.setStrokeLineCap(StrokeLineCap.BUTT);
         path.setOpacity(0.5);

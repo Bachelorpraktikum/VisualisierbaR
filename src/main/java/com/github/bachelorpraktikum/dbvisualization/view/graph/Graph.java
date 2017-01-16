@@ -100,7 +100,7 @@ public final class Graph {
         return elements;
     }
 
-    public Point2D translate(Node node) {
-        return coordinatesAdapter.apply(node);
+    public CoordinatesAdapter getCoordinatesAdapter() {
+        return coordinatesAdapter;
     }
 }
