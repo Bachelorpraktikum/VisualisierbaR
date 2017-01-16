@@ -122,7 +122,8 @@ public final class GraphParser {
         public Context visitMv_init(LogParser.Mv_initContext ctx) {
             Train train = Train.in(context).get(ctx.train_name().getText());
             Edge edge = Edge.in(context).get(ctx.edge_name().getText());
-            train.eventFactory().init(edge);
+            int time = timeVisitor.visitTime(ctx.time());
+            train.eventFactory().init(time, edge);
             return context;
         }
 

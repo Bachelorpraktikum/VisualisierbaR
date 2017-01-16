@@ -62,7 +62,11 @@ public final class TrainView {
 
     private void updateTrain(int time) {
         path.getElements().clear();
-        Train.Position trainPosition = train.getState(time).getPosition();
+        Train.State state = train.getState(time);
+        if(!state.isInitialized()) {
+            return;
+        }
+        Train.Position trainPosition = state.getPosition();
         List<Edge> edges = trainPosition.getEdges();
         List<PathElement> elements = new LinkedList<>();
 

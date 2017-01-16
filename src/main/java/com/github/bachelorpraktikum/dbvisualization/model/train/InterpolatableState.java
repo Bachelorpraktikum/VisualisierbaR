@@ -15,21 +15,24 @@ final class InterpolatableState implements Train.State {
     private final int index;
     private final int time;
     private final int distance;
-    @Nonnull
+    @Nullable
     private final TrainPosition position;
     private final int speed;
     private final boolean terminated;
+    private final boolean initialized;
 
     private InterpolatableState(Train train,
                                 int index,
                                 boolean terminated,
+                                boolean initialized,
                                 int time,
                                 int distance,
-                                TrainPosition position,
+                                @Nullable TrainPosition position,
                                 int speed) {
         this.train = train;
         this.index = index;
         this.terminated = terminated;
+        this.initialized = initialized;
         this.time = time;
         this.distance = distance;
         this.position = position;
@@ -44,6 +47,7 @@ final class InterpolatableState implements Train.State {
         private int time = -1;
         private int speed = -1;
         private boolean terminated = false;
+        private boolean initialized = true;
         private int index = -1;
         private int distance = -1;
         @Nullable
@@ -102,6 +106,18 @@ final class InterpolatableState implements Train.State {
         }
 
         /**
+         * Defines whether the train has been initialized.<br>
+         * Optional, defaults to true.
+         *
+         * @param initialized whether the train is initialized
+         * @return this Builder
+         */
+        Builder initialized(boolean initialized) {
+            this.initialized = initialized;
+            return this;
+        }
+
+        /**
          * Sets the index of the last event that is represented by this state.
          *
          * @param index the index in the Train events list
@@ -133,13 +149,13 @@ final class InterpolatableState implements Train.State {
 
         /**
          * Sets the position the train is at.
+         * Can be null if the train is not initialized.
          *
          * @param position the position
          * @return this Builder
-         * @throws NullPointerException if position is null
          */
-        Builder position(TrainPosition position) {
-            this.position = Objects.requireNonNull(position);
+        Builder position(@Nullable TrainPosition position) {
+            this.position = position;
             return this;
         }
 
@@ -163,10 +179,19 @@ final class InterpolatableState implements Train.State {
                     || speed < 0
                     || index < 0
                     || distance < 0
-                    || position == null) {
+                    || (initialized && position == null)) {
                 throw new IllegalStateException("not all required values set");
             }
-            return new InterpolatableState(train, index, terminated, time, distance, position, speed);
+            return new InterpolatableState(
+                    train,
+                    index,
+                    terminated,
+                    initialized,
+                    time,
+                    distance,
+                    position,
+                    speed
+            );
         }
 
         @Override
@@ -176,6 +201,7 @@ final class InterpolatableState implements Train.State {
                     + ", time=" + time
                     + ", speed=" + speed
                     + ", terminated=" + terminated
+                    + ", initialized=" + initialized
                     + ", index=" + index
                     + ", distance=" + distance
                     + ", position=" + position
@@ -191,6 +217,17 @@ final class InterpolatableState implements Train.State {
 
         if (getTime() > targetTime) {
             throw new IllegalArgumentException("time not between states");
+        }
+
+        if(!isInitialized()) {
+            return new Builder(getTrain())
+                    .index(getIndex())
+                    .time(targetTime)
+                    .distance(0)
+                    .speed(0)
+                    .initialized(false)
+                    .position(null)
+                    .build();
         }
 
         int relativeTargetTime = targetTime - getTime();
@@ -230,6 +267,9 @@ final class InterpolatableState implements Train.State {
     @Nonnull
     @Override
     public TrainPosition getPosition() {
+        if (!isInitialized() || position == null) {
+            throw new IllegalStateException("Tried to get position of uninitialized train");
+        }
         return position;
     }
 
@@ -250,6 +290,11 @@ final class InterpolatableState implements Train.State {
     @Override
     public int getSpeed() {
         return speed;
+    }
+
+    @Override
+    public boolean isInitialized() {
+        return initialized;
     }
 
     @Override

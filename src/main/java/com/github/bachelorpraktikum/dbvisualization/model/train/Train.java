@@ -24,7 +24,7 @@ import javafx.collections.ObservableList;
 
 /**
  * Represents a train.<br> There will always be exactly one instance of this class per name per
- * {@link Context}. <p>Once {@link EventFactory#init(Edge) initialized}, a train has exactly one
+ * {@link Context}. <p>Once {@link EventFactory#init(int, Edge) initialized}, a train has exactly one
  * {@link #getState(int) state} at any given point of time (represented by a positive integer).</p>
  * <p>Only the state at a point of time after or at the time of the last registered event can
  * change.</p> <p>{@link EventFactory#terminate(int, int) Terminated} trains are immutable.</p>
@@ -51,6 +51,7 @@ public class Train {
         this.length = length;
 
         events = FXCollections.observableArrayList();
+        events.add(new TrainEvent.Start(this));
     }
 
     /**
@@ -202,7 +203,7 @@ public class Train {
      * @param time the time in milliseconds since the start of the simulation
      * @return the state of the train at the given point in time.
      * @throws IllegalArgumentException if time is negative
-     * @throws IllegalStateException    if this train has not been {@link EventFactory#init(Edge)
+     * @throws IllegalStateException    if this train has not been {@link EventFactory#init(int, Edge)
      *                                  initialized}
      */
     @Nonnull
@@ -222,7 +223,7 @@ public class Train {
      * @throws IllegalArgumentException if time is negative
      * @throws IllegalArgumentException if before is a state of a different train
      * @throws NullPointerException     if before is null
-     * @throws IllegalStateException    if this train has not been {@link EventFactory#init(Edge)
+     * @throws IllegalStateException    if this train has not been {@link EventFactory#init(int, Edge)
      *                                  initialized}
      */
     @Nonnull
@@ -250,10 +251,6 @@ public class Train {
     private State getState(int time, int startingIndex) {
         if (time < 0) {
             throw new IllegalArgumentException("time is negative");
-        }
-
-        if (events.isEmpty()) {
-            throw new IllegalStateException("not initialized");
         }
 
         Iterator<TrainEvent> iterator = events.listIterator(startingIndex);
@@ -307,18 +304,26 @@ public class Train {
          * Initializes the {@link Train} instance corresponding to this factory.
          * The back of the train will be at totalDistance 0 from the start of the edge.
          *
+         * @param time the time of the event
          * @param edge the edge on which this train should be initialized.
          * @throws IllegalStateException if this method is called twice for the same train.
          */
-        public void init(Edge edge) {
-            if (!events.isEmpty()) {
-                throw new IllegalStateException("already initialized");
+        public void init(int time, Edge edge) {
+            if (events.size() != 1) {
+                throw new IllegalStateException("already initialized. Possibly two init events?");
             }
-            events.add(new TrainEvent.Init(Train.this, edge));
+            List<String> warnings = new LinkedList<>();
+            if (time < 0) {
+                warnings.add("Tried to add with negative time: " + time);
+                time = 0;
+            }
+            TrainEvent event = new TrainEvent.Init(time, Train.this, edge);
+            warnings.forEach(event::addWarning);
+            events.add(event);
         }
 
         private void addState(int time, EventCreator creator) {
-            if (events.isEmpty()) {
+            if (events.size() == 1) {
                 throw new IllegalStateException("not initialized");
             }
             List<String> warnings = new LinkedList<>();
@@ -425,8 +430,15 @@ public class Train {
 
         boolean isTerminated();
 
+        boolean isInitialized();
+
         int getSpeed();
 
+        /**
+         * Gets the position of the train.
+         * @return the train position
+         * @throws IllegalStateException if {@link #isInitialized()} is false
+         */
         @Nonnull
         Position getPosition();
 

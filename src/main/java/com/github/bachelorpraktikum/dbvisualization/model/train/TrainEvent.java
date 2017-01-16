@@ -19,12 +19,12 @@ abstract class TrainEvent implements Event {
     private final int time;
     private final int distance;
     private final int totalDistance;
-    @Nonnull
+    @Nullable
     private final TrainPosition position;
     @Nonnull
     private final List<String> warnings;
 
-    private TrainEvent(int index, Train train, int time, int distance, int totalDistance, TrainPosition position) {
+    private TrainEvent(int index, Train train, int time, int distance, int totalDistance, @Nullable TrainPosition position) {
         this.index = index;
         this.train = train;
         this.time = time;
@@ -66,7 +66,7 @@ abstract class TrainEvent implements Event {
         return totalDistance;
     }
 
-    @Nonnull
+    @Nullable
     final TrainPosition getPosition() {
         return position;
     }
@@ -122,7 +122,7 @@ abstract class TrainEvent implements Event {
     static class Speed extends TrainEvent {
         private final int speed;
 
-        private Speed(int index, Train train, int time, int distance, int totalDistance, TrainPosition position, int speed) {
+        private Speed(int index, Train train, int time, int distance, int totalDistance, @Nullable TrainPosition position, int speed) {
             super(index, train, time, distance, totalDistance, position);
             this.speed = speed;
         }
@@ -161,16 +161,38 @@ abstract class TrainEvent implements Event {
     }
 
     @ParametersAreNonnullByDefault
+    static class Start extends Speed {
+        Start(Train train) {
+            super(0, train, 0, 0, 0, null, 0);
+        }
+
+        @Nonnull
+        @Override
+        Builder stateBuilder() {
+            return super.stateBuilder().initialized(false);
+        }
+
+        @Nonnull
+        @Override
+        public String getDescription() {
+            return getTrain().getReadableName() + ": Start{"
+                    + "time=" +getTime()
+                    + ", this event purely serves as a helper for interpolation";
+        }
+    }
+
+    @ParametersAreNonnullByDefault
     static class Init extends Speed {
-        Init(Train train, Edge startEdge) {
-            super(0, train, 0, 0, 0, TrainPosition.init(train, startEdge), 0);
+        Init(int time, Train train, Edge startEdge) {
+            super(1, train, time, 0, 0, TrainPosition.init(train, startEdge), 0);
         }
 
         @Nonnull
         @Override
         public String getDescription() {
             return getTrain().getReadableName() + ": Init{"
-                    + "startEdge=" + getPosition().getBackEdge().getName()
+                    + "time=" + getTime()
+                    + ", startEdge=" + getPosition().getBackEdge().getName()
                     + "}";
         }
     }
