@@ -619,6 +619,7 @@ public class MainController {
 
     private void showSourceChooser() {
         if (graph != null) {
+            simulation.stop();
             centerPane.getChildren().remove(graph.getGroup());
             graph = null;
         }
