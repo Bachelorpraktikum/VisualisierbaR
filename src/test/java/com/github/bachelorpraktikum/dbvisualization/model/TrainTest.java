@@ -431,10 +431,16 @@ public class TrainTest {
         Edge edge = createEdges(50)[0];
         train.eventFactory().init(0, edge);
         train.eventFactory().speed(10, 10, 20);
+        Event beforeEvent = train.getEvents().get(train.getEvents().size() - 1);
         train.eventFactory().speed(5, 10, 10);
-        Event event = train.getEvents().get(2);
-        assertFalse(event.getWarnings().isEmpty());
-        assertEquals(10, event.getTime());
-        assertEquals(train.getEvents().get(1).getTime(), event.getTime());
+        Event newEvent = train.getEvents().get(train.getEvents().size() - 1);
+        assertTrue(beforeEvent != newEvent);
+
+        assertTrue(beforeEvent.getWarnings().isEmpty());
+        assertEquals(10, beforeEvent.getTime());
+
+        assertFalse(newEvent.getWarnings().isEmpty());
+        assertEquals(10, newEvent.getTime());
+        assertEquals(beforeEvent.getTime(), newEvent.getTime());
     }
 }
