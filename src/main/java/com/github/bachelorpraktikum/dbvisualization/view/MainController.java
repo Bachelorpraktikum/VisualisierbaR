@@ -359,7 +359,8 @@ public class MainController {
         });
 
         eventTraversalTimeline = new Timeline(new KeyFrame(Duration.seconds(1), event -> {
-            selectNextEvent(getCurrentTime());
+            Event nextEvent = selectNextEvent(getCurrentTime());
+            simulationTime.set(nextEvent.getTime());
         }));
         eventTraversal.selectedProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue) {
@@ -371,18 +372,19 @@ public class MainController {
         eventTraversalTimeline.setCycleCount(Timeline.INDEFINITE);
     }
 
-    private void selectNextEvent(int time) {
-        autoChange = false;
+    private Event selectNextEvent(int time) {
+        autoChange = true;
         for (Event event : logList.getItems()) {
             if (event.getTime() > time) {
                 logList.getSelectionModel().select(event);
                 logList.scrollTo(event);
-                return;
+
+                autoChange = false;
+                return event;
             }
         }
 
-        eventTraversalTimeline.stop();
-        autoChange = true;
+        return logList.getItems().get(logList.getItems().size() - 1);
     }
 
     private void selectClosestLogEntry(int time) {
