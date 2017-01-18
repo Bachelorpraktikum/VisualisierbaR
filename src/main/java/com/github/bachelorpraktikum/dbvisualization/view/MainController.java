@@ -368,6 +368,7 @@ public class MainController {
             } else {
                 eventTraversalTimeline.stop();
             }
+            timeText.setDisable(newValue);
         });
         eventTraversalTimeline.setCycleCount(Timeline.INDEFINITE);
     }
