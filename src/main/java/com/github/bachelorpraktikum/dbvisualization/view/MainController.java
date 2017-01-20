@@ -12,11 +12,13 @@ import com.github.bachelorpraktikum.dbvisualization.view.detail.ElementDetailBas
 import com.github.bachelorpraktikum.dbvisualization.view.detail.ElementDetailController;
 import com.github.bachelorpraktikum.dbvisualization.view.detail.TrainDetail;
 import com.github.bachelorpraktikum.dbvisualization.view.graph.Graph;
+import com.github.bachelorpraktikum.dbvisualization.view.graph.adapter.ProportionalCoordinatesAdapter;
 import com.github.bachelorpraktikum.dbvisualization.view.graph.adapter.SimpleCoordinatesAdapter;
 import com.github.bachelorpraktikum.dbvisualization.view.legend.LegendItem;
 import com.github.bachelorpraktikum.dbvisualization.view.legend.LegendListViewCell;
 import com.github.bachelorpraktikum.dbvisualization.view.train.TrainView;
 
+import java.awt.event.ActionEvent;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.Arrays;
@@ -97,6 +99,8 @@ public class MainController {
     private CheckBox trainFilter;
     @FXML
     private TextField filterText;
+    @FXML
+    private ToggleButton proportionalToggle;
 
     @FXML
     private StackPane sidebar;
@@ -166,6 +170,8 @@ public class MainController {
         fireOnEnterPress(closeButton);
         fireOnEnterPress(logToggle);
         closeButton.setOnAction(event -> showSourceChooser());
+
+        proportionalToggle.setOnAction(ActionEvent -> switchGraph());
 
         legendButton.selectedProperty().addListener((observable, oldValue, newValue) -> {
             legend.setVisible(newValue);
@@ -566,7 +572,10 @@ public class MainController {
     private Graph getGraph() {
         if (graph == null) {
             Context context = ContextHolder.getInstance().getContext();
-            graph = new Graph(context, new SimpleCoordinatesAdapter());
+            if(proportionalToggle.isSelected())
+                graph = new Graph(context, new ProportionalCoordinatesAdapter(context));
+            else
+                graph = new Graph(context, new SimpleCoordinatesAdapter());
             centerPane.getChildren().add(graph.getGroup());
             showLegend();
             graph.getElements().entrySet()
@@ -649,5 +658,11 @@ public class MainController {
         }
         LoginController controller = loader.getController();
         controller.setStage(stage);
+    }
+
+    private void switchGraph() {
+        centerPane.getChildren().clear();
+        graph = null;
+        fitGraphToCenter(getGraph());
     }
 }

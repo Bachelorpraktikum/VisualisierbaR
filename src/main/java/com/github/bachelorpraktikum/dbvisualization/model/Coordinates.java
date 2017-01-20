@@ -1,5 +1,7 @@
 package com.github.bachelorpraktikum.dbvisualization.model;
 
+import com.sun.javafx.geom.Vec2d;
+
 import javax.annotation.ParametersAreNonnullByDefault;
 import javax.annotation.concurrent.Immutable;
 
@@ -44,6 +46,19 @@ public final class Coordinates {
      */
     public int getY() {
         return y;
+    }
+
+    /**
+     * Calculates the normalized vector from this Coordinate to the given one.
+     *
+     * @param c2 the coordinate the vector points to
+     * @return a vector
+     */
+    public Vec2d normVectorTo(Coordinates c2) {
+        Vec2d vec = new Vec2d(c2.getX() - x, c2.getY() - y);
+        double vecLength = Math.sqrt(vec.x*vec.x + vec.y*vec.y);
+        vec.set(vec.x / vecLength, vec.y / vecLength);
+        return vec;
     }
 
     @Override
