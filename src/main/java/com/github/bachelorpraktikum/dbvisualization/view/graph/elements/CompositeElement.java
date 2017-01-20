@@ -103,6 +103,10 @@ final class CompositeElement extends ElementBase<Group> {
                 Polygon polygon = new Polygon(0, 2, 1, 0, 2, 2);
                 resizeNode(polygon, 1.0 * getCalibrationBase());
                 return polygon;
+            case UnknownElement:
+                Rectangle rectangle = new Rectangle(2, 2);
+                resizeNode(rectangle, 1.0);
+                return rectangle;
             default:
                 return new Rectangle(2, 2);
         }
