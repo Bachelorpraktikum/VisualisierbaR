@@ -37,6 +37,7 @@ public final class Elements {
                 case SwWechselImpl:
                     shapes.add(new StellwerkWechselElement(element, node, adapter));
                     break;
+                case GeschwindigkeitsVoranzeiger:
                 case VorSignalImpl:
                 case HauptSignalImpl:
                 case GeschwindigkeitsAnzeigerImpl:

@@ -88,6 +88,7 @@ public final class Element {
         GeschwindigkeitsAnzeigerImpl,
         VorSignalImpl("VorsignalImpl"),
         HauptSignalImpl("HauptsignalImpl"),
+        GeschwindigkeitsVoranzeiger,
         SichtbarkeitsPunktImpl("SichtbarkeitspunktImpl", "SichtbarkeitspunktImpl2"),
         GefahrenPunktImpl("GefahrenpunktImpl"),
         MagnetImpl("MagnetImpl"),
@@ -157,6 +158,8 @@ public final class Element {
                     return SwWechselImpl;
                 case "GeschwindigkeitsAnzeigerImpl":
                     return GeschwindigkeitsAnzeigerImpl;
+                case "GeschwindigkeitsVorAnzeigerImpl":
+                    return GeschwindigkeitsVoranzeiger;
                 default:
                     return UnknownElement;
             }

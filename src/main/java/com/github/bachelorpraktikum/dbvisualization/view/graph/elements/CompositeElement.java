@@ -94,18 +94,24 @@ final class CompositeElement extends ElementBase<Group> {
     }
 
     private Shape createShape(Element.Type type) {
+        Shape shape = null;
         switch (type) {
-            case HauptSignalImpl:
-                return createPathShape(type);
             case VorSignalImpl:
-                return createPathShape(type);
+            case HauptSignalImpl:
+                shape = createPathShape(type);
+                break;
             case GeschwindigkeitsAnzeigerImpl:
-                Polygon polygon = new Polygon(0, 2, 1, 0, 2, 2);
-                resizeNode(polygon, 1.0 * getCalibrationBase());
-                return polygon;
+                shape = new Polygon(0, 2, 1, 0, 2, 2);
+                break;
+            case GeschwindigkeitsVoranzeiger:
+                shape = new Polygon(0, 0, 1, 2, 2, 0);
+                break;
             default:
-                return new Rectangle(2, 2);
+                shape = new Rectangle(2, 2);
+                break;
         }
+        resizeNode(shape, getCalibrationBase() * 2.0);
+        return shape;
     }
 
     private Shape createPathShape(Element.Type type) {
