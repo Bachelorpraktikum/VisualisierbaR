@@ -1,5 +1,6 @@
 package com.github.bachelorpraktikum.dbvisualization.view;
 
+import com.github.bachelorpraktikum.dbvisualization.CompositeObservableList;
 import com.github.bachelorpraktikum.dbvisualization.DataSource;
 import com.github.bachelorpraktikum.dbvisualization.database.Database;
 import com.github.bachelorpraktikum.dbvisualization.logparser.GraphParser;
@@ -16,25 +17,17 @@ import com.github.bachelorpraktikum.dbvisualization.view.graph.adapter.SimpleCoo
 import com.github.bachelorpraktikum.dbvisualization.view.legend.LegendItem;
 import com.github.bachelorpraktikum.dbvisualization.view.legend.LegendListViewCell;
 import com.github.bachelorpraktikum.dbvisualization.view.train.TrainView;
-
 import java.io.IOException;
 import java.sql.SQLException;
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
-import java.util.WeakHashMap;
 import java.util.function.Predicate;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
@@ -79,6 +72,8 @@ import javafx.stage.Stage;
 import javafx.util.Callback;
 import javafx.util.Duration;
 import javafx.util.StringConverter;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 public class MainController {
     @FXML
@@ -89,7 +84,6 @@ public class MainController {
     private VBox detailBox;
     @FXML
     private ElementDetailController detailBoxController;
-    private Map<Context, List<ObservableValue>> listeners;
 
     @FXML
     private ListView<String> elementList;
@@ -145,7 +139,6 @@ public class MainController {
 
     private Map<GraphObject<?>, ObservableValue<LegendItem.State>> legendStates;
 
-    private List<TrainView> trains;
     private IntegerProperty simulationTime;
     private IntegerProperty velocity;
     private Animation simulation;
@@ -155,7 +148,6 @@ public class MainController {
     private void initialize() {
         timePattern = Pattern.compile("(\\d+)(m?s?|h)?$");
         HBox.setHgrow(rightSpacer, Priority.ALWAYS);
-        this.listeners = new WeakHashMap<>();
         this.legendStates = new HashMap<>(256);
         this.simulation = new Timeline(new KeyFrame(Duration.millis(50), event -> {
             int time = (int) (simulationTime.get() + (velocity.get() * 0.05));
@@ -308,7 +300,6 @@ public class MainController {
             }
         });
 
-        this.trains = new LinkedList<>();
         simulationTime = new SimpleIntegerProperty();
         simulationTime.addListener((observable, oldValue, newValue) -> {
             if (ContextHolder.getInstance().hasContext()) {
@@ -373,37 +364,41 @@ public class MainController {
         eventTraversalTimeline.setCycleCount(Timeline.INDEFINITE);
     }
 
-    private Event selectNextEvent(int time) {
-        autoChange = true;
-        for (Event event : logList.getItems()) {
-            if (event.getTime() > time) {
-                logList.getSelectionModel().select(event);
-                logList.scrollTo(event);
-
-                autoChange = false;
-                return event;
+    private int getLastEventIndex(int time) {
+        int last = 0;
+        List<Event> items = logList.getItems();
+        for (int index = 0; index < items.size(); index++) {
+            Event item = items.get(index);
+            if (item.getTime() > time) {
+                return last;
             }
+            last = index;
         }
-
-        return logList.getItems().get(logList.getItems().size() - 1);
+        // Return last
+        return last;
     }
 
-    private void selectClosestLogEntry(int time) {
+    private Event selectNextEvent(int time) {
+        int index = getLastEventIndex(time) + 1;
+        if (index >= logList.getItems().size()) {
+            index--;
+        }
+
+        Event event = logList.getItems().get(index);
+        selectEvent(event);
+        return event;
+    }
+
+    private Event selectClosestLogEntry(int time) {
+        Event event = logList.getItems().get(getLastEventIndex(time));
+        selectEvent(event);
+        return event;
+    }
+
+    private void selectEvent(Event event) {
         autoChange = true;
-
-        Event last = null;
-        for (Event event : logList.getItems()) {
-            if (event.getTime() > time) {
-                break;
-            }
-            last = event;
-        }
-        if (last == null) {
-            last = logList.getItems().get(0);
-        }
-        logList.getSelectionModel().select(last);
-        logList.scrollTo(last);
-
+        logList.getSelectionModel().select(event);
+        logList.scrollTo(event);
         autoChange = false;
     }
 
@@ -509,7 +504,7 @@ public class MainController {
         ObservableValue<Predicate<String>> trainBinding = Bindings.createObjectBinding(() -> s ->
                         trainFilter.isSelected(),
                 trainFilter.selectedProperty());
-        listeners.get(context).add(trainBinding);
+        context.addObject(trainBinding);
         trains.predicateProperty().bind(trainBinding);
 
         FilteredList<String> elements = FXCollections.observableList(Element.in(context).getAll().stream()
@@ -518,17 +513,16 @@ public class MainController {
         ObservableValue<Predicate<String>> elementBinding = Bindings.createObjectBinding(() -> s ->
                         elementFilter.isSelected(),
                 elementFilter.selectedProperty());
-        listeners.get(context).add(elementBinding);
+        context.addObject(elementBinding);
         elements.predicateProperty().bind(elementBinding);
 
-        List<ObservableList<? extends String>> lists = Arrays.asList(trains, elements);
-        ObservableList<String> items = new CompositeObservableList<>(lists);
+        ObservableList<String> items = new CompositeObservableList<>(trains, elements);
         FilteredList<String> textFilteredItems = items.filtered(null);
         ObservableValue<Predicate<String>> textFilterBinding = Bindings.createObjectBinding(() -> {
             String text = filterText.getText().trim().toLowerCase();
             return s -> s.toLowerCase().contains(text);
         }, filterText.textProperty());
-        listeners.get(context).add(textFilterBinding);
+        context.addObject(textFilterBinding);
         textFilteredItems.predicateProperty().bind(textFilterBinding);
 
         elementList.setItems(textFilteredItems);
@@ -551,17 +545,8 @@ public class MainController {
                     showSourceChooser();
                     return;
                 }
-                listeners.put(context, new LinkedList<>());
                 ContextHolder.getInstance().setContext(context);
-
-                List<ObservableList<? extends Event>> lists = new LinkedList<>();
-                lists.add(Element.in(context).getEvents());
-                for (Train train : Train.in(context).getAll()) {
-                    lists.add(train.getEvents());
-                }
-
-                ObservableList<Event> events = new CompositeObservableList<>(lists);
-                logList.setItems(events.sorted());
+                logList.setItems(context.getObservableEvents().sorted());
                 fitGraphToCenter(getGraph());
 
                 break;
@@ -603,13 +588,13 @@ public class MainController {
                         Element element = entry.getKey();
                         ObservableValue<LegendItem.State> state = legendStates.get(GraphObject.element(element.getType()));
                         Binding<Boolean> binding = Bindings.createBooleanBinding(() -> state.getValue() != LegendItem.State.DISABLED, state);
-                        listeners.get(context).add(binding);
+                        context.addObject(binding);
                         entry.getValue().getShape().visibleProperty().bind(binding);
                     });
             for (Train train : Train.in(context).getAll()) {
                 TrainView trainView = new TrainView(train, graph);
                 trainView.timeProperty().bind(simulationTime);
-                trains.add(trainView);
+                context.addObject(trainView);
             }
         }
         return graph;
@@ -649,10 +634,9 @@ public class MainController {
     private void showSourceChooser() {
         if (graph != null) {
             simulation.stop();
-            centerPane.getChildren().remove(graph.getGroup());
+            centerPane.getChildren().clear();
             graph = null;
         }
-        trains.clear();
         ContextHolder.getInstance().setContext(null);
         FXMLLoader loader = new FXMLLoader(getClass().getResource("SourceChooser.fxml"));
         loader.setResources(ResourceBundle.getBundle("bundles.localization"));
