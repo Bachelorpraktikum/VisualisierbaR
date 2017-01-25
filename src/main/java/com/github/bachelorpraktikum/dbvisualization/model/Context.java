@@ -1,6 +1,5 @@
 package com.github.bachelorpraktikum.dbvisualization.model;
 
-import com.github.bachelorpraktikum.dbvisualization.CompositeList;
 import com.github.bachelorpraktikum.dbvisualization.CompositeObservableList;
 import com.github.bachelorpraktikum.dbvisualization.model.train.Train;
 import java.util.LinkedList;
@@ -20,13 +19,6 @@ public final class Context {
 
     public Context() {
         this.objects = new LinkedList<>();
-    }
-
-    public List<Event> getEvents() {
-        CompositeList<Event> elementEvents = new CompositeList<>(Element.in(this).getEvents());
-        return elementEvents.union(Train.in(this).getAll().stream()
-                .map(Train::getEvents)
-                .reduce(new CompositeList<>(), CompositeList::union, CompositeList::union));
     }
 
     public ObservableList<Event> getObservableEvents() {
