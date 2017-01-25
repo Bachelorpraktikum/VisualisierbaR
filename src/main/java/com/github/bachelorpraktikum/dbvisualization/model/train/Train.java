@@ -344,7 +344,7 @@ public class Train {
          * Registers a speed event.
          *
          * @param time       the time of the event
-         * @param distance   the totalDistance travelled since the last event
+         * @param distance   the distance travelled since the last event
          * @param speedAfter the speed at this point of time
          * @throws IllegalStateException if the train has not been initialized
          * @throws IllegalStateException if the train has been terminated
@@ -360,7 +360,7 @@ public class Train {
          * This is a workaround for speed log entries without a speed.
          *
          * @param time       the time of the event
-         * @param distance   the totalDistance travelled since the last event
+         * @param distance   the distance travelled since the last event
          * @throws IllegalStateException if the train has not been initialized
          * @throws IllegalStateException if the train has been terminated
          * @throws IllegalStateException if the specified time lies before the time of the last
@@ -372,11 +372,11 @@ public class Train {
 
         /**
          * Registers a reachStart event.<br> After this event the front of the train will be at
-         * totalDistance 0 from the start of the given {@link Edge}.
+         * distance 0 from the start of the given {@link Edge}.
          *
          * @param time     the time of the event
          * @param edge     the edge the train reached
-         * @param distance the totalDistance travelled since the last event
+         * @param distance the distance travelled since the last event
          * @throws IllegalStateException if the train has not been initialized
          * @throws IllegalStateException if the train has been terminated
          * @throws IllegalStateException if the specified time lies before the time of the last
@@ -388,11 +388,11 @@ public class Train {
 
         /**
          * Registers a leave event.<br> After this event the back of the train will be at
-         * totalDistance 0 from the start of the given {@link Edge}.
+         * distance 0 from the start of the given {@link Edge}.
          *
          * @param time     the time of the event
          * @param edge     the edge the train reached
-         * @param distance the totalDistance travelled since the last event
+         * @param distance the distance travelled since the last event
          * @throws IllegalStateException if the train has not been initialized
          * @throws IllegalStateException if the train has been terminated
          * @throws IllegalStateException if the specified time lies before the time of the last
@@ -406,7 +406,7 @@ public class Train {
          * Terminates this train. Can only be called once.
          *
          * @param time     the time of the event
-         * @param distance the totalDistance travelled since the last event
+         * @param distance the distance travelled since the last event
          * @throws IllegalStateException if the train has not been initialized
          * @throws IllegalStateException if the train has already been terminated
          * @throws IllegalStateException if the specified time lies before the time of the last

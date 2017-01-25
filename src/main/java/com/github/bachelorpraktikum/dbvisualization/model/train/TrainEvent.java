@@ -168,7 +168,7 @@ abstract class TrainEvent implements Event {
     @ParametersAreNonnullByDefault
     static class Start extends Speed {
         Start(Train train) {
-            super(0, train, 0, 0, 0, null, 0);
+            super(0, train, 0, 0, 0, () -> null, 0);
         }
 
         @Nonnull

@@ -117,7 +117,7 @@ public class TrainTest {
 
         Train.State state = train.getState(0);
         assertEquals(train.getLength(), state.getPosition().getFrontDistance());
-        assertEquals(0, state.getPosition().getBackDistance());
+        assertEquals(edge.getLength(), state.getPosition().getBackDistance());
         assertEquals(edge, state.getPosition().getFrontEdge());
         assertEquals(edge, state.getPosition().getBackEdge());
         assertEquals(0, state.getTotalDistance());
@@ -133,7 +133,7 @@ public class TrainTest {
         Train.State state = train.getState(0);
         assertEquals(train.getLength(), state.getPosition().getFrontDistance());
         assertEquals(edge2, state.getPosition().getFrontEdge());
-        assertEquals(0, state.getPosition().getBackDistance());
+        assertEquals(edge2.getLength(), state.getPosition().getBackDistance());
         assertEquals(0, state.getTotalDistance());
         assertTrue(state.isInitialized());
     }
@@ -191,10 +191,10 @@ public class TrainTest {
         train.eventFactory().init(0, edges[0]);
 
         train.eventFactory().reach(10, edges[1], 10);
-        train.eventFactory().leave(20, edges[0], 10);
+        train.eventFactory().leave(20, edges[1], 10);
         Train.State state = train.getState(20);
         assertEquals(20, state.getTime());
-        assertEquals(0, state.getPosition().getBackDistance());
+        assertEquals(edges[1].getLength(), state.getPosition().getBackDistance());
         assertEquals(edges[1], state.getPosition().getBackEdge());
 
         assertEquals(edges[1], state.getPosition().getFrontEdge());
@@ -236,11 +236,11 @@ public class TrainTest {
     @Test
     public void testSpeedInterpolationWithNonSpeedInbetween() {
         Train train = Train.in(context).create("t", "train", 10);
-        Edge[] edges = createEdges(10, 50);
+        Edge[] edges = createEdges(15, 50);
         train.eventFactory().init(0, edges[0]);
 
         train.eventFactory().speed(10, 5, 10);
-        train.eventFactory().leave(15, edges[1], 5);
+        train.eventFactory().reach(15, edges[1], 5);
         train.eventFactory().speed(20, 5, 20);
 
         assertEquals(12, train.getState(12).getSpeed());
