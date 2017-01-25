@@ -2,11 +2,11 @@ package com.github.bachelorpraktikum.dbvisualization.model.train;
 
 import com.github.bachelorpraktikum.dbvisualization.model.Edge;
 import com.github.bachelorpraktikum.dbvisualization.model.Event;
-
+import com.github.bachelorpraktikum.dbvisualization.model.Node;
 import com.github.bachelorpraktikum.dbvisualization.model.train.InterpolatableState.Builder;
 import java.util.LinkedList;
 import java.util.List;
-
+import java.util.function.Supplier;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -19,12 +19,17 @@ abstract class TrainEvent implements Event {
     private final int time;
     private final int distance;
     private final int totalDistance;
-    @Nullable
-    private final TrainPosition position;
+    @Nonnull
+    private final Supplier<TrainPosition> position;
     @Nonnull
     private final List<String> warnings;
 
-    private TrainEvent(int index, Train train, int time, int distance, int totalDistance, @Nullable TrainPosition position) {
+    private TrainEvent(int index,
+            Train train,
+            int time,
+            int distance,
+            int totalDistance,
+            Supplier<TrainPosition> position) {
         this.index = index;
         this.train = train;
         this.time = time;
@@ -68,7 +73,7 @@ abstract class TrainEvent implements Event {
 
     @Nullable
     final TrainPosition getPosition() {
-        return position;
+        return position.get();
     }
 
     @Nonnull
@@ -102,7 +107,7 @@ abstract class TrainEvent implements Event {
                     time,
                     distance,
                     before.getTotalDistance() + distance,
-                    before.getPosition().move(distance)
+                    () -> before.getPosition().move(distance)
             );
             addWarning("Speed event without speed!");
         }
@@ -122,7 +127,7 @@ abstract class TrainEvent implements Event {
     static class Speed extends TrainEvent {
         private final int speed;
 
-        private Speed(int index, Train train, int time, int distance, int totalDistance, @Nullable TrainPosition position, int speed) {
+        private Speed(int index, Train train, int time, int distance, int totalDistance, @Nullable Supplier<TrainPosition> position, int speed) {
             super(index, train, time, distance, totalDistance, position);
             this.speed = speed;
         }
@@ -133,7 +138,7 @@ abstract class TrainEvent implements Event {
                     time,
                     distance,
                     before.getTotalDistance() + distance,
-                    before.getPosition().move(distance),
+                    () -> before.getPosition().move(distance),
                     speed
             );
         }
@@ -184,7 +189,35 @@ abstract class TrainEvent implements Event {
     @ParametersAreNonnullByDefault
     static class Init extends Speed {
         Init(int time, Train train, Edge startEdge) {
-            super(1, train, time, 0, 0, TrainPosition.init(train, startEdge), 0);
+            super(1,
+                    train,
+                    time,
+                    0,
+                    0,
+                    () -> Init.getPositionWithLookahead(train, startEdge),
+                    0);
+
+        }
+
+        private static TrainPosition getPositionWithLookahead(Train train, Edge startEdge) {
+            Reach reach = findFirstReachEvent(train);
+            if (reach == null) {
+                return TrainPosition
+                        .init(train, startEdge, startEdge.getNode1(), startEdge.getNode2());
+            }
+            Edge reached = reach.getReached();
+            Node common = reached.getCommonNode(startEdge);
+            Node other = startEdge.getOtherNode(common);
+            return TrainPosition.init(train, startEdge, other, common);
+        }
+
+        private static Reach findFirstReachEvent(Train train) {
+            for(Event event : train.getEvents()) {
+                if(event instanceof Reach) {
+                    return (Reach) event;
+                }
+            }
+            return null;
         }
 
         @Nonnull
@@ -204,7 +237,7 @@ abstract class TrainEvent implements Event {
                     time,
                     distance,
                     before.getTotalDistance() + distance,
-                    before.getPosition().move(distance)
+                    () -> before.getPosition().move(distance)
             );
         }
 
@@ -227,7 +260,7 @@ abstract class TrainEvent implements Event {
 
     @ParametersAreNonnullByDefault
     private abstract static class Position extends TrainEvent {
-        Position(int index, Train train, int time, int distance, int totalDistance, TrainPosition position) {
+        Position(int index, Train train, int time, int distance, int totalDistance, Supplier<TrainPosition> position) {
             super(index, train, time, distance, totalDistance, position);
         }
 
@@ -290,8 +323,12 @@ abstract class TrainEvent implements Event {
                     time,
                     distance,
                     before.getTotalDistance() + distance,
-                    before.getPosition().reachFront(reached));
+                    () -> before.getPosition().reachFront(reached));
             this.reached = reached;
+        }
+
+        Edge getReached() {
+            return reached;
         }
 
         @Nonnull
@@ -316,7 +353,7 @@ abstract class TrainEvent implements Event {
                     time,
                     distance,
                     before.getTotalDistance() + distance,
-                    before.getPosition().leaveBack(left, distance));
+                    () -> before.getPosition().leaveBack(left, distance));
             this.left = left;
         }
 

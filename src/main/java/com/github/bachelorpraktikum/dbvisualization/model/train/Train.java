@@ -3,7 +3,7 @@ package com.github.bachelorpraktikum.dbvisualization.model.train;
 import com.github.bachelorpraktikum.dbvisualization.model.Context;
 import com.github.bachelorpraktikum.dbvisualization.model.Edge;
 import com.github.bachelorpraktikum.dbvisualization.model.Event;
-
+import com.github.bachelorpraktikum.dbvisualization.model.Node;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -13,14 +13,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.WeakHashMap;
+import java.util.function.Function;
 import java.util.logging.Logger;
-
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.geometry.Point2D;
 import javax.annotation.Nonnull;
 import javax.annotation.ParametersAreNonnullByDefault;
 import javax.annotation.concurrent.Immutable;
-
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 
 /**
  * Represents a train.<br> There will always be exactly one instance of this class per name per
@@ -485,6 +485,15 @@ public class Train {
          */
         int getFrontDistance();
 
+        @Nonnull
+        Node getFrontNode();
+
+        @Nonnull
+        Point2D getFrontPosition(Function<Node, Point2D> adapter);
+
+        @Nonnull
+        Point2D getFrontCoordinates();
+
         /**
          * Gets the {@link Edge} the back of the {@link Train} is on.
          *
@@ -501,6 +510,24 @@ public class Train {
          */
         int getBackDistance();
 
+        @Nonnull
+        Node getBackNode();
+
+        @Nonnull
+        Point2D getBackPosition(Function<Node, Point2D> adapter);
+
+        @Nonnull
+        Point2D getBackCoordinates();
+
+        @Nonnull
+        List<Point2D> getPositions(Function<Node, Point2D> adapter);
+
+        /**
+         * Gets all edges this train is on. The list starts with the front edge and ends with the
+         * back edge.
+         *
+         * @return a list of all edges this train is on
+         */
         @Nonnull
         List<Edge> getEdges();
     }

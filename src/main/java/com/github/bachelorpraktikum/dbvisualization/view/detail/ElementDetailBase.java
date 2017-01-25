@@ -7,6 +7,7 @@ import java.net.URL;
 import java.util.List;
 
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Point2D;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.Shape;
 
@@ -17,12 +18,12 @@ public abstract class ElementDetailBase {
 
     abstract List<URL> getImageUrls();
 
-    abstract Coordinates getCoordinates();
+    abstract Point2D getCoordinates();
 
     String getCoordinatesString() {
-        Coordinates coord = getCoordinates();
+        Point2D coord = getCoordinates();
 
-        return String.format("x: %d | y: %d", coord.getX(), coord.getY());
+        return String.format("x: %f | y: %f", coord.getX(), coord.getY());
     }
 
     abstract boolean isTrain();

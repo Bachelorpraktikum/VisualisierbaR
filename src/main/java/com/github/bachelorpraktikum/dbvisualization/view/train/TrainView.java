@@ -1,17 +1,14 @@
 package com.github.bachelorpraktikum.dbvisualization.view.train;
 
-import com.github.bachelorpraktikum.dbvisualization.model.Coordinates;
 import com.github.bachelorpraktikum.dbvisualization.model.Edge;
 import com.github.bachelorpraktikum.dbvisualization.model.Node;
 import com.github.bachelorpraktikum.dbvisualization.model.train.Train;
 import com.github.bachelorpraktikum.dbvisualization.view.TooltipUtil;
 import com.github.bachelorpraktikum.dbvisualization.view.graph.Graph;
-
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.function.Function;
-
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.geometry.Point2D;
@@ -42,7 +39,6 @@ public final class TrainView {
         path.setStrokeWidth(TRAIN_WIDTH * calibrationBase);
         path.setStroke(Color.GREEN);
         path.setStrokeLineCap(StrokeLineCap.BUTT);
-        path.setOpacity(0.5);
         graph.getGroup().getChildren().add(path);
         path.toBack();
 
@@ -67,62 +63,16 @@ public final class TrainView {
             return;
         }
         Train.Position trainPosition = state.getPosition();
-        List<Edge> edges = trainPosition.getEdges();
+        List<Point2D> points = trainPosition.getPositions(coordinatesTranslator);
         List<PathElement> elements = new LinkedList<>();
 
-        if (edges.size() == 1) {
-            // just let the train go from node 1 to node 2
-            Edge edge = edges.get(0);
-            Point2D pos1 = toPos(edge.getNode1());
-            Point2D vector = toPos(edge.getNode2()).subtract(pos1);
-            double edgeLength = vector.magnitude();
-            vector = vector.normalize();
+        Iterator<Point2D> iterator = points.iterator();
+        Point2D start = iterator.next();
+        elements.add(new MoveTo(start.getX(), start.getY()));
 
-            double backDistance = ((double) trainPosition.getBackDistance()) / edge.getLength() * edgeLength;
-            Point2D back = pos1.add(vector.multiply(backDistance));
-            elements.add(new MoveTo(back.getX(), back.getY()));
-
-            double frontDistance = ((double) trainPosition.getFrontDistance()) / edge.getLength() * edgeLength;
-            Point2D front = pos1.add(vector.multiply(frontDistance));
-            elements.add(new LineTo(front.getX(), front.getY()));
-        } else {
-            // Look at the next edge to determine where the front is coming from
-            Iterator<Edge> iterator = edges.iterator();
-            Edge first = iterator.next();
-            Edge second = iterator.next();
-            Point2D start = toPos(findCommonNode(first, second));
-            Point2D end = toPos(findNextNode(second, first));
-            Point2D vector = end.subtract(start);
-            double edgeLength = vector.magnitude();
-            vector = vector.normalize();
-
-            double frontDistance = ((double) trainPosition.getFrontDistance()) / first.getLength() * edgeLength;
-            Point2D front = start.add(vector.multiply(frontDistance));
-            elements.add(new MoveTo(front.getX(), front.getY()));
-            if (!front.equals(start)) {
-                elements.add(new LineTo(start.getX(), start.getY()));
-            }
-
-            Edge last = first;
-            Edge current = second;
-            while (iterator.hasNext()) {
-                // if there is a next edge, this edge can be fully covered
-                Edge nextEdge = iterator.next();
-                Point2D nextPos = toPos(findCommonNode(current, nextEdge));
-                elements.add(new LineTo(nextPos.getX(), nextPos.getY()));
-                last = current;
-                current = nextEdge;
-            }
-
-            // the last edge should not be fully covered
-            start = toPos(findCommonNode(last, current));
-            end = toPos(findNextNode(last, current));
-            vector = end.subtract(start);
-            edgeLength = vector.magnitude();
-            vector = vector.normalize();
-            double backDistance = ((double) trainPosition.getBackDistance()) / current.getLength() * edgeLength;
-            Point2D back = start.add(vector.multiply(backDistance));
-            elements.add(new LineTo(back.getX(), back.getY()));
+        while (iterator.hasNext()) {
+            Point2D point = iterator.next();
+            elements.add(new LineTo(point.getX(), point.getY()));
         }
 
         path.getElements().addAll(elements);

@@ -2,12 +2,10 @@ package com.github.bachelorpraktikum.dbvisualization.model;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.WeakHashMap;
-
 import javax.annotation.Nonnull;
 import javax.annotation.ParametersAreNonnullByDefault;
 import javax.annotation.concurrent.Immutable;
@@ -153,6 +151,30 @@ public final class Edge {
     @Nonnull
     public Node getNode2() {
         return node2;
+    }
+
+    @Nonnull
+    public Node getOtherNode(Node node) {
+        if (getNode1().equals(node)) {
+            return getNode2();
+        } else if (getNode2().equals(node)) {
+            return getNode1();
+        } else {
+            throw new IllegalArgumentException();
+        }
+    }
+
+    public Node getCommonNode(Edge other) {
+        Node n1 = getNode1();
+        Node n2 = getNode2();
+
+        if (n1.equals(other.getNode1()) || n1.equals(other.getNode2())) {
+            return n1;
+        } else if (n2.equals(other.getNode1()) || n2.equals(other.getNode2())) {
+            return n2;
+        } else {
+            throw new IllegalArgumentException();
+        }
     }
 
     /**

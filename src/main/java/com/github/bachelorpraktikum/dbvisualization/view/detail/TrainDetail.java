@@ -6,6 +6,7 @@ import com.github.bachelorpraktikum.dbvisualization.model.train.Train;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import javafx.geometry.Point2D;
 
 public class TrainDetail extends ElementDetailBase {
     private Train train;
@@ -28,9 +29,9 @@ public class TrainDetail extends ElementDetailBase {
     }
 
     @Override
-    Coordinates getCoordinates() {
-        // TODO: Decide on which position to display
-        return getState().getPosition().getFrontEdge().getNode1().getCoordinates();
+    Point2D getCoordinates() {
+        // TODO: ALSO DISPLAY BACK COORDINATES
+        return getState().getPosition().getFrontCoordinates();
     }
 
     @Override
