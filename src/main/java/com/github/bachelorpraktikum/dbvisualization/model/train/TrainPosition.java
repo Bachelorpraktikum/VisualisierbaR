@@ -77,12 +77,6 @@ final class TrainPosition implements Train.Position {
 
     @Nonnull
     @Override
-    public Node getFrontNode() {
-        return frontNode;
-    }
-
-    @Nonnull
-    @Override
     public Point2D getFrontCoordinates() {
         return getEndCoordinates(frontNode, unreachedFrontNode, frontDistance);
     }
@@ -106,12 +100,6 @@ final class TrainPosition implements Train.Position {
     @Override
     public int getBackDistance() {
         return backDistance;
-    }
-
-    @Nonnull
-    @Override
-    public Node getBackNode() {
-        return backNode;
     }
 
     @Nonnull

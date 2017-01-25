@@ -471,6 +471,7 @@ public class Train {
 
         /**
          * Gets the {@link Edge} the front of the {@link Train} is on.
+         * This is a convenience method for {@link #getEdges() getEdges().get(0)}.
          *
          * @return the edge
          */
@@ -478,24 +479,37 @@ public class Train {
         Edge getFrontEdge();
 
         /**
-         * Gets the totalDistance the front of the train has travelled on the {@link #getFrontEdge()
+         * Gets the distance the front of the train has travelled on the {@link #getFrontEdge()
          * front edge}.
          *
-         * @return the totalDistance in meters
+         * @return the distance in meters
          */
         int getFrontDistance();
 
-        @Nonnull
-        Node getFrontNode();
-
+        /**
+         * Gets the real coordinates of the train's front.
+         *
+         * @param adapter the adapter to translate the Coordinates of the nearest Nodes to real
+         * coordinates.
+         * @return the real position of the front
+         */
         @Nonnull
         Point2D getFrontPosition(Function<Node, Point2D> adapter);
 
+        /**
+         * Gets the position of the train's front in the virtual coordinate system of the
+         * simulation. The coordinates returned by this function can not confidently translated to
+         * real coordinates, because the actual layout might differ from the virtual one. If you
+         * want real coordinates of the front, use {@link #getFrontPosition(Function)}.
+         *
+         * @return the virtual coordinates of the front
+         */
         @Nonnull
         Point2D getFrontCoordinates();
 
         /**
-         * Gets the {@link Edge} the back of the {@link Train} is on.
+         * Gets the {@link Edge} the back of the {@link Train} is on. This is a convenience method
+         * for {@link #getEdges() getEdges().get(getEdges().size() - 1)}.
          *
          * @return the edge
          */
@@ -503,22 +517,42 @@ public class Train {
         Edge getBackEdge();
 
         /**
-         * Gets the totalDistance the back of the train is away from the end of the {@link
+         * Gets the distance the back of the train is away from the end of the {@link
          * #getBackEdge() back edge}.
+         * In other words, this is the distance the back end of the train still has to travel until
+         * it reaches the end of the edge.
          *
-         * @return the totalDistance in meters
+         * @return the distance in meters
          */
         int getBackDistance();
 
-        @Nonnull
-        Node getBackNode();
-
+        /**
+         * Gets the real coordinates of the train's back.
+         *
+         * @param adapter the adapter to translate the Coordinates of the nearest Nodes to real
+         * coordinates.
+         * @return the real position of the back
+         */
         @Nonnull
         Point2D getBackPosition(Function<Node, Point2D> adapter);
 
+        /**
+         * Gets the position of the train's back in the virtual coordinate system of the
+         * simulation. The coordinates returned by this function can not confidently translated to
+         * real coordinates, because the actual layout might differ from the virtual one. If you
+         * want real coordinates of the back, use {@link #getBackPosition(Function)}.
+         *
+         * @return the virtual coordinates of the back
+         */
         @Nonnull
         Point2D getBackCoordinates();
 
+        /**
+         * Gets all significant points this train is on, from front to start.
+         * This includes all nodes and the exact positions of the front and back.
+         * @param adapter the adapter to translate Node Coordinates to real positions.
+         * @return a list of real positions
+         */
         @Nonnull
         List<Point2D> getPositions(Function<Node, Point2D> adapter);
 
