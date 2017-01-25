@@ -1,6 +1,5 @@
 package com.github.bachelorpraktikum.dbvisualization.view.train;
 
-import com.github.bachelorpraktikum.dbvisualization.model.Edge;
 import com.github.bachelorpraktikum.dbvisualization.model.Node;
 import com.github.bachelorpraktikum.dbvisualization.model.train.Train;
 import com.github.bachelorpraktikum.dbvisualization.view.TooltipUtil;
@@ -76,40 +75,5 @@ public final class TrainView {
         }
 
         path.getElements().addAll(elements);
-    }
-
-    private Point2D toPos(Node node) {
-        return coordinatesTranslator.apply(node);
-    }
-
-
-    private Node findNextNode(Edge last, Edge current) {
-        Node node1 = current.getNode1();
-        Node node2 = current.getNode2();
-
-        if (node1.equals(last.getNode1())
-                || node1.equals(last.getNode2())) {
-            return node2;
-        } else if (node2.equals(last.getNode1())
-                || node2.equals(last.getNode2())) {
-            return node1;
-        } else {
-            throw new IllegalArgumentException("no common node");
-        }
-    }
-
-    private Node findCommonNode(Edge edge1, Edge edge2) {
-        Node node1 = edge2.getNode1();
-        Node node2 = edge2.getNode2();
-
-        if (node1.equals(edge1.getNode1())
-                || node1.equals(edge1.getNode2())) {
-            return node1;
-        } else if (node2.equals(edge1.getNode1())
-                || node2.equals(edge1.getNode2())) {
-            return node2;
-        } else {
-            throw new IllegalArgumentException("no common node");
-        }
     }
 }
