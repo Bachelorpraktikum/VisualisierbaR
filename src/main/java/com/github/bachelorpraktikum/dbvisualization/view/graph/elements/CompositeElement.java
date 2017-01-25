@@ -81,9 +81,9 @@ final class CompositeElement extends ElementBase<Group> {
         resizeNode(shape, MAX_ELEMENT_WIDTH * getCalibrationBase());
     }
 
-    private void resizeNode(javafx.scene.Node node, double maxSize) {
+    private void resizeNode(javafx.scene.Node node, double maxWidth) {
         Bounds bounds = node.getLayoutBounds();
-        double f = maxSize / bounds.getWidth();
+        double f = maxWidth / bounds.getWidth();
         node.setScaleX(node.getScaleX() * f);
         node.setScaleY(node.getScaleY() * f);
     }
@@ -128,7 +128,6 @@ final class CompositeElement extends ElementBase<Group> {
             }
 
             shape.setRotate(90);
-            resizeNode(shape, 2 * getCalibrationBase());
             return shape;
         } catch (IOException e) {
             e.printStackTrace();
