@@ -4,7 +4,9 @@ import com.github.bachelorpraktikum.dbvisualization.CompositeObservableList;
 import com.github.bachelorpraktikum.dbvisualization.model.train.Train;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 import javafx.collections.ObservableList;
+import javax.annotation.Nonnull;
 import javax.annotation.concurrent.Immutable;
 
 /**
@@ -21,6 +23,13 @@ public final class Context {
         this.objects = new LinkedList<>();
     }
 
+    /**
+     * Gets a list of all events associated with this context.
+     * This list will never contain events for trains created after calling this method though.
+     *
+     * @return an immutable observable list of events
+     */
+    @Nonnull
     public ObservableList<Event> getObservableEvents() {
         CompositeObservableList<Event> elementEvents = new CompositeObservableList<>(
                 Element.in(this).getEvents());
@@ -31,7 +40,14 @@ public final class Context {
                         CompositeObservableList::union));
     }
 
-    public void addObject(Object object) {
-        objects.add(object);
+    /**
+     * Ensures the given object will not be garbage collected until this context is.
+     *
+     * @param object any object
+     * @throws NullPointerException if the object is null
+     */
+    @Nonnull
+    public void addObject(@Nonnull Object object) {
+        objects.add(Objects.requireNonNull(object));
     }
 }
