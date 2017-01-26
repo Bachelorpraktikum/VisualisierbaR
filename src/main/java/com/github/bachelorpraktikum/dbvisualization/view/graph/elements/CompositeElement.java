@@ -3,7 +3,6 @@ package com.github.bachelorpraktikum.dbvisualization.view.graph.elements;
 import com.github.bachelorpraktikum.dbvisualization.model.Element;
 import com.github.bachelorpraktikum.dbvisualization.model.Node;
 import com.github.bachelorpraktikum.dbvisualization.view.graph.adapter.CoordinatesAdapter;
-
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -11,12 +10,8 @@ import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.RecursiveAction;
 import java.util.concurrent.atomic.DoubleAdder;
 import java.util.stream.Collectors;
-
-import javax.annotation.Nonnull;
-
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.WeakChangeListener;
 import javafx.fxml.FXMLLoader;
@@ -27,8 +22,11 @@ import javafx.scene.shape.Line;
 import javafx.scene.shape.Polygon;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.Shape;
+import javax.annotation.Nonnull;
 
 final class CompositeElement extends ElementBase<Group> {
+    private static final double MAX_SHAPE_WIDTH = 2.0;
+    private static final double GESCHWINDIGKEITS_ANZEIGER_WIDTH_FACTOR = 0.5;
     private static final double FOOT_HEIGHT = 0.5;
 
     private final Map<Element, Shape> shapes;
@@ -94,6 +92,7 @@ final class CompositeElement extends ElementBase<Group> {
     }
 
     private Shape createShape(Element.Type type) {
+        double maxWidth = MAX_SHAPE_WIDTH;
         Shape shape = null;
         switch (type) {
             case VorSignalImpl:
@@ -102,15 +101,18 @@ final class CompositeElement extends ElementBase<Group> {
                 break;
             case GeschwindigkeitsAnzeigerImpl:
                 shape = new Polygon(0, 2, 1, 0, 2, 2);
+                maxWidth *= GESCHWINDIGKEITS_ANZEIGER_WIDTH_FACTOR;
                 break;
             case GeschwindigkeitsVoranzeiger:
                 shape = new Polygon(0, 0, 1, 2, 2, 0);
+                maxWidth *= GESCHWINDIGKEITS_ANZEIGER_WIDTH_FACTOR;
                 break;
+            case UnknownElement:
             default:
                 shape = new Rectangle(2, 2);
                 break;
         }
-        resizeNode(shape, getCalibrationBase() * 2.0);
+        resizeNode(shape, getCalibrationBase() * maxWidth);
         return shape;
     }
 
