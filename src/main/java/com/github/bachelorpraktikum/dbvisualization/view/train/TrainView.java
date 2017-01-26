@@ -75,5 +75,11 @@ public final class TrainView {
         }
 
         path.getElements().addAll(elements);
+
+        if (state.isTerminated()) {
+            path.setStroke(Color.GRAY);
+        } else {
+            path.setStroke(Color.GREEN);
+        }
     }
 }
