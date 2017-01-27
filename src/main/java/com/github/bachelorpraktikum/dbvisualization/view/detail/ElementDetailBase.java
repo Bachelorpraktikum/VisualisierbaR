@@ -1,15 +1,13 @@
 package com.github.bachelorpraktikum.dbvisualization.view.detail;
 
-import com.github.bachelorpraktikum.dbvisualization.model.Coordinates;
-
-import java.io.IOException;
-import java.net.URL;
-import java.util.List;
-
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Point2D;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.Shape;
+
+import java.io.IOException;
+import java.net.URL;
+import java.util.List;
 
 public abstract class ElementDetailBase {
     private int time;

@@ -10,6 +10,8 @@ import javafx.scene.shape.Shape;
 
 public class ElementDetailController {
     @FXML
+    private Label coordinateValueBack;
+    @FXML
     private VBox elementBox;
     @FXML
     private Label stateValue;
@@ -50,6 +52,7 @@ public class ElementDetailController {
 
         if (detail.isTrain()) {
             TrainDetail trainDetail = (TrainDetail) detail;
+            coordinateValueBack.textProperty().setValue(trainDetail.getBackCoordinate());
             speedValue.textProperty().setValue(String.format("%dkm/h", trainDetail.getSpeed()));
             lengthValue.textProperty().setValue(String.format("%dm", trainDetail.getLength()));
             shape.setRotate(180);

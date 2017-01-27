@@ -1,12 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.Insets?>
-<?import javafx.scene.chart.LineChart?>
-<?import javafx.scene.chart.NumberAxis?>
-<?import javafx.scene.control.Label?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.chart.*?>
+<?import javafx.scene.control.*?>
 <?import javafx.scene.Group?>
-<?import javafx.scene.layout.AnchorPane?>
-<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.layout.*?>
 <VBox fx:id="detailView" prefHeight="600" xmlns="http://javafx.com/javafx/8.0.111"
       xmlns:fx="http://javafx.com/fxml/1"
       fx:controller="com.github.bachelorpraktikum.dbvisualization.view.detail.ElementDetailController">
@@ -34,6 +32,13 @@
         </AnchorPane>
     </VBox>
     <VBox fx:id="trainBox">
+        <AnchorPane>
+            <Label AnchorPane.leftAnchor="0" text="%coordinateBack"/>
+            <Label fx:id="coordinateValueBack" AnchorPane.rightAnchor="0"/>
+            <VBox.margin>
+                <Insets bottom="3" left="10" right="10" top="3"/>
+            </VBox.margin>
+        </AnchorPane>
         <AnchorPane>
             <Label AnchorPane.leftAnchor="0" text="%speed"/>
             <Label fx:id="speedValue" AnchorPane.rightAnchor="0"/>
