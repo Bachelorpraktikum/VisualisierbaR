@@ -335,8 +335,6 @@ public class MainController {
 
             showDetailView();
             detailBoxController.setDetail(detail);
-            Element e = Element.in(context).get(newValue);
-            getGraph().getElements().get(e).getShape(e).setStroke(Color.RED);
         });
 
         eventTraversalTimeline = new Timeline(new KeyFrame(Duration.seconds(1), event -> {

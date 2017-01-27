@@ -29,7 +29,6 @@ public class TrainDetail extends ElementDetailBase {
 
     @Override
     Point2D getCoordinates() {
-        // TODO: ALSO DISPLAY BACK COORDINATES
         return getState().getPosition().getFrontCoordinates();
     }
 
