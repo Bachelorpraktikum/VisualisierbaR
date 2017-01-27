@@ -6,8 +6,9 @@ import com.github.bachelorpraktikum.dbvisualization.model.Edge;
 import com.github.bachelorpraktikum.dbvisualization.model.Node;
 import com.sun.javafx.geom.Vec2d;
 
-import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Stack;
 
 import javax.annotation.Nonnull;
 
@@ -29,6 +30,7 @@ public final class ProportionalCoordinatesAdapter implements CoordinatesAdapter 
         this.context = context;
         shortestEdgeLength = Double.MAX_VALUE;
 
+        // search for the shortest Edge
         for(Edge edge: Edge.in(context).getAll()) {
             double edgeLength = edge.getLength();
 
@@ -39,6 +41,9 @@ public final class ProportionalCoordinatesAdapter implements CoordinatesAdapter 
         int x = Integer.MAX_VALUE;
         int y = Integer.MAX_VALUE;
 
+        // search for a starting Node
+        // this will be the Node with the smallest x and y coordinates,
+        // which is the Node in the top left corner
         for(Node node: Node.in(context).getAll()) {
             Coordinates c = node.getCoordinates();
             if(c.getX() < x || c.getY() < y) {
@@ -50,7 +55,8 @@ public final class ProportionalCoordinatesAdapter implements CoordinatesAdapter 
 
         startingCoordinates = startingNode.getCoordinates();
 
-        this.dijkstra();
+        // calculate all transformation Vectors
+        this.dfs();
     }
 
     @Override
@@ -58,6 +64,12 @@ public final class ProportionalCoordinatesAdapter implements CoordinatesAdapter 
         return 2;
     }
 
+    /**
+     * Calculates a point for the given Node. This Point is the Place
+     * the Node should be placed on the screen.
+     *
+     * @return the Point at which the given Node should be placed
+     */
     @Nonnull
     @Override
     public Point2D apply(@Nonnull Node node) {
@@ -65,59 +77,61 @@ public final class ProportionalCoordinatesAdapter implements CoordinatesAdapter 
         return new Point2D(startingCoordinates.getX() + transformVec.x, startingCoordinates.getY() + transformVec.y);
     }
 
-    private void dijkstra() {
-        ArrayList<Node> Q = new ArrayList<>();
-
-        for(Node v: Node.in(context).getAll()) {
-            transformationMap.put(v, new Vec2d(Double.MAX_VALUE, Double.MAX_VALUE));
-            //prevMap.put(v, null);
-            Q.add(v);
-        }
-
-        transformationMap.replace(startingNode, new Vec2d(0, 0));
+    /**
+     * Use Depth-First Search to visit every node in the Graph
+     */
+    private void dfs() {
+        Stack<Node> Q = new Stack<>();
+        HashSet<Node> S = new HashSet<>();
+        Q.push(startingNode);
+        transformationMap.put(startingNode, new Vec2d(startingCoordinates.getX(), startingCoordinates.getY()));
+        Node lastCurrent = null;
 
         while(!Q.isEmpty()) {
-            // u should be vertex with the minimal distance
-            Node u = null;
-            Vec2d uVector = new Vec2d(Double.MAX_VALUE, Double.MAX_VALUE);
-            for(Node node: Q) {
-                if(vectorLength(transformationMap.get(node)) < vectorLength(uVector)) {
-                    u = node;
-                    uVector = transformationMap.get(node);
+            Node current = Q.pop();
+            if(lastCurrent != null && lastCurrent.equals(startingNode))
+                S.remove(startingNode);
+
+            if(!S.contains(current)) {
+                S.add(current);
+                for (Edge edge : current.getEdges()) {
+                    if (edge.getNode1().equals(current)) {
+                        processNode(edge.getNode2(), current, edge, Q, S);
+                    } else {
+                        processNode(edge.getNode1(), current, edge, Q, S);
+                    }
                 }
             }
-
-            // remove u from Q
-            Q.remove(u);
-
-            if(u == null)
-                throw new IllegalStateException();
-
-            for(Edge edge: u.getEdges()) {
-                if(edge.getNode1().equals(u)) {
-                    processNode(edge.getNode2(), u, edge);
-                } else {
-                    processNode(edge.getNode1(), u, edge);
-                }
-            }
+            lastCurrent = current;
         }
     }
 
-    private void processNode(Node node, Node u, Edge edge) {
-        Coordinates nodeCoord = node.getCoordinates();
+    /**
+     * Helper function for the dfs algorithm
+     *
+     *
+     * @param v a neighbour of u
+     * @param u the currently processed node
+     * @param edge the edge between u and v
+     * @param Q the current set of nodes
+     */
+    private void processNode(Node v, Node u, Edge edge, Stack<Node> Q, HashSet<Node> S) {
+        if(S.contains(v))
+            return;
+        Coordinates vCoord = v.getCoordinates();
         Coordinates uCoord = u.getCoordinates();
-        Vec2d normVec = uCoord.normVectorTo(nodeCoord);
+        Vec2d normVec = uCoord.normVectorTo(vCoord);
         double scaleFactor = edge.getLength() / shortestEdgeLength;
-        Vec2d transformVec = new Vec2d(normVec.x * scaleFactor, normVec.y * scaleFactor);
+        Vec2d edgeVec = new Vec2d(normVec.x * scaleFactor, normVec.y * scaleFactor);
         Vec2d uVec = transformationMap.get(u);
-        Vec2d alt = new Vec2d(uVec.x + transformVec.x, uVec.y + transformVec.y);
-        if(vectorLength(alt) < vectorLength(transformationMap.get(node))) {
-            transformationMap.replace(node, alt);
-            //prevMap.replace(node, u);
-        }
-    }
 
-    private double vectorLength(Vec2d v) {
-        return Math.sqrt(v.x*v.x + v.y*v.y);
+        // this vector is from the startingNode to the point where
+        // the node v should be placed
+        Vec2d transformationVec = new Vec2d(uVec.x + edgeVec.x, uVec.y + edgeVec.y);
+        if(transformationMap.containsKey(v))
+            transformationMap.replace(v, transformationVec);
+        else
+            transformationMap.put(v, transformationVec);
+        Q.push(v);
     }
 }
