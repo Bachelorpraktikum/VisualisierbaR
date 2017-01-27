@@ -59,7 +59,7 @@ public class ElementDetailController {
             TrainDetail trainDetail = (TrainDetail) detail;
             coordinateValueBack.textProperty().setValue(trainDetail.getBackCoordinate());
             coordinateLabel.setText(ResourceBundle.getBundle("bundles.localization").getString("coordinate_front"));
-            speedValue.textProperty().setValue(String.format("%dkm/h", trainDetail.getSpeed()));
+            speedValue.textProperty().setValue(String.format("%dm/s", trainDetail.getSpeed()));
             lengthValue.textProperty().setValue(String.format("%dm", trainDetail.getLength()));
             shape.setRotate(180);
         } else {
