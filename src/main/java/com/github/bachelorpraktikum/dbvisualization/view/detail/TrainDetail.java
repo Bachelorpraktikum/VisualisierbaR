@@ -1,12 +1,11 @@
 package com.github.bachelorpraktikum.dbvisualization.view.detail;
 
-import com.github.bachelorpraktikum.dbvisualization.model.Coordinates;
 import com.github.bachelorpraktikum.dbvisualization.model.train.Train;
+import javafx.geometry.Point2D;
 
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
-import javafx.geometry.Point2D;
 
 public class TrainDetail extends ElementDetailBase {
     private Train train;
@@ -49,5 +48,11 @@ public class TrainDetail extends ElementDetailBase {
 
     int getLength() {
         return train.getLength();
+    }
+
+    String getBackCoordinate() {
+        Point2D coord = train.getState(getTime()).getPosition().getBackCoordinates();
+
+        return String.format("x: %f | y: %f", coord.getX(), coord.getY());
     }
 }
