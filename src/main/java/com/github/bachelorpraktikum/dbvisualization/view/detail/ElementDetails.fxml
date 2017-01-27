@@ -16,7 +16,7 @@
         </VBox.margin>
     </AnchorPane>
     <AnchorPane>
-        <Label AnchorPane.leftAnchor="0" text="%coordinate"/>
+        <Label fx:id="coordinateLabel" AnchorPane.leftAnchor="0" text="%coordinate"/>
         <Label fx:id="coordinateValue" AnchorPane.rightAnchor="0"/>
         <VBox.margin>
             <Insets bottom="3" left="10" right="10" top="3"/>
@@ -33,7 +33,7 @@
     </VBox>
     <VBox fx:id="trainBox">
         <AnchorPane>
-            <Label AnchorPane.leftAnchor="0" text="%coordinateBack"/>
+            <Label AnchorPane.leftAnchor="0" text="%coordinate_back"/>
             <Label fx:id="coordinateValueBack" AnchorPane.rightAnchor="0"/>
             <VBox.margin>
                 <Insets bottom="3" left="10" right="10" top="3"/>

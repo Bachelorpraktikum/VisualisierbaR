@@ -8,7 +8,12 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
 import javafx.scene.shape.Shape;
 
+import javax.annotation.Resource;
+import java.util.ResourceBundle;
+
 public class ElementDetailController {
+    @FXML
+    private Label coordinateLabel;
     @FXML
     private Label coordinateValueBack;
     @FXML
@@ -53,6 +58,7 @@ public class ElementDetailController {
         if (detail.isTrain()) {
             TrainDetail trainDetail = (TrainDetail) detail;
             coordinateValueBack.textProperty().setValue(trainDetail.getBackCoordinate());
+            coordinateLabel.setText(ResourceBundle.getBundle("bundles.localization").getString("coordinate_front"));
             speedValue.textProperty().setValue(String.format("%dkm/h", trainDetail.getSpeed()));
             lengthValue.textProperty().setValue(String.format("%dm", trainDetail.getLength()));
             shape.setRotate(180);
