@@ -90,13 +90,13 @@ public class TrainTest {
     }
 
     @Test
-    public void testGetStateNegativeTime() {
+    public void testGetStateNegativeTimeBeforeInit() {
         Train train = Train.in(context).create("t", "train", 20);
         Edge edge = createEdges(30)[0];
         train.eventFactory().init(0, edge);
 
         expected.expect(IllegalArgumentException.class);
-        train.getState(-1);
+        train.getState(Context.INIT_STATE_TIME - 1);
     }
 
     @Test

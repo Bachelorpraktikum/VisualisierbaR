@@ -120,7 +120,7 @@ public class ElementTest {
         boolean hasZeroTime = false;
         boolean zeroTimeHasWarnings = false;
         for (Event event : Element.in(context).getEvents()) {
-            assertFalse(event.getTime() < 0);
+            assertFalse(event.getTime() < Context.INIT_STATE_TIME);
             if (event.getTime() == 0) {
                 hasZeroTime = true;
                 if (!event.getWarnings().isEmpty()) {

@@ -253,10 +253,6 @@ public class Train {
             throw new IllegalArgumentException("time is too small");
         }
 
-        if(time < 0) {
-         //   return events.get(0).getState();
-        }
-
         Iterator<TrainEvent> iterator = events.listIterator(startingIndex);
         TrainEvent result = iterator.next();
 

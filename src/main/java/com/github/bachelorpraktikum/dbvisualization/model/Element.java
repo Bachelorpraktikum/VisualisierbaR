@@ -358,12 +358,12 @@ public final class Element {
 
     /**
      * Adds an event for this {@link Element}.
+     * If the time is negative, it will be corrected to 0 and a warning will be added to the event.
      *
      * @param state new state after this event
      * @param time  the time of the event in milliseconds
      * @throws NullPointerException     if state is null
      * @throws IllegalStateException    if there is already another event after this one
-     * @throws IllegalArgumentException if time is negative
      */
     public void addEvent(State state, int time) {
         List<String> warnings = new LinkedList<>();
