@@ -51,13 +51,13 @@ public class ElementDetailController {
         elementBox.setVisible(!detail.isTrain());
 
         elementName.textProperty().setValue(detail.getName());
-        coordinateValue.textProperty().setValue(String.valueOf(detail.getCoordinatesString()));
+        coordinateValue.textProperty().setValue(String.valueOf(detail.getCoordinatesString(detail.getCoordinates())));
 
         Shape shape = detail.getShape();
 
         if (detail.isTrain()) {
             TrainDetail trainDetail = (TrainDetail) detail;
-            coordinateValueBack.textProperty().setValue(trainDetail.getBackCoordinate());
+            coordinateValueBack.textProperty().setValue(detail.getCoordinatesString(trainDetail.getBackCoordinate()));
             coordinateLabel.setText(ResourceBundle.getBundle("bundles.localization").getString("coordinate_front"));
             speedValue.textProperty().setValue(String.format("%dm/s", trainDetail.getSpeed()));
             lengthValue.textProperty().setValue(String.format("%dm", trainDetail.getLength()));

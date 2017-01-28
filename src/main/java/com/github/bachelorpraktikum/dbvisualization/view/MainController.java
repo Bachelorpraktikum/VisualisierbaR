@@ -348,6 +348,7 @@ public class MainController {
 
             showDetailView();
             detailBoxController.setDetail(detail);
+            detailBoxController.setTime(simulationTime.get());
         });
 
         eventTraversalTimeline = new Timeline(new KeyFrame(Duration.seconds(1), event -> {

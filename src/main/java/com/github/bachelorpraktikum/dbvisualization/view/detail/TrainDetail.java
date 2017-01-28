@@ -1,11 +1,12 @@
 package com.github.bachelorpraktikum.dbvisualization.view.detail;
 
 import com.github.bachelorpraktikum.dbvisualization.model.train.Train;
-import javafx.geometry.Point2D;
-
+import com.github.bachelorpraktikum.dbvisualization.model.train.Train.State;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import javafx.geometry.Point2D;
+import javax.annotation.Nullable;
 
 public class TrainDetail extends ElementDetailBase {
     private Train train;
@@ -27,9 +28,16 @@ public class TrainDetail extends ElementDetailBase {
         return urls;
     }
 
+    @Nullable
     @Override
     Point2D getCoordinates() {
-        return getState().getPosition().getFrontCoordinates();
+        State state = getState();
+
+        if (state.isInitialized()) {
+            return getState().getPosition().getFrontCoordinates();
+        } else {
+            return null;
+        }
     }
 
     @Override
@@ -49,9 +57,12 @@ public class TrainDetail extends ElementDetailBase {
         return train.getLength();
     }
 
-    String getBackCoordinate() {
-        Point2D coord = train.getState(getTime()).getPosition().getBackCoordinates();
-
-        return String.format("x: %f | y: %f", coord.getX(), coord.getY());
+    Point2D getBackCoordinate() {
+        State state = getState();
+        if (state.isInitialized()) {
+            return state.getPosition().getBackCoordinates();
+        } else {
+            return null;
+        }
     }
 }
