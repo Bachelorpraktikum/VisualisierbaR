@@ -119,6 +119,8 @@ public class MainController {
     @FXML
     private ListView<Event> logList;
     @FXML
+    private Button resetButton;
+    @FXML
     private TextField timeText;
     @FXML
     private HBox rightSpacer;
@@ -159,6 +161,7 @@ public class MainController {
         fireOnEnterPress(closeButton);
         fireOnEnterPress(logToggle);
         closeButton.setOnAction(event -> showSourceChooser());
+        resetButton.setOnAction(event -> simulationTime.set(Context.INIT_STATE_TIME));
 
         legendButton.selectedProperty().addListener((observable, oldValue, newValue) -> {
             legend.setVisible(newValue);
@@ -570,6 +573,7 @@ public class MainController {
                 return;
         }
 
+        simulationTime.set(Context.INIT_STATE_TIME);
         showElements();
     }
 

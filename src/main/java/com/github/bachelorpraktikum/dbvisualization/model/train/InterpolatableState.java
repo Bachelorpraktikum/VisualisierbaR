@@ -1,5 +1,6 @@
 package com.github.bachelorpraktikum.dbvisualization.model.train;
 
+import com.github.bachelorpraktikum.dbvisualization.model.Context;
 import java.util.Objects;
 
 import javax.annotation.Nonnull;
@@ -44,7 +45,7 @@ final class InterpolatableState implements Train.State {
         @Nonnull
         private final Train train;
 
-        private int time = -1;
+        private int time = Integer.MIN_VALUE;
         private int speed = -1;
         private boolean terminated = false;
         private boolean initialized = true;
@@ -71,7 +72,7 @@ final class InterpolatableState implements Train.State {
          * @throws IllegalArgumentException if time is negative
          */
         Builder time(int time) {
-            if (time < 0) {
+            if (time < Context.INIT_STATE_TIME) {
                 throw new IllegalArgumentException("time is negative");
             }
             this.time = time;
@@ -175,7 +176,7 @@ final class InterpolatableState implements Train.State {
          * @throws IllegalStateException if any of the required values have not been set.
          */
         InterpolatableState build() {
-            if (time < 0
+            if (time < Context.INIT_STATE_TIME
                     || speed < 0
                     || index < 0
                     || distance < 0

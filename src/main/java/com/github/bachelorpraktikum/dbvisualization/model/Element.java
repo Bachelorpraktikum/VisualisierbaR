@@ -4,7 +4,6 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -12,17 +11,15 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.WeakHashMap;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import javax.annotation.ParametersAreNonnullByDefault;
-
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.beans.property.ReadOnlyProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.SortedList;
 import javafx.scene.paint.Color;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import javax.annotation.ParametersAreNonnullByDefault;
 
 /**
  * Represents an element on the track.<p>Every element is associated with a {@link Node}.</p>
@@ -182,7 +179,7 @@ public final class Element {
         }
 
         // Add an event at time 0 with the initial state
-        factory.addEvent(this, state, 0);
+        factory.addEvent(this, state, Context.INIT_STATE_TIME);
     }
 
     /**
@@ -287,11 +284,10 @@ public final class Element {
         }
 
         private void addEvent(Element element, State state, int time) {
-            List<String> warnings = new LinkedList<>();
-            if (time < 0) {
-                warnings.add("original time was " + time);
-                time = 0;
-            }
+            addEvent(element, state, new LinkedList<>(), time);
+        }
+
+        private void addEvent(Element element, State state, List<String> warnings, int time) {
             if (!events.isEmpty() && time < events.get(events.size() - 1).getTime()) {
                 warnings.add("tried to add before last event at " + time);
                 time = events.get(events.size() - 1).getTime();
@@ -306,7 +302,7 @@ public final class Element {
         }
 
         private void resetTime() {
-            currentTime = -1;
+            currentTime = Context.INIT_STATE_TIME;
             nextIndex = 0;
         }
 
@@ -314,11 +310,11 @@ public final class Element {
          * Changes the time for all {@link Element elements} in this context.
          *
          * @param time the time in milliseconds
-         * @throws IllegalArgumentException if time is negative
+         * @throws IllegalArgumentException if time is less than {@link Context#INIT_STATE_TIME}
          */
         public void setTime(int time) {
-            if (time < 0) {
-                throw new IllegalArgumentException("negative time: " + time);
+            if (time < -1) {
+               throw new IllegalArgumentException("invalid time: " + time);
             }
 
             if (time == currentTime) {
@@ -370,7 +366,12 @@ public final class Element {
      * @throws IllegalArgumentException if time is negative
      */
     public void addEvent(State state, int time) {
-        getFactory().addEvent(this, Objects.requireNonNull(state), time);
+        List<String> warnings = new LinkedList<>();
+        if (time < 0) {
+            warnings.add("original time was " + time);
+            time = 0;
+        }
+        getFactory().addEvent(this, Objects.requireNonNull(state), warnings, time);
     }
 
     /**

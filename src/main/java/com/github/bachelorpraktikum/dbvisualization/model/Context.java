@@ -16,6 +16,7 @@ import javax.annotation.concurrent.Immutable;
  */
 @Immutable
 public final class Context {
+    public static final int INIT_STATE_TIME = -1;
 
     private final List<Object> objects;
 

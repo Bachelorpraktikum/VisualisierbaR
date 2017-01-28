@@ -1,5 +1,6 @@
 package com.github.bachelorpraktikum.dbvisualization.model.train;
 
+import com.github.bachelorpraktikum.dbvisualization.model.Context;
 import com.github.bachelorpraktikum.dbvisualization.model.Edge;
 import com.github.bachelorpraktikum.dbvisualization.model.Event;
 import com.github.bachelorpraktikum.dbvisualization.model.Node;
@@ -168,7 +169,7 @@ abstract class TrainEvent implements Event {
     @ParametersAreNonnullByDefault
     static class Start extends Speed {
         Start(Train train) {
-            super(0, train, 0, 0, 0, () -> null, 0);
+            super(0, train, Context.INIT_STATE_TIME, 0, 0, () -> null, 0);
         }
 
         @Nonnull

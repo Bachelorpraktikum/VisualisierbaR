@@ -202,7 +202,7 @@ public class Train {
      *
      * @param time the time in milliseconds since the start of the simulation
      * @return the state of the train at the given point in time.
-     * @throws IllegalArgumentException if time is negative
+     * @throws IllegalArgumentException if time is less than {@link Context#INIT_STATE_TIME}
      * @throws IllegalStateException    if this train has not been {@link EventFactory#init(int, Edge)
      *                                  initialized}
      */
@@ -220,7 +220,7 @@ public class Train {
      * @param time   the time in milliseconds since the start of the simulation
      * @param before the state to use as a jumping off point
      * @return the state of the train at the given point in time.
-     * @throws IllegalArgumentException if time is negative
+     * @throws IllegalArgumentException if time is less than {@link Context#INIT_STATE_TIME}
      * @throws IllegalArgumentException if before is a state of a different train
      * @throws NullPointerException     if before is null
      * @throws IllegalStateException    if this train has not been {@link EventFactory#init(int, Edge)
@@ -249,8 +249,12 @@ public class Train {
 
     @Nonnull
     private State getState(int time, int startingIndex) {
-        if (time < 0) {
-            throw new IllegalArgumentException("time is negative");
+        if (time < Context.INIT_STATE_TIME) {
+            throw new IllegalArgumentException("time is too small");
+        }
+
+        if(time < 0) {
+         //   return events.get(0).getState();
         }
 
         Iterator<TrainEvent> iterator = events.listIterator(startingIndex);
