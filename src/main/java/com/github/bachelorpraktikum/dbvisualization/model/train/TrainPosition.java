@@ -78,7 +78,7 @@ final class TrainPosition implements Train.Position {
     @Nonnull
     @Override
     public Point2D getFrontCoordinates() {
-        return getEndCoordinates(frontNode, unreachedFrontNode, frontDistance);
+        return getEndCoordinates(frontNode, unreachedFrontNode, getFrontEdge(), frontDistance);
     }
 
     @Nonnull
@@ -105,7 +105,7 @@ final class TrainPosition implements Train.Position {
     @Nonnull
     @Override
     public Point2D getBackCoordinates() {
-        return getEndCoordinates(backNode, unreachedBackNode, backDistance);
+        return getEndCoordinates(backNode, unreachedBackNode, getBackEdge(), backDistance);
     }
 
     @Nonnull
@@ -119,22 +119,18 @@ final class TrainPosition implements Train.Position {
     }
 
     @Nonnull
-    private Point2D getEndCoordinates(Node endNode, Node unreachedNode, int distance) {
+    private Point2D getEndCoordinates(Node endNode, Node unreachedNode, Edge edge, int distance) {
         Point2D end = toPoint(endNode);
         Point2D unreached = toPoint(unreachedNode);
-        Point2D vector = getNormVector(end, unreached);
-        double frontLength = ((double) distance) / getFrontEdge().getLength();
-        return toPoint(endNode).add(vector.multiply(frontLength));
+        Point2D vector = getVector(end, unreached);
+        double endLength = ((double) distance) / edge.getLength() * vector.magnitude();
+        vector = vector.normalize();
+        return toPoint(endNode).add(vector.multiply(endLength));
     }
 
     @Nonnull
     private Point2D getVector(Point2D start, Point2D unreached) {
         return unreached.subtract(start);
-    }
-
-    @Nonnull
-    private Point2D getNormVector(Point2D start, Point2D unreached) {
-        return getVector(start, unreached).normalize();
     }
 
     @Nonnull
