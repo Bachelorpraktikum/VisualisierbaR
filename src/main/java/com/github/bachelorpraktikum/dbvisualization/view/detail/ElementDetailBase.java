@@ -4,6 +4,7 @@ import com.github.bachelorpraktikum.dbvisualization.model.Coordinates;
 import java.io.IOException;
 import java.net.URL;
 import java.util.List;
+import java.util.ResourceBundle;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Point2D;
 import javafx.scene.shape.Rectangle;
@@ -21,11 +22,10 @@ public abstract class ElementDetailBase {
     abstract Point2D getCoordinates();
 
     String getCoordinatesString(Point2D coord) {
-        String fString = "x: %f | y: %f";
         if (coord == null) {
-            return String.format(fString, -1.0, -1.0);
+            return ResourceBundle.getBundle("bundles.localization").getString("unavailable");
         } else {
-            return String.format(fString, coord.getX(), coord.getY());
+            return String.format("x: %f | y: %f", coord.getX(), coord.getY());
         }
     }
 
