@@ -55,7 +55,7 @@
         <Insets bottom="3" left="10" right="10" top="3"/>
       </VBox.margin>
     </AnchorPane>
-    <LineChart fx:id="vt_chart" createSymbols="false" animated="false"
+    <LineChart fx:id="vt_chart" createSymbols="false"
       legendVisible="false" prefHeight="0.0" prefWidth="0.0" title="%title_vt">
       <xAxis>
         <NumberAxis side="BOTTOM"/>

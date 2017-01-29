@@ -4,6 +4,7 @@ import com.github.bachelorpraktikum.dbvisualization.model.Event;
 import com.github.bachelorpraktikum.dbvisualization.model.train.Train;
 import com.github.bachelorpraktikum.dbvisualization.model.train.Train.State;
 import java.util.ResourceBundle;
+import java.util.function.Function;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -34,9 +35,9 @@ public class ElementDetailController {
     @FXML
     private LineChart<Integer, Integer> vt_chart;
     @FXML
-    private LineChart vd_chart;
+    private LineChart<Double, Integer> vd_chart;
     @FXML
-    private LineChart dt_chart;
+    private LineChart<Integer, Double> dt_chart;
     @FXML
     private VBox trainBox;
     @FXML
@@ -96,22 +97,34 @@ public class ElementDetailController {
         if (!detail.isTrain()) {
             return;
         }
+
+        updateChart(vt_chart, State::getTime, State::getSpeed, time);
+        updateChart(vd_chart, s -> s.getTotalDistance() / 1000.0, State::getSpeed, time);
+        updateChart(dt_chart, State::getTime, s -> s.getTotalDistance() / 1000.0, time);
+    }
+
+    private <X, Y> void updateChart(LineChart<X, Y> chart,
+            Function<State, X> xFunction,
+            Function<State, Y> yFunction,
+            int time) {
         Train train = (Train) detail.getElement();
 
-        ObservableList<Data<Integer, Integer>> data = FXCollections.observableArrayList();
+        ObservableList<Data<X, Y>> data = FXCollections.observableArrayList();
         State state = train.getState(0);
-        data.add(new Data<>(state.getTime(), state.getSpeed()));
+        data.add(new Data<>(xFunction.apply(state), yFunction.apply(state)));
         for (Event event : train.getEvents()) {
             if (event.getTime() > time) {
                 break;
             }
             state = train.getState(event.getTime(), state);
-            data.add(new Data<>(state.getTime(), state.getSpeed()));
+            data.add(new Data<>(xFunction.apply(state), yFunction.apply(state)));
         }
         state = train.getState(time, state);
-        data.add(new Data<>(state.getTime(), state.getSpeed()));
-        vt_chart.setData(FXCollections.singletonObservableList(new Series<>(data)));
+        data.add(new Data<>(xFunction.apply(state), yFunction.apply(state)));
+        chart.setData(FXCollections.singletonObservableList(new Series<>(data)));
     }
+
+
 
     public void setTime(int time) {
         if (detail != null) {
