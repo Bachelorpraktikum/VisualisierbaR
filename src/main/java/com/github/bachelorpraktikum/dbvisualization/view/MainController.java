@@ -206,9 +206,11 @@ public class MainController {
 
                 TooltipUtil.install(result, () -> {
                     StringBuilder sb = new StringBuilder();
-                    sb.append(result.getItem().getDescription());
-                    for (String warning : result.getItem().getWarnings()) {
-                        sb.append(System.lineSeparator()).append("[WARN]: ").append(warning);
+                    if (result.getItem() != null) {
+                        sb.append(result.getItem().getDescription());
+                        for (String warning : result.getItem().getWarnings()) {
+                            sb.append(System.lineSeparator()).append("[WARN]: ").append(warning);
+                        }
                     }
                     return sb.toString();
                 });
