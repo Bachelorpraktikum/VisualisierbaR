@@ -1,15 +1,20 @@
 package com.github.bachelorpraktikum.dbvisualization.view.detail;
 
+import com.github.bachelorpraktikum.dbvisualization.model.Event;
+import com.github.bachelorpraktikum.dbvisualization.model.train.Train;
+import com.github.bachelorpraktikum.dbvisualization.model.train.Train.State;
+import java.util.ResourceBundle;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.geometry.Bounds;
 import javafx.scene.Group;
 import javafx.scene.chart.LineChart;
+import javafx.scene.chart.XYChart.Data;
+import javafx.scene.chart.XYChart.Series;
 import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
 import javafx.scene.shape.Shape;
-
-import javax.annotation.Resource;
-import java.util.ResourceBundle;
 
 public class ElementDetailController {
     @FXML
@@ -27,7 +32,7 @@ public class ElementDetailController {
     @FXML
     private Label coordinateValue;
     @FXML
-    private LineChart vt_chart;
+    private LineChart<Integer, Integer> vt_chart;
     @FXML
     private LineChart vd_chart;
     @FXML
@@ -87,10 +92,32 @@ public class ElementDetailController {
         shape.setRotate(180);
     }
 
+    private void updateCharts(int time) {
+        if (!detail.isTrain()) {
+            return;
+        }
+        Train train = (Train) detail.getElement();
+
+        ObservableList<Data<Integer, Integer>> data = FXCollections.observableArrayList();
+        State state = train.getState(0);
+        data.add(new Data<>(state.getTime(), state.getSpeed()));
+        for (Event event : train.getEvents()) {
+            if (event.getTime() > time) {
+                break;
+            }
+            state = train.getState(event.getTime(), state);
+            data.add(new Data<>(state.getTime(), state.getSpeed()));
+        }
+        state = train.getState(time, state);
+        data.add(new Data<>(state.getTime(), state.getSpeed()));
+        vt_chart.setData(FXCollections.singletonObservableList(new Series<>(data)));
+    }
+
     public void setTime(int time) {
         if (detail != null) {
             detail.setTime(time);
             setDetail(detail);
+            updateCharts(time);
         }
     }
 }

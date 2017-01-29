@@ -1,6 +1,5 @@
 package com.github.bachelorpraktikum.dbvisualization.view.detail;
 
-import com.github.bachelorpraktikum.dbvisualization.model.Coordinates;
 import java.io.IOException;
 import java.net.URL;
 import java.util.List;
@@ -11,8 +10,18 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.Shape;
 import javax.annotation.Nullable;
 
-public abstract class ElementDetailBase {
+public abstract class ElementDetailBase<E> {
+
+    private final E e;
     private int time;
+
+    ElementDetailBase(E e) {
+        this.e = e;
+    }
+
+    E getElement() {
+        return e;
+    }
 
     abstract String getName();
 

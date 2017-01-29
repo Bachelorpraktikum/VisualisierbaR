@@ -8,16 +8,14 @@ import java.util.List;
 import javafx.geometry.Point2D;
 import javax.annotation.Nullable;
 
-public class TrainDetail extends ElementDetailBase {
-    private Train train;
-
+public class TrainDetail extends ElementDetailBase<Train> {
     public TrainDetail(Train train) {
-        this.train = train;
+        super(train);
     }
 
     @Override
     String getName() {
-        return train.getReadableName();
+        return getElement().getReadableName();
     }
 
     @Override
@@ -46,7 +44,7 @@ public class TrainDetail extends ElementDetailBase {
     }
 
     Train.State getState() {
-        return train.getState(getTime());
+        return getElement().getState(getTime());
     }
 
     int getSpeed() {
@@ -54,7 +52,7 @@ public class TrainDetail extends ElementDetailBase {
     }
 
     int getLength() {
-        return train.getLength();
+        return getElement().getLength();
     }
 
     Point2D getBackCoordinate() {

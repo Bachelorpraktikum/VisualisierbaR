@@ -7,32 +7,31 @@ import java.util.List;
 import javafx.geometry.Point2D;
 import javax.annotation.Nullable;
 
-public class ElementDetail extends ElementDetailBase {
-    private Element element;
+public class ElementDetail extends ElementDetailBase<Element> {
 
     public ElementDetail(Element element) {
-        this.element = element;
+        super(element);
     }
 
     @Override
     String getName() {
         try {
-            String[] names = element.getName().split("_");
+            String[] names = getElement().getName().split("_");
             return names[names.length - 1];
         } catch (IndexOutOfBoundsException ignored) {
-            return element.getName();
+            return getElement().getName();
         }
     }
 
     @Override
     @Nullable
     List<URL> getImageUrls() {
-        return element.getType().getImageUrls();
+        return getElement().getType().getImageUrls();
     }
 
     @Override
     Point2D getCoordinates() {
-        Coordinates coordinates = element.getNode().getCoordinates();
+        Coordinates coordinates = getElement().getNode().getCoordinates();
         return new Point2D(coordinates.getX(), coordinates.getY());
     }
 
@@ -42,6 +41,6 @@ public class ElementDetail extends ElementDetailBase {
     }
 
     Element.State getState() {
-        return element.getState();
+        return getElement().getState();
     }
 }
