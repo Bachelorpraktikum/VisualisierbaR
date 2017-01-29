@@ -7,6 +7,7 @@ import com.github.bachelorpraktikum.dbvisualization.model.Node;
 import com.github.bachelorpraktikum.dbvisualization.model.train.InterpolatableState.Builder;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.function.Supplier;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -72,6 +73,8 @@ abstract class TrainEvent implements Event {
         return totalDistance;
     }
 
+    abstract int getSpeed();
+
     @Nullable
     final TrainPosition getPosition() {
         return position.get();
@@ -83,6 +86,7 @@ abstract class TrainEvent implements Event {
                 .index(getIndex())
                 .time(getTime())
                 .distance(getTotalDistance())
+                .speed(getSpeed())
                 .position(getPosition());
     }
 
@@ -144,15 +148,9 @@ abstract class TrainEvent implements Event {
             );
         }
 
+        @Override
         final int getSpeed() {
             return speed;
-        }
-
-        @Nonnull
-        @Override
-        InterpolatableState.Builder stateBuilder() {
-            return super.stateBuilder()
-                    .speed(getSpeed());
         }
 
         @Nonnull
@@ -261,55 +259,62 @@ abstract class TrainEvent implements Event {
 
     @ParametersAreNonnullByDefault
     private abstract static class Position extends TrainEvent {
+
         Position(int index, Train train, int time, int distance, int totalDistance, Supplier<TrainPosition> position) {
             super(index, train, time, distance, totalDistance, position);
         }
 
-        @Nonnull
+        int getSpeedBefore() {
+            return getTrain().getTrainEvents().get(getIndex() - 1).getState().getSpeed();
+        }
+
         @Override
-        InterpolatableState.Builder stateBuilder() {
-            return super.stateBuilder()
-                    .speed(calculateSpeed());
-        }
-
-        @Nonnull
-        private Speed getSpeedEventBefore() {
-            for (int index = getIndex() - 1; index >= 0; index--) {
-                TrainEvent event = getTrain().getTrainEvents().get(index);
-                if (event instanceof Speed) {
-                    return (Speed) event;
-                }
-            }
-            throw new IllegalStateException("Missing init event");
-        }
-
-        @Nullable
-        private Speed getSpeedEventAfter() {
+        int getSpeed() {
             List<TrainEvent> events = getTrain().getTrainEvents();
-            for (int index = getIndex() + 1; index < events.size(); index++) {
-                TrainEvent event = events.get(index);
-                if (event instanceof Speed) {
-                    return (Speed) event;
+            if(getIndex() == events.size() - 1) {
+                return getSpeedBefore();
+            }
+            Speed speedEvent = null;
+            for(TrainEvent event : events.subList(getIndex() + 1, events.size())) {
+                // look for a speed event on the current front edge
+                if(event instanceof Speed) {
+                    speedEvent = (Speed) event;
+                    break;
+                } else if(event instanceof Reach) {
+                    // there is no speed event on this edge
+                    return getSpeedBefore();
                 }
             }
-            return null;
-        }
-
-        private int calculateSpeed() {
-            Speed before = getSpeedEventBefore();
-            Speed after = getSpeedEventAfter();
-
-            if (after == null) {
-                return before.getSpeed();
+            if(speedEvent == null) {
+                return getSpeedBefore();
             }
 
-            int relativeAfterTime = after.getTime() - before.getTime();
-            int relativeTime = getTime() - before.getTime();
+            TrainEvent reachEvent = null;
+            ListIterator<TrainEvent> trainEvents = events.listIterator(getIndex());
+            while(trainEvents.hasPrevious()) {
+                TrainEvent event = trainEvents.previous();
+                if (event instanceof Reach || event instanceof Init) {
+                    reachEvent = event;
+                    break;
+                }
+            }
+            if (reachEvent == null) {
+                // this should never happen, because the event factory does not allow to insert
+                // any event before an init event.
+                throw new IllegalStateException();
+            }
 
-            int interpolatedSpeed = before.getSpeed();
-            int speedDiff = after.getSpeed() - before.getSpeed();
-            interpolatedSpeed += (int) (((double) speedDiff) / relativeAfterTime * relativeTime);
-            return interpolatedSpeed;
+            int startTime = reachEvent.getTime();
+            int startSpeed = reachEvent.getSpeed();
+            int endTime = speedEvent.getTime();
+            int endSpeed = speedEvent.getSpeed();
+
+            int targetTime = getTime() - startTime;
+            int timeDiff = endTime - startTime;
+            int speedDiff = endSpeed - startSpeed;
+
+            int addedSpeed = (int) (((double) speedDiff) / timeDiff) * targetTime;
+            return startSpeed + addedSpeed;
         }
     }
 
@@ -317,6 +322,7 @@ abstract class TrainEvent implements Event {
     static class Reach extends Position {
         @Nonnull
         private final Edge reached;
+        private final int speed;
 
         Reach(TrainEvent before, int time, int distance, Edge reached) {
             super(before.getIndex() + 1,
@@ -326,10 +332,16 @@ abstract class TrainEvent implements Event {
                     before.getTotalDistance() + distance,
                     () -> before.getPosition().reachFront(reached));
             this.reached = reached;
+            this.speed = getSpeedBefore();
         }
 
         Edge getReached() {
             return reached;
+        }
+
+        @Override
+        int getSpeed() {
+            return speed;
         }
 
         @Nonnull
