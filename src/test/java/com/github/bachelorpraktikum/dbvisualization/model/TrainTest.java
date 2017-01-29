@@ -225,7 +225,6 @@ public class TrainTest {
         Edge edge = createEdges(50)[0];
         train.eventFactory().init(0, edge);
 
-        train.eventFactory().speed(10, 5, 10);
         train.eventFactory().speed(20, 5, 20);
 
         assertEquals(12, train.getState(12).getSpeed());
@@ -239,13 +238,27 @@ public class TrainTest {
         Edge[] edges = createEdges(15, 50);
         train.eventFactory().init(0, edges[0]);
 
-        train.eventFactory().speed(10, 5, 10);
-        train.eventFactory().reach(15, edges[1], 5);
-        train.eventFactory().speed(20, 5, 20);
+        train.eventFactory().reach(10, edges[1], 5);
+        train.eventFactory().leave(15, edges[1], 10);
+        train.eventFactory().move(17, 5);
+        train.eventFactory().speed(20, 5, 10);
 
-        assertEquals(12, train.getState(12).getSpeed());
-        assertEquals(15, train.getState(15).getSpeed());
-        assertEquals(17, train.getState(17).getSpeed());
+        assertEquals(2, train.getState(12).getSpeed());
+        assertEquals(5, train.getState(15).getSpeed());
+        assertEquals(7, train.getState(17).getSpeed());
+    }
+
+    @Test
+    public void testSpeedInterpolationBeforeReach() {
+        Train train = Train.in(context).create("t", "train", 10);
+        Edge[] edges = createEdges(15, 50);
+        train.eventFactory().init(0, edges[0]);
+
+        train.eventFactory().reach(10, edges[1], 5);
+        train.eventFactory().speed(20, 5, 10);
+
+        assertEquals(0, train.getState(0).getSpeed());
+        assertEquals(0, train.getState(9).getSpeed());
     }
 
     @Test
