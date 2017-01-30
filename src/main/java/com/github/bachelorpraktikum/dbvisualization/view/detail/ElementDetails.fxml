@@ -58,28 +58,28 @@
     <LineChart fx:id="vt_chart" createSymbols="false"
       legendVisible="false" prefHeight="0.0" prefWidth="0.0" title="%title_vt">
       <xAxis>
-        <NumberAxis side="BOTTOM"/>
+        <NumberAxis side="BOTTOM" label="s"/>
       </xAxis>
       <yAxis>
-        <NumberAxis side="LEFT"/>
+        <NumberAxis side="LEFT" label="m/s"/>
       </yAxis>
     </LineChart>
     <LineChart fx:id="vd_chart" createSymbols="false"
       legendVisible="false" prefHeight="0.0" prefWidth="0.0" title="%title_vd">
       <xAxis>
-        <NumberAxis side="BOTTOM"/>
+        <NumberAxis side="BOTTOM" label="km"/>
       </xAxis>
       <yAxis>
-        <NumberAxis side="LEFT"/>
+        <NumberAxis side="LEFT" label="m/s"/>
       </yAxis>
     </LineChart>
     <LineChart fx:id="dt_chart" createSymbols="false"
       legendVisible="false" prefHeight="0.0" prefWidth="0.0" title="%title_dt">
       <xAxis>
-        <NumberAxis side="BOTTOM"/>
+        <NumberAxis side="BOTTOM" label="s"/>
       </xAxis>
       <yAxis>
-        <NumberAxis side="LEFT"/>
+        <NumberAxis side="LEFT" label="km"/>
       </yAxis>
     </LineChart>
   </VBox>
