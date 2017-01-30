@@ -159,4 +159,9 @@ final class CompositeElement extends ElementBase<Group> {
         bottomLine.toBack();
         return group;
     }
+
+    @Override
+    protected double getStrokeFactor() {
+        return 0.2;
+    }
 }

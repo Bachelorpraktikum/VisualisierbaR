@@ -104,4 +104,6 @@ abstract class ElementBase<T extends Node> extends GraphShapeBase<Element, T> {
         angle += 180;
         t.setRotate(angle);
     }
+
+    protected abstract double getStrokeFactor();
 }

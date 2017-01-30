@@ -59,6 +59,11 @@ final class WeichenpunktElement extends ElementBase<Polygon> {
     }
 
     @Override
+    protected double getStrokeFactor() {
+        return 0.01;
+    }
+
+    @Override
     protected void resize(Polygon shape) {
     }
 

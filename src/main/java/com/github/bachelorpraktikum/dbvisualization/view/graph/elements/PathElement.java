@@ -77,4 +77,9 @@ class PathElement extends SingleElementBase<Shape> {
             throw new IllegalStateException(e);
         }
     }
+
+    @Override
+    protected double getStrokeFactor() {
+        return 0.05;
+    }
 }
