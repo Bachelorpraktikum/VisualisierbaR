@@ -85,11 +85,8 @@ final class CompositeElement extends ElementBase<Group> {
         double maxWidth = MAX_ELEMENT_WIDTH * getCalibrationBase();
         resizeNode(shape, maxWidth);
 
-        Bounds shapeBounds = shape.getLayoutBounds();
-        double max = Math.max(shapeBounds.getMaxX(), shapeBounds.getMaxY());
         for (Element ele : shapes.keySet()) {
-            shapes.get(ele).setStroke(Color.GREEN);
-            shapes.get(ele).setStrokeWidth(max * getStrokeFactor());
+            shapes.get(ele).setStroke(Color.TRANSPARENT);
         }
     }
 
@@ -112,18 +109,22 @@ final class CompositeElement extends ElementBase<Group> {
             case VorSignalImpl:
             case HauptSignalImpl:
                 shape = createPathShape(type);
+                shape.setStrokeWidth(100);
                 break;
             case GeschwindigkeitsAnzeigerImpl:
                 shape = new Polygon(0, 2, 1, 0, 2, 2);
                 maxWidth *= GESCHWINDIGKEITS_ANZEIGER_WIDTH_FACTOR;
+                shape.setStrokeWidth(getStrokeFactor());
                 break;
             case GeschwindigkeitsVoranzeiger:
                 shape = new Polygon(0, 0, 1, 2, 2, 0);
                 maxWidth *= GESCHWINDIGKEITS_ANZEIGER_WIDTH_FACTOR;
+                shape.setStrokeWidth(getStrokeFactor());
                 break;
             case UnknownElement:
             default:
                 shape = new Rectangle(2, 2);
+                shape.setStrokeWidth(getStrokeFactor());
                 break;
         }
         resizeNode(shape, getCalibrationBase() * maxWidth);
