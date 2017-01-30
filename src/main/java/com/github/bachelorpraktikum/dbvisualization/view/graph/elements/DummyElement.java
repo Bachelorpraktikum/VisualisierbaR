@@ -50,4 +50,8 @@ final class DummyElement extends SingleElementBase<Rectangle> {
         rectangle.setStrokeWidth(getCalibrationBase() * STROKE_WIDTH);
         return rectangle;
     }
+
+    protected double getStrokeFactor() {
+        return 0;
+    }
 }
