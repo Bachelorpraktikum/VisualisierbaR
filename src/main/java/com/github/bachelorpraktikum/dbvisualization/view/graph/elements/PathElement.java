@@ -13,6 +13,7 @@ import javax.annotation.Nonnull;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Bounds;
 import javafx.geometry.Point2D;
+import javafx.scene.paint.Color;
 import javafx.scene.shape.Shape;
 
 class PathElement extends SingleElementBase<Shape> {
@@ -44,6 +45,9 @@ class PathElement extends SingleElementBase<Shape> {
 
         shape.setScaleX(scale);
         shape.setScaleY(scale);
+
+        shape.setStroke(Color.GREEN);
+        shape.setStrokeWidth(max * getStrokeFactor());
     }
 
     protected List<URL> getImageUrls() {

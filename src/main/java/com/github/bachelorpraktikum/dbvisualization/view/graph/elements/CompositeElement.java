@@ -3,6 +3,7 @@ package com.github.bachelorpraktikum.dbvisualization.view.graph.elements;
 import com.github.bachelorpraktikum.dbvisualization.model.Element;
 import com.github.bachelorpraktikum.dbvisualization.model.Node;
 import com.github.bachelorpraktikum.dbvisualization.view.graph.adapter.CoordinatesAdapter;
+
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -13,17 +14,20 @@ import java.util.Map;
 import java.util.concurrent.atomic.DoubleAdder;
 import java.util.concurrent.atomic.LongAdder;
 import java.util.stream.Collectors;
+
+import javax.annotation.Nonnull;
+
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.WeakChangeListener;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Bounds;
 import javafx.geometry.Point2D;
 import javafx.scene.Group;
+import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Polygon;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.Shape;
-import javax.annotation.Nonnull;
 
 final class CompositeElement extends ElementBase<Group> {
     private static final double MAX_SHAPE_WIDTH = 2.0;
@@ -78,7 +82,15 @@ final class CompositeElement extends ElementBase<Group> {
 
     @Override
     protected void resize(Group shape) {
-        resizeNode(shape, MAX_ELEMENT_WIDTH * getCalibrationBase());
+        double maxWidth = MAX_ELEMENT_WIDTH * getCalibrationBase();
+        resizeNode(shape, maxWidth);
+
+        Bounds shapeBounds = shape.getLayoutBounds();
+        double max = Math.max(shapeBounds.getMaxX(), shapeBounds.getMaxY());
+        for (Element ele : shapes.keySet()) {
+            shapes.get(ele).setStroke(Color.GREEN);
+            shapes.get(ele).setStrokeWidth(max * getStrokeFactor());
+        }
     }
 
     private void resizeNode(javafx.scene.Node node, double maxWidth) {
