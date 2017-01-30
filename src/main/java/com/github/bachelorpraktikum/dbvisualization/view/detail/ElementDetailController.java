@@ -33,11 +33,11 @@ public class ElementDetailController {
     @FXML
     private Label coordinateValue;
     @FXML
-    private LineChart<Integer, Integer> vt_chart;
+    private LineChart<Double, Integer> vt_chart;
     @FXML
     private LineChart<Double, Integer> vd_chart;
     @FXML
-    private LineChart<Integer, Double> dt_chart;
+    private LineChart<Double, Double> dt_chart;
     @FXML
     private VBox trainBox;
     @FXML
@@ -98,9 +98,12 @@ public class ElementDetailController {
             return;
         }
 
-        updateChart(vt_chart, State::getTime, State::getSpeed, time);
-        updateChart(vd_chart, s -> s.getTotalDistance() / 1000.0, State::getSpeed, time);
-        updateChart(dt_chart, State::getTime, s -> s.getTotalDistance() / 1000.0, time);
+        Function<State, Double> distanceFunction = s -> s.getTotalDistance() / 1000.0;
+        Function<State, Double> timeFunction = s -> s.getTime() / 1000.0;
+
+        updateChart(vt_chart, timeFunction, State::getSpeed, time);
+        updateChart(vd_chart, distanceFunction, State::getSpeed, time);
+        updateChart(dt_chart, timeFunction, distanceFunction, time);
     }
 
     private <X, Y> void updateChart(LineChart<X, Y> chart,
