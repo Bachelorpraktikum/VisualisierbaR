@@ -198,9 +198,7 @@ public final class Element {
         @Nonnull
         private final Switch.Factory switchFactory;
         @Nonnull
-        private final ObservableList<ElementEvent> unorderedEvents;
-        @Nonnull
-        private final SortedList<ElementEvent> events;
+        private final ObservableList<ElementEvent> events;
         private int currentTime;
         private int nextIndex;
 
@@ -216,8 +214,7 @@ public final class Element {
             this.elements = new LinkedHashMap<>(INITIAL_ELEMENTS_CAPACITY);
 
             this.switchFactory = Switch.in(context);
-            this.unorderedEvents = FXCollections.observableArrayList();
-            this.events = unorderedEvents.sorted();
+            this.events = FXCollections.observableArrayList();
             this.currentTime = -1;
             this.nextIndex = 0;
         }
@@ -292,8 +289,8 @@ public final class Element {
                 warnings.add("tried to add before last event at " + time);
                 time = events.get(events.size() - 1).getTime();
             }
-            unorderedEvents.add(new ElementEvent(element, time, state, warnings));
-            // maybe the states has to be updated
+            events.add(new ElementEvent(element, time, state, warnings));
+            // maybe the states have to be updated
             if (time <= currentTime) {
                 int refreshTime = currentTime;
                 resetTime();
