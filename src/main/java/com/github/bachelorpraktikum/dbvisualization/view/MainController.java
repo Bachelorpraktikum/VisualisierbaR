@@ -17,6 +17,7 @@ import com.github.bachelorpraktikum.dbvisualization.view.graph.adapter.SimpleCoo
 import com.github.bachelorpraktikum.dbvisualization.view.legend.LegendItem;
 import com.github.bachelorpraktikum.dbvisualization.view.legend.LegendListViewCell;
 import com.github.bachelorpraktikum.dbvisualization.view.train.TrainView;
+
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.HashMap;
@@ -28,6 +29,10 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
@@ -72,8 +77,6 @@ import javafx.stage.Stage;
 import javafx.util.Callback;
 import javafx.util.Duration;
 import javafx.util.StringConverter;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 public class MainController {
 
@@ -342,6 +345,9 @@ public class MainController {
         elementList.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
             Context context = ContextHolder.getInstance().getContext();
             ElementDetailBase detail;
+            boolean isElement = false;
+            Element element = null;
+            Train train = null;
 
             if (newValue == null) {
                 // Selection has been cleared
@@ -349,14 +355,21 @@ public class MainController {
             }
 
             try {
-                detail = new ElementDetail(Element.in(context).get(newValue));
+                element = Element.in(context).get(newValue);
+                detail = new ElementDetail(element);
+                isElement = true;
             } catch (IllegalArgumentException ignored) {
-                detail = new TrainDetail(Train.in(context).getByReadable(newValue));
+                train = Train.in(context).getByReadable(newValue);
+                detail = new TrainDetail(train);
             }
 
             showDetailView();
             detailBoxController.setDetail(detail);
             detailBoxController.setTime(simulationTime.get());
+
+            if (isElement) {
+                getGraph().getElements().get(element).getShape(element).setStroke(Color.GREEN);
+            }
         });
 
         eventTraversalTimeline = new Timeline(new KeyFrame(Duration.seconds(1), event -> {
