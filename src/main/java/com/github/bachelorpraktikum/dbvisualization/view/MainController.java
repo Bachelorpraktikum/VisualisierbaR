@@ -352,7 +352,9 @@ public class MainController {
             Train train = null;
 
             if (newValue == null) {
-                highlightedShape.setStroke(Color.TRANSPARENT);
+                if (highlightedShape != null) {
+                    highlightedShape.setStroke(Color.TRANSPARENT);
+                }
                 return;
             }
 
