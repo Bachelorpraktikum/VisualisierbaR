@@ -60,7 +60,7 @@ final class WeichenpunktElement extends ElementBase<Polygon> {
 
     @Override
     protected double getStrokeFactor() {
-        return 0.01;
+        return 0.1;
     }
 
     @Override
@@ -70,6 +70,10 @@ final class WeichenpunktElement extends ElementBase<Polygon> {
     @Nonnull
     @Override
     protected Polygon createShape() {
-        return new Polygon();
+        Polygon polygon = new Polygon();
+
+        polygon.setStrokeWidth(getStrokeFactor());
+
+        return polygon;
     }
 }
