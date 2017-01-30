@@ -73,6 +73,7 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
+import javafx.scene.shape.Shape;
 import javafx.stage.Stage;
 import javafx.util.Callback;
 import javafx.util.Duration;
@@ -149,6 +150,7 @@ public class MainController {
     private IntegerProperty velocity;
     private Animation simulation;
     private Timeline eventTraversalTimeline;
+    private Shape highlightedShape;
 
     @FXML
     private void initialize() {
@@ -350,7 +352,7 @@ public class MainController {
             Train train = null;
 
             if (newValue == null) {
-                // Selection has been cleared
+                highlightedShape.setStroke(Color.TRANSPARENT);
                 return;
             }
 
@@ -368,7 +370,8 @@ public class MainController {
             detailBoxController.setTime(simulationTime.get());
 
             if (isElement) {
-                getGraph().getElements().get(element).getShape(element).setStroke(Color.GREEN);
+                highlightedShape = getGraph().getElements().get(element).getShape(element);
+                highlightedShape.setStroke(Color.GREEN);
             }
         });
 
