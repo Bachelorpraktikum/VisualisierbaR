@@ -476,6 +476,7 @@ public class MainController {
         stage.setScene(new Scene(rootPane));
 
         stage.centerOnScreen();
+        stage.setMaximized(false);
         stage.setMaximized(true);
     }
 
