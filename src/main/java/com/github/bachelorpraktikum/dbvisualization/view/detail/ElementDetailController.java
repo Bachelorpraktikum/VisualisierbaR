@@ -116,6 +116,9 @@ public class ElementDetailController {
             if (event.getTime() > time) {
                 break;
             }
+            if(event.getTime() < 0) {
+                continue;
+            }
             state = train.getState(event.getTime(), state);
             data.add(new Data<>(xFunction.apply(state), yFunction.apply(state)));
         }
