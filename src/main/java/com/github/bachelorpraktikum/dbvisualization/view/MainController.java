@@ -600,14 +600,24 @@ public class MainController {
                         Binding<Boolean> binding = Bindings.createBooleanBinding(() -> state.getValue() != LegendItem.State.DISABLED, state);
                         context.addObject(binding);
                         entry.getValue().getShape().visibleProperty().bind(binding);
+                        entry.getValue().getShape(element).setOnMouseClicked(event -> {
+                            setDetail(new ElementDetail(element));
+                        });
                     });
             for (Train train : Train.in(context).getAll()) {
                 TrainView trainView = new TrainView(train, graph);
                 trainView.timeProperty().bind(simulationTime);
                 context.addObject(trainView);
+                trainView.setOnMouseClick(e -> setDetail(new TrainDetail(train)));
             }
         }
         return graph;
+    }
+
+    private void setDetail(ElementDetailBase detail) {
+        showDetailView();
+        detailBoxController.setDetail(detail);
+        detailBoxController.setTime(simulationTime.get());
     }
 
     private void fitGraphToCenter(Graph graph) {

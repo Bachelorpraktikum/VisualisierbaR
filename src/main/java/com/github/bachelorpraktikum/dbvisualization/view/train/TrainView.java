@@ -10,8 +10,10 @@ import java.util.List;
 import java.util.function.Function;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
+import javafx.event.EventHandler;
 import javafx.geometry.Point2D;
 import javafx.scene.control.Tooltip;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.LineTo;
 import javafx.scene.shape.MoveTo;
@@ -45,6 +47,10 @@ public final class TrainView {
         updateTrain(0);
 
         TooltipUtil.install(path, new Tooltip(train.getReadableName() + " " + train.getLength()));
+    }
+
+    public void setOnMouseClick(EventHandler<? super MouseEvent> eventHandler) {
+        path.setOnMouseClicked(eventHandler);
     }
 
     public Train getTrain() {
