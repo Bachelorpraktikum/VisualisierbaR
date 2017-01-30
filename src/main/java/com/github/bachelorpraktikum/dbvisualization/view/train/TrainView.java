@@ -20,7 +20,7 @@ import javafx.scene.shape.PathElement;
 import javafx.scene.shape.StrokeLineCap;
 
 public final class TrainView {
-    private static final double TRAIN_WIDTH = 0.3;
+    private static final double TRAIN_WIDTH = 0.4;
 
     private final Train train;
     private final IntegerProperty timeProperty;
