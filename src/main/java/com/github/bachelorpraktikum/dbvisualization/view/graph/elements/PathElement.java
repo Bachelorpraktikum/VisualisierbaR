@@ -14,6 +14,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.geometry.Bounds;
 import javafx.geometry.Point2D;
 import javafx.scene.shape.Shape;
+import javafx.scene.shape.StrokeType;
 
 class PathElement extends SingleElementBase<Shape> {
     PathElement(Element element, Node node, CoordinatesAdapter adapter) {
@@ -45,6 +46,8 @@ class PathElement extends SingleElementBase<Shape> {
         shape.setScaleX(scale);
         shape.setScaleY(scale);
 
+        shape.setStrokeWidth(getStrokeFactor());
+        shape.setStrokeType(StrokeType.INSIDE);
     }
 
     protected List<URL> getImageUrls() {
