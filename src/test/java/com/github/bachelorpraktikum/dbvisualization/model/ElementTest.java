@@ -51,8 +51,7 @@ public class ElementTest {
     public void testInstanceManagerExistsDifferentType() {
         Element element = createElement();
 
-        expected.expect(IllegalArgumentException.class);
-        Element.in(context).create(element.getName(), Element.Type.GefahrenPunktImpl, element.getNode(), element.getState());
+        assertSame(element, Element.in(context).create(element.getName(), Element.Type.GefahrenPunktImpl, element.getNode(), element.getState()));
     }
 
     @Test
@@ -60,8 +59,7 @@ public class ElementTest {
         Element element = createElement();
         Node otherNode = Node.in(context).create("otherNode", new Coordinates(10, 10));
 
-        expected.expect(IllegalArgumentException.class);
-        Element.in(context).create(element.getName(), element.getType(), otherNode, element.getState());
+        assertSame(element, Element.in(context).create(element.getName(), element.getType(), otherNode, element.getState()));
     }
 
     @Ignore("the initial state is currently not checked in the factory")
