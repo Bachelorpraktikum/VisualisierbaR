@@ -11,6 +11,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.DoubleAdder;
+import java.util.concurrent.atomic.LongAdder;
 import java.util.stream.Collectors;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.WeakChangeListener;
@@ -26,6 +27,7 @@ import javax.annotation.Nonnull;
 
 final class CompositeElement extends ElementBase<Group> {
     private static final double MAX_SHAPE_WIDTH = 2.0;
+    private static final double ELEMENT_SPACING = 0.7;
     private static final double GESCHWINDIGKEITS_ANZEIGER_WIDTH_FACTOR = 0.5;
     private static final double FOOT_HEIGHT = 0.5;
 
@@ -43,9 +45,9 @@ final class CompositeElement extends ElementBase<Group> {
         elements.stream().sorted(Comparator.comparing(Element::getType)).forEach(element -> {
             Shape shape = createShape(element.getType());
             Bounds bounds = shape.getLayoutBounds();
-            shape.relocate(0 - bounds.getWidth() / 2, y.doubleValue() - bounds.getHeight() / 2);
-            // TODO this seems to be too much
-            y.add(shape.getLayoutBounds().getHeight());
+            shape.relocate(0 - bounds.getWidth() / 2, 0 - bounds.getHeight() / 2);
+            shape.setTranslateY(y.doubleValue());
+            y.add(shape.getBoundsInParent().getHeight() + ELEMENT_SPACING);
             ChangeListener<Element.State> listener = (observable, oldValue, newValue) -> {
                 shape.setFill(newValue.getColor());
             };
