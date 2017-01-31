@@ -9,6 +9,8 @@ import javafx.collections.ObservableList;
 import javafx.geometry.Point2D;
 import javafx.scene.shape.Polygon;
 import javafx.scene.shape.Shape;
+import javafx.scene.shape.StrokeType;
+
 import javax.annotation.Nonnull;
 
 final class WeichenpunktElement extends ElementBase<Polygon> {
@@ -65,15 +67,13 @@ final class WeichenpunktElement extends ElementBase<Polygon> {
 
     @Override
     protected void resize(Polygon shape) {
+        shape.setStrokeWidth(getStrokeFactor());
+        shape.setStrokeType(StrokeType.CENTERED);
     }
 
     @Nonnull
     @Override
     protected Polygon createShape() {
-        Polygon polygon = new Polygon();
-
-        polygon.setStrokeWidth(getStrokeFactor());
-
-        return polygon;
+        return new Polygon();
     }
 }
