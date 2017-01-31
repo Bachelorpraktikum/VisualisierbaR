@@ -61,6 +61,10 @@ public final class TrainView {
         TooltipUtil.install(path, new Tooltip(train.getReadableName() + " " + train.getLength()));
     }
 
+    public Paint getColor() {
+        return color;
+    }
+
     public void setOnMouseClicked(EventHandler<? super MouseEvent> eventHandler) {
         path.setOnMouseClicked(eventHandler);
     }
