@@ -24,6 +24,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
+import java.util.WeakHashMap;
 import java.util.function.Predicate;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -133,6 +134,7 @@ public class MainController {
     private Pane centerPane;
     @Nullable
     private Graph graph;
+    private Map<Train, TrainView> trains;
 
     private Stage stage;
 
@@ -155,6 +157,7 @@ public class MainController {
     @FXML
     private void initialize() {
         timePattern = Pattern.compile("(\\d+)(m?s?|h)?$");
+        trains = new WeakHashMap<>();
         HBox.setHgrow(rightSpacer, Priority.ALWAYS);
         this.legendStates = new HashMap<>(256);
         this.simulation = new Timeline(new KeyFrame(Duration.millis(50), event -> {
@@ -628,7 +631,7 @@ public class MainController {
             for (Train train : Train.in(context).getAll()) {
                 TrainView trainView = new TrainView(train, graph);
                 trainView.timeProperty().bind(simulationTime);
-                context.addObject(trainView);
+                trains.put(train, trainView);
                 trainView.setOnMouseClicked(e -> setDetail(new TrainDetail(train)));
             }
         }
