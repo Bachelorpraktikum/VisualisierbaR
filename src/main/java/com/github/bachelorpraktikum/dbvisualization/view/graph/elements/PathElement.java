@@ -45,7 +45,6 @@ class PathElement extends SingleElementBase<Shape> {
         shape.setScaleX(scale);
         shape.setScaleY(scale);
 
-        shape.setStrokeWidth(max * getStrokeFactor());
     }
 
     protected List<URL> getImageUrls() {
@@ -82,6 +81,6 @@ class PathElement extends SingleElementBase<Shape> {
 
     @Override
     protected double getStrokeFactor() {
-        return 0.05 * getCalibrationBase();
+        return 200 * getCalibrationBase();
     }
 }
