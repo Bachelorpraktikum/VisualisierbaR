@@ -60,7 +60,7 @@ final class WeichenpunktElement extends ElementBase<Polygon> {
 
     @Override
     protected double getStrokeFactor() {
-        return 0.1;
+        return 0.1 * getCalibrationBase();
     }
 
     @Override

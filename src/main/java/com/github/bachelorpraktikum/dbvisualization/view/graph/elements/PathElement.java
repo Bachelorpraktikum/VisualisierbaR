@@ -82,6 +82,6 @@ class PathElement extends SingleElementBase<Shape> {
 
     @Override
     protected double getStrokeFactor() {
-        return 0.05;
+        return 0.05 * getCalibrationBase();
     }
 }

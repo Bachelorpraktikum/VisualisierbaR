@@ -127,6 +127,7 @@ final class CompositeElement extends ElementBase<Group> {
                 shape.setStrokeWidth(getStrokeFactor());
                 break;
         }
+        shape.setStrokeWidth(shape.getStrokeWidth() * getCalibrationBase());
         resizeNode(shape, getCalibrationBase() * maxWidth);
         return shape;
     }
