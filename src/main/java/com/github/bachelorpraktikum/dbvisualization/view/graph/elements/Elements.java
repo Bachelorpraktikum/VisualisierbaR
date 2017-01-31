@@ -5,6 +5,7 @@ import com.github.bachelorpraktikum.dbvisualization.model.Node;
 import com.github.bachelorpraktikum.dbvisualization.model.Switch;
 import com.github.bachelorpraktikum.dbvisualization.view.graph.GraphShape;
 import com.github.bachelorpraktikum.dbvisualization.view.graph.adapter.CoordinatesAdapter;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
