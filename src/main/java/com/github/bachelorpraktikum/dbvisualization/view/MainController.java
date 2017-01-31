@@ -153,9 +153,11 @@ public class MainController {
     private Animation simulation;
     private Timeline eventTraversalTimeline;
     private Shape highlightedShape;
+    private Paint resetColor;
 
     @FXML
     private void initialize() {
+        resetColor = Color.TRANSPARENT;
         timePattern = Pattern.compile("(\\d+)(m?s?|h)?$");
         trains = new WeakHashMap<>();
         HBox.setHgrow(rightSpacer, Priority.ALWAYS);
@@ -356,7 +358,7 @@ public class MainController {
 
             if (newValue == null) {
                 if (highlightedShape != null) {
-                    highlightedShape.setStroke(Color.TRANSPARENT);
+                    highlightedShape.setStroke(resetColor);
                 }
                 return;
             }
@@ -377,9 +379,12 @@ public class MainController {
             Color highlightColor = Color.GREEN;
             if (isElement) {
                 highlightedShape = getGraph().getElements().get(element).getShape(element);
+                resetColor = Color.TRANSPARENT;
             } else {
-                highlightedShape = trains.get(train).getShape();
+                TrainView trainView = trains.get(train);
+                highlightedShape = trainView.getShape();
                 highlightColor = Color.RED;
+                resetColor = trainView.getColor();
             }
 
             highlightedShape.setStroke(highlightColor);
