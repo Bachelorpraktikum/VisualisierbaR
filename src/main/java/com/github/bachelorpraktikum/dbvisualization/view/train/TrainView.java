@@ -49,7 +49,7 @@ public final class TrainView {
         TooltipUtil.install(path, new Tooltip(train.getReadableName() + " " + train.getLength()));
     }
 
-    public void setOnMouseClick(EventHandler<? super MouseEvent> eventHandler) {
+    public void setOnMouseClicked(EventHandler<? super MouseEvent> eventHandler) {
         path.setOnMouseClicked(eventHandler);
     }
 

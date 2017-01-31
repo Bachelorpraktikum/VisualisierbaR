@@ -608,7 +608,7 @@ public class MainController {
                 TrainView trainView = new TrainView(train, graph);
                 trainView.timeProperty().bind(simulationTime);
                 context.addObject(trainView);
-                trainView.setOnMouseClick(e -> setDetail(new TrainDetail(train)));
+                trainView.setOnMouseClicked(e -> setDetail(new TrainDetail(train)));
             }
         }
         return graph;
