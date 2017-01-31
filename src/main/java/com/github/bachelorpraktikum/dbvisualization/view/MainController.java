@@ -161,7 +161,10 @@ public class MainController {
         fireOnEnterPress(closeButton);
         fireOnEnterPress(logToggle);
         closeButton.setOnAction(event -> showSourceChooser());
-        resetButton.setOnAction(event -> simulationTime.set(Context.INIT_STATE_TIME));
+        resetButton.setOnAction(event -> {
+            simulationTime.set(Context.INIT_STATE_TIME);
+            selectClosestLogEntry(Context.INIT_STATE_TIME);
+        });
 
         legendButton.selectedProperty().addListener((observable, oldValue, newValue) -> {
             legend.setVisible(newValue);
