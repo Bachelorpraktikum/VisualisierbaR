@@ -11,6 +11,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.WeakHashMap;
+import java.util.logging.Logger;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.beans.property.ReadOnlyProperty;
 import javafx.collections.FXCollections;
@@ -29,6 +30,7 @@ import javax.annotation.ParametersAreNonnullByDefault;
  */
 @ParametersAreNonnullByDefault
 public final class Element {
+    private static final Logger log = Logger.getLogger(Element.class.getName());
     @Nonnull
     private final Factory factory;
     @Nonnull
@@ -248,7 +250,7 @@ public final class Element {
                 // we SHOULD also check for the initial state, but it's not easily accessible,
                 // so I'm going to let it slide for now
                 String errorMessage = String.format("element with this name (%s) already exists, but differently", name);
-                throw new IllegalArgumentException(errorMessage);
+                log.warning(errorMessage);
             }
             return element;
         }

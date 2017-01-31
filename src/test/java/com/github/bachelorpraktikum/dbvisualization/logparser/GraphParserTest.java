@@ -22,7 +22,6 @@ public class GraphParserTest {
         assertNotNull(context);
     }
 
-    @Ignore("Not parseable due to errors in log file")
     @Test
     public void testLog3() throws IOException {
         Context context = new GraphParser("src/test/resources/test3.zug.clean").parse();
