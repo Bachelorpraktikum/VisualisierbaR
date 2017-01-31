@@ -236,8 +236,6 @@ public final class Element {
          * @param state the initial state of the element
          * @return an element
          * @throws NullPointerException     if either of the arguments is null
-         * @throws IllegalArgumentException if an element with this name already exists, but with
-         *                                  different arguments
          */
         @Nonnull
         public Element create(String name, Type type, Node node, State state) {
