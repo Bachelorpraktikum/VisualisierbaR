@@ -374,10 +374,15 @@ public class MainController {
             detailBoxController.setDetail(detail);
             detailBoxController.setTime(simulationTime.get());
 
+            Color highlightColor = Color.GREEN;
             if (isElement) {
                 highlightedShape = getGraph().getElements().get(element).getShape(element);
-                highlightedShape.setStroke(Color.GREEN);
+            } else {
+                highlightedShape = trains.get(train).getShape();
+                highlightColor = Color.RED;
             }
+
+            highlightedShape.setStroke(highlightColor);
         });
 
         eventTraversalTimeline = new Timeline(new KeyFrame(Duration.seconds(1), event -> {
