@@ -6,9 +6,10 @@ import java.io.IOException;
 import java.net.URI;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.logging.Logger;
+import java.util.Map;
 import java.util.Objects;
 import java.util.ResourceBundle;
-import java.util.logging.Logger;
 
 import javax.annotation.Nonnull;
 
@@ -90,6 +91,25 @@ public class SourceController implements SourceChooser {
     private SourceChooser getTabController(String id) {
         for (SourceChooser controller : controllers) {
             if (Objects.equals(id, controller.getRootPaneId())) {
+                return controller;
+            }
+        }
+
+        return null;
+    }
+
+    public void setInitialDirectories(Map<DataSource.Type, URI> typeURIMapping) {
+        for (Map.Entry<DataSource.Type, URI> entry : typeURIMapping.entrySet()) {
+            SourceChooser controller = getControllerByType(entry.getKey());
+            if (controller != null) {
+                
+            }
+        }
+    }
+
+    private SourceChooser getControllerByType(DataSource.Type type) {
+        for (SourceChooser controller : controllers) {
+            if (controller.getResourceType() == type) {
                 return controller;
             }
         }
