@@ -102,7 +102,7 @@ public class SourceController implements SourceChooser {
         for (Map.Entry<DataSource.Type, URI> entry : typeURIMapping.entrySet()) {
             SourceChooser controller = getControllerByType(entry.getKey());
             if (controller != null) {
-                
+                controller.setInitialURI(entry.getValue());
             }
         }
     }
@@ -133,6 +133,11 @@ public class SourceController implements SourceChooser {
     @Override
     public DataSource.Type getResourceType() {
         return activeController.getResourceType();
+    }
+
+    @Override
+    public void setInitialURI(URI initialURI) {
+
     }
 
     /**

@@ -35,7 +35,7 @@ public class FileChooserController implements SourceChooser {
     private void initialize() {
         fileURIProperty = new ReadOnlyObjectWrapper<>();
         fileChooser = new FileChooser();
-        fileChooser.setInitialDirectory(new File(System.getProperty("user.home")));
+        setInitialDirectory(System.getProperty("user.home"));
         explorerButton.setOnAction(event -> updatePath(openFileChooser()));
 
         explorerButton.addEventHandler(KeyEvent.KEY_PRESSED, event -> {
@@ -84,6 +84,10 @@ public class FileChooserController implements SourceChooser {
         pathField.setText(file.getAbsolutePath());
     }
 
+    private void setInitialDirectory(String initialDirectory) {
+        fileChooser.setInitialDirectory(new File(initialDirectory));
+    }
+
     /**
      * {@inheritDoc}
      */
@@ -118,5 +122,10 @@ public class FileChooserController implements SourceChooser {
     @Override
     public DataSource.Type getResourceType() {
         return DataSource.Type.LOG_FILE;
+    }
+
+    @Override
+    public void setInitialURI(URI initialURI) {
+        setInitialDirectory(initialURI.getPath());
     }
 }
