@@ -8,17 +8,23 @@ import java.util.Properties;
 import java.util.logging.Logger;
 
 public class ConfigFile extends Properties {
+    private static ConfigFile instance = new ConfigFile();
+
+    public static ConfigFile getInstance() {
+        return instance;
+    }
+
     private static final Logger log = Logger.getLogger(ConfigFile.class.getName());
     private final static String USER_HOME = System.getProperty("user.home");
     private String filepath;
 
-    public ConfigFile() {
+    private ConfigFile() {
         this(String.format("{}/{}", USER_HOME, "ebd.cfg"));
     }
 
-    public ConfigFile(String filepath) {
+    private ConfigFile(String filepath) {
         super();
-        
+
         this.filepath = filepath;
         load();
     }
