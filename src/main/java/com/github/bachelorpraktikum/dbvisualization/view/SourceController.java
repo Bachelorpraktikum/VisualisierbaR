@@ -186,7 +186,7 @@ public class SourceController implements SourceChooser {
         }
         MainController controller = mainLoader.getController();
         controller.setStage(stage);
-        controller.setDataSource(new DataSource(DataSource.Type.LOG_FILE, getResourceURI()));
+        controller.setDataSource(new DataSource(getResourceType(), getResourceURI()));
     }
 
     private void closeWindow() {
