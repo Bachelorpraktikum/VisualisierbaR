@@ -147,7 +147,7 @@ public class FileChooserController implements SourceChooser {
     }
 
     private String getLogFileKey() {
-        String logFileKey = ResourceBundle.getBundle(getClass().getName()).getString("initialDirectoryKey");
+        String logFileKey = ResourceBundle.getBundle("config_keys").getString("initialDirectoryKey");
         return String.format(logFileKey, getResourceType().toString());
     }
 }
