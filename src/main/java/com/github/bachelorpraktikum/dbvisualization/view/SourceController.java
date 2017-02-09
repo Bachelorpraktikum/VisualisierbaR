@@ -2,6 +2,7 @@ package com.github.bachelorpraktikum.dbvisualization.view;
 
 import com.github.bachelorpraktikum.dbvisualization.DataSource;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.util.LinkedList;
@@ -13,6 +14,7 @@ import java.util.ResourceBundle;
 
 import javax.annotation.Nonnull;
 
+import com.github.bachelorpraktikum.dbvisualization.config.ConfigFile;
 import javafx.beans.property.ReadOnlyProperty;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -187,6 +189,15 @@ public class SourceController implements SourceChooser {
         MainController controller = mainLoader.getController();
         controller.setStage(stage);
         controller.setDataSource(new DataSource(getResourceType(), getResourceURI()));
+
+        String initialDirKey = String.format(geInitialDirKey(), getResourceType().toString());
+        String parentFolder = new File(getResourceURI()).getParent();
+        ConfigFile.getInstance().put(initialDirKey, parentFolder);
+    }
+
+    private String geInitialDirKey() {
+        String logFileKey = ResourceBundle.getBundle("config_keys").getString("initialDirectoryKey");
+        return String.format(logFileKey, getResourceType().toString());
     }
 
     private void closeWindow() {
