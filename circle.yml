@@ -1,7 +1,7 @@
 dependencies:
   override:
-  - mvn dependency:go-offline -P site
-  - mvn site -P site -DskipTests -DgenerateReports=false
+  - mvn package
+  - mvn site -P site
 
 test:
   post:
