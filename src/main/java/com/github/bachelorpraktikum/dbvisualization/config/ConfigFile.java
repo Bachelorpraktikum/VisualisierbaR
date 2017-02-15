@@ -91,9 +91,8 @@ public class ConfigFile extends Properties {
             colorValue = defaultColorString;
             put(colorsKey, colorValue);
         }
-        String[] colorStrings = colorValue.split(";");
 
-        Paint[] colors = Arrays.stream(colorStrings).map(
+        Paint[] colors = Arrays.stream(colorValue.split(";")).map(
                     colorString -> {
                         try {
                             return Paint.valueOf(colorString);
