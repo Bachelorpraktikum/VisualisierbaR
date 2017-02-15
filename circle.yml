@@ -1,5 +1,6 @@
 dependencies:
   override:
+  - mvn site -P site -DskipTests
   - mvn dependency:go-offline -P site
 
 test:
