@@ -13,6 +13,7 @@ import com.github.bachelorpraktikum.dbvisualization.view.detail.ElementDetailBas
 import com.github.bachelorpraktikum.dbvisualization.view.detail.ElementDetailController;
 import com.github.bachelorpraktikum.dbvisualization.view.detail.TrainDetail;
 import com.github.bachelorpraktikum.dbvisualization.view.graph.Graph;
+import com.github.bachelorpraktikum.dbvisualization.view.graph.GraphShape;
 import com.github.bachelorpraktikum.dbvisualization.view.graph.adapter.SimpleCoordinatesAdapter;
 import com.github.bachelorpraktikum.dbvisualization.view.legend.LegendItem;
 import com.github.bachelorpraktikum.dbvisualization.view.legend.LegendListViewCell;
@@ -74,7 +75,7 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
-import javafx.scene.shape.Shape;
+import javafx.scene.shape.Circle;
 import javafx.stage.Stage;
 import javafx.util.Callback;
 import javafx.util.Duration;
@@ -82,6 +83,8 @@ import javafx.util.StringConverter;
 
 public class MainController {
 
+    private static final double HIGHLIGHT_FACTOR = 0.6;
+    private static final double HIGHLIGHT_STROKE_WIDTH = 0.05;
     @FXML
     private AnchorPane detail;
     @FXML
@@ -152,8 +155,8 @@ public class MainController {
     private IntegerProperty velocity;
     private Animation simulation;
     private Timeline eventTraversalTimeline;
-    private Shape highlightedShape;
     private Paint resetColor;
+    private Circle highlightCircle;
 
     @FXML
     private void initialize() {
@@ -349,46 +352,54 @@ public class MainController {
             timeText.setDisable(newValue);
         });
 
-        elementList.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
-            Context context = ContextHolder.getInstance().getContext();
-            ElementDetailBase detail;
-            boolean isElement = false;
-            Element element = null;
-            Train train = null;
+        elementList.getSelectionModel().selectedItemProperty()
+            .addListener((observable, oldValue, newValue) -> {
+                Context context = ContextHolder.getInstance().getContext();
+                ElementDetailBase detail;
+                boolean isElement = false;
+                Element element = null;
+                Train train = null;
 
-            if (newValue == null) {
-                if (highlightedShape != null) {
-                    highlightedShape.setStroke(resetColor);
+                if (newValue == null) {
+                    getGraph().getGroup().getChildren().remove(highlightCircle);
+                    return;
                 }
-                return;
-            }
 
-            try {
-                element = Element.in(context).get(newValue);
-                detail = new ElementDetail(element);
-                isElement = true;
-            } catch (IllegalArgumentException ignored) {
-                train = Train.in(context).getByReadable(newValue);
-                detail = new TrainDetail(train);
-            }
+                try {
+                    element = Element.in(context).get(newValue);
+                    detail = new ElementDetail(element);
+                    isElement = true;
+                } catch (IllegalArgumentException ignored) {
+                    train = Train.in(context).getByReadable(newValue);
+                    detail = new TrainDetail(train);
+                }
 
-            showDetailView();
-            detailBoxController.setDetail(detail);
-            detailBoxController.setTime(simulationTime.get());
+                GraphShape<Element> graphElement = graph.getElements().get(element);
+                Circle c = new Circle();
 
-            Color highlightColor = Color.GREEN;
-            if (isElement) {
-                highlightedShape = getGraph().getElements().get(element).getShape(element);
-                resetColor = Color.TRANSPARENT;
-            } else {
-                TrainView trainView = trains.get(train);
-                highlightedShape = trainView.getShape();
-                highlightColor = Color.RED;
-                resetColor = trainView.getColor();
-            }
+                if (isElement) {
+                    javafx.scene.Node shape = graphElement.getShape();
+                    Bounds parentBounds = shape.getBoundsInParent();
+                    c.setCenterY(parentBounds.getMinY() + parentBounds.getHeight() / 2);
+                    c.setCenterX(parentBounds.getMinX() + parentBounds.getWidth() / 2);
+                    c.setRadius(
+                        Math.max(parentBounds.getWidth(), parentBounds.getHeight())
+                            * HIGHLIGHT_FACTOR
+                    );
 
-            highlightedShape.setStroke(highlightColor);
-        });
+                    c.setFill(Color.TRANSPARENT);
+                    c.setStroke(Color.BLUE);
+                    c.setStrokeWidth(
+                        HIGHLIGHT_STROKE_WIDTH * graph.getCoordinatesAdapter()
+                            .getCalibrationBase());
+                    highlightCircle = c;
+                    graph.getGroup().getChildren().add(c);
+                }
+
+                showDetailView();
+                detailBoxController.setDetail(detail);
+                detailBoxController.setTime(simulationTime.get());
+            });
 
         eventTraversalTimeline = new Timeline(new KeyFrame(Duration.seconds(1), event -> {
             Event nextEvent = selectNextEvent(getCurrentTime());
