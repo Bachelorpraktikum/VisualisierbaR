@@ -1,10 +1,15 @@
 package com.github.bachelorpraktikum.dbvisualization.config;
 
+import com.sun.javafx.binding.Logging;
+import javafx.scene.paint.Color;
+import javafx.scene.paint.Paint;
+
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Properties;
+import java.util.ResourceBundle;
 import java.util.logging.Logger;
 
 public class ConfigFile extends Properties {
@@ -72,5 +77,22 @@ public class ConfigFile extends Properties {
 
     public void setFilepath(String filepath) {
         this.filepath = filepath;
+    }
+
+    public Paint[] getColors() {
+        String colorsKey = ResourceBundle.getBundle("config_keys").getString("colorsKey");
+        String colorValue = String.valueOf(getOrDefault(colorsKey, "GREEN;ORANGE;BROWN;DARKMAGENTA"));
+        String[] colorStrings = colorValue.split(";");
+        Paint[] colors = new Paint[colorStrings.length];
+
+        for (int i = 0; i < colorStrings.length; i++) {
+            try {
+                colors[i] = Color.valueOf(colorStrings[i]);
+            } catch (IllegalArgumentException ignored) {
+                Logger.getLogger(getClass().getName()).warning(String.format("%s is not a supported color.", colorStrings[i]));
+            }
+        }
+
+        return colors;
     }
 }
