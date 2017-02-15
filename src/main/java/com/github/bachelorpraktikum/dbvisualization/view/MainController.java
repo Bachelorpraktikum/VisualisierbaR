@@ -354,6 +354,10 @@ public class MainController {
 
         elementList.getSelectionModel().selectedItemProperty()
             .addListener((observable, oldValue, newValue) -> {
+                for (TrainView tv : trains.values()) {
+                    tv.setHighlighted(false);
+                }
+
                 Context context = ContextHolder.getInstance().getContext();
                 ElementDetailBase detail;
                 boolean isElement = false;
@@ -394,6 +398,8 @@ public class MainController {
                             .getCalibrationBase());
                     highlightCircle = c;
                     graph.getGroup().getChildren().add(c);
+                } else {
+                    trains.get(train).setHighlighted(true);
                 }
 
                 showDetailView();
