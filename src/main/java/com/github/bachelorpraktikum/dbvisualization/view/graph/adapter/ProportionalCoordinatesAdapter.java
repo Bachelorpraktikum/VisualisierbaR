@@ -4,13 +4,9 @@ import com.github.bachelorpraktikum.dbvisualization.model.Context;
 import com.github.bachelorpraktikum.dbvisualization.model.Coordinates;
 import com.github.bachelorpraktikum.dbvisualization.model.Edge;
 import com.github.bachelorpraktikum.dbvisualization.model.Node;
-import com.sun.javafx.geom.Vec2d;
 
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.InputMismatchException;
-import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.Stack;
 
@@ -25,9 +21,9 @@ import javafx.geometry.Point2D;
 public final class ProportionalCoordinatesAdapter implements CoordinatesAdapter {
     private double shortestEdgeLength;
     private Node startingNode;
-    private Coordinates startingCoordinates;
+    private Point2D startingPoint;
     private Context context;
-    private HashMap<Node, Vec2d> transformationMap = new HashMap<>();
+    private HashMap<Node, Point2D> transformationMap = new HashMap<>();
 
     public ProportionalCoordinatesAdapter(Context context) {
         this.context = context;
@@ -59,7 +55,7 @@ public final class ProportionalCoordinatesAdapter implements CoordinatesAdapter 
            })
            .findFirst().orElseThrow(IllegalStateException::new);
 
-        startingCoordinates = startingNode.getCoordinates();
+        startingPoint = startingNode.getCoordinates().toPoint2D();
 
         // calculate all transformation Vectors
         this.dfs();
@@ -79,8 +75,8 @@ public final class ProportionalCoordinatesAdapter implements CoordinatesAdapter 
     @Nonnull
     @Override
     public Point2D apply(@Nonnull Node node) {
-        Vec2d transformVec = transformationMap.get(node);
-        return new Point2D(startingCoordinates.getX() + transformVec.x, startingCoordinates.getY() + transformVec.y);
+        Point2D transformVec = transformationMap.get(node);
+        return startingPoint.add(transformVec);
     }
 
     /**
@@ -88,9 +84,9 @@ public final class ProportionalCoordinatesAdapter implements CoordinatesAdapter 
      */
     private void dfs() {
         Stack<Node> Q = new Stack<>();
-        Set<Node> S = new LinkedHashSet<>();
+        Set<Node> S = new HashSet<>();
         Q.push(startingNode);
-        transformationMap.put(startingNode, new Vec2d(startingCoordinates.getX(), startingCoordinates.getY()));
+        transformationMap.put(startingNode, startingPoint);
 
         while(!Q.isEmpty()) {
             Node current = Q.pop();
@@ -121,16 +117,16 @@ public final class ProportionalCoordinatesAdapter implements CoordinatesAdapter 
     private void processNode(Node v, Node u, Edge edge, Stack<Node> Q, Set<Node> S) {
         if(S.contains(v))
             return;
-        Coordinates vCoord = v.getCoordinates();
-        Coordinates uCoord = u.getCoordinates();
-        Vec2d normVec = uCoord.normVectorTo(vCoord);
+        Point2D vCoord = v.getCoordinates().toPoint2D();
+        Point2D uCoord = u.getCoordinates().toPoint2D();
+        Point2D normVec = vCoord.subtract(uCoord).normalize();
         double scaleFactor = edge.getLength() / shortestEdgeLength;
-        Vec2d edgeVec = new Vec2d(normVec.x * scaleFactor, normVec.y * scaleFactor);
-        Vec2d uVec = transformationMap.get(u);
+        Point2D edgeVec = normVec.multiply(scaleFactor);
+        Point2D uVec = transformationMap.get(u);
 
         // this vector is from the startingNode to the point where
         // the node v should be placed
-        Vec2d transformationVec = new Vec2d(uVec.x + edgeVec.x, uVec.y + edgeVec.y);
+        Point2D transformationVec = uVec.add(edgeVec);
         if(transformationMap.containsKey(v))
             transformationMap.replace(v, transformationVec);
         else

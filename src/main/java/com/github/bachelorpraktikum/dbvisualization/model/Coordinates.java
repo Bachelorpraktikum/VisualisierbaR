@@ -1,7 +1,6 @@
 package com.github.bachelorpraktikum.dbvisualization.model;
 
-import com.sun.javafx.geom.Vec2d;
-
+import javafx.geometry.Point2D;
 import javax.annotation.ParametersAreNonnullByDefault;
 import javax.annotation.concurrent.Immutable;
 
@@ -12,6 +11,7 @@ import javax.annotation.concurrent.Immutable;
 @Immutable
 @ParametersAreNonnullByDefault
 public final class Coordinates {
+
     private final int x;
     private final int y;
 
@@ -49,26 +49,29 @@ public final class Coordinates {
     }
 
     /**
-     * Calculates the normalized vector from this Coordinate to the given one.
+     * Returns a {@link Point2D} representation of this coordinate.
+     * This method performs no translation.
      *
-     * @param c2 the coordinate the vector points to
-     * @return a vector
+     * @return a Point2D
      */
-    public Vec2d normVectorTo(Coordinates c2) {
-        Vec2d vec = new Vec2d(c2.getX() - x, c2.getY() - y);
-        double vecLength = Math.sqrt(vec.x*vec.x + vec.y*vec.y);
-        vec.set(vec.x / vecLength, vec.y / vecLength);
-        return vec;
+    public Point2D toPoint2D() {
+        return new Point2D(getX(), getY());
     }
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj) return true;
-        if (obj == null || getClass() != obj.getClass()) return false;
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null || getClass() != obj.getClass()) {
+            return false;
+        }
 
         Coordinates that = (Coordinates) obj;
 
-        if (x != that.x) return false;
+        if (x != that.x) {
+            return false;
+        }
         return y == that.y;
     }
 
@@ -82,8 +85,8 @@ public final class Coordinates {
     @Override
     public String toString() {
         return "Coordinates{"
-                + "x=" + x
-                + ", y=" + y
-                + '}';
+            + "x=" + x
+            + ", y=" + y
+            + '}';
     }
 }
