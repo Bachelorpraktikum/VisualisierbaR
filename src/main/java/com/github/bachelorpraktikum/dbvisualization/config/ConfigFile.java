@@ -79,7 +79,7 @@ public class ConfigFile extends Properties {
         this.filepath = filepath;
     }
 
-    public Paint[] getColors() {
+    public Paint[] getTrainColors() {
         String colorsKey = ResourceBundle.getBundle("config_keys").getString("colorsKey");
         String colorValue = String.valueOf(getOrDefault(colorsKey, "GREEN;ORANGE;BROWN;DARKMAGENTA"));
         String[] colorStrings = colorValue.split(";");

@@ -38,7 +38,7 @@ public final class TrainView {
     private final Paint color;
     private final Path path;
 
-    private static final Paint[] COLORS = ConfigFile.getInstance().getColors();
+    private static final Paint[] COLORS = ConfigFile.getInstance().getTrainColors();
 
     public TrainView(Train train, Graph graph) {
         this.train = train;
