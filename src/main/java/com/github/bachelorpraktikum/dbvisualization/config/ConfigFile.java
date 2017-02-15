@@ -9,11 +9,11 @@ import java.util.Objects;
 import java.util.Properties;
 import java.util.ResourceBundle;
 import java.util.logging.Logger;
-
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 
 public class ConfigFile extends Properties {
+
     private final static String USER_HOME = System.getProperty("user.home");
     private static final Logger log = Logger.getLogger(ConfigFile.class.getName());
 
@@ -42,7 +42,8 @@ public class ConfigFile extends Properties {
             outputStream = new FileOutputStream(filepath);
             store(outputStream);
         } catch (IOException io) {
-            log.severe(String.format("Couldn't write to %s due to error: %s.", filepath, io.getMessage()));
+            log.severe(
+                String.format("Couldn't write to %s due to error: %s.", filepath, io.getMessage()));
         } finally {
             if (outputStream != null) {
                 try {
@@ -64,7 +65,8 @@ public class ConfigFile extends Properties {
             inputStream = new FileInputStream(filepath);
             load(inputStream);
         } catch (IOException io) {
-            log.severe(String.format("Couldn't load %s due to error: %s.", filepath, io.getMessage()));
+            log.severe(
+                String.format("Couldn't load %s due to error: %s.", filepath, io.getMessage()));
         } finally {
             if (inputStream != null) {
                 try {
@@ -82,7 +84,8 @@ public class ConfigFile extends Properties {
 
     public Paint[] getTrainColors() {
         final String defaultColorString = "GREEN;ORANGE;BROWN;DARKMAGENTA";
-        final Paint[] defaultColors = new Paint[]{Color.GREEN, Color.ORANGE, Color.BROWN, Color.DARKMAGENTA};
+        final Paint[] defaultColors = new Paint[]{Color.GREEN, Color.ORANGE, Color.BROWN,
+            Color.DARKMAGENTA};
         String colorsKey = ResourceBundle.getBundle("config_keys").getString("colorsKey");
 
         String colorValue = String.valueOf(getOrDefault(colorsKey, defaultColors));
@@ -92,15 +95,16 @@ public class ConfigFile extends Properties {
         }
 
         Paint[] colors = Arrays.stream(colorValue.split(";")).map(
-                colorString -> {
-                    try {
-                        return Paint.valueOf(colorString);
-                    } catch (IllegalArgumentException ignored) {
-                        Logger.getLogger(getClass().getName()).warning(String.format("%s is not a supported color.", colorString));
-                    }
-
-                    return null;
+            colorString -> {
+                try {
+                    return Paint.valueOf(colorString);
+                } catch (IllegalArgumentException ignored) {
+                    Logger.getLogger(getClass().getName())
+                        .warning(String.format("%s is not a supported color.", colorString));
                 }
+
+                return null;
+            }
         ).filter(Objects::nonNull).toArray(Paint[]::new);
 
         if (colors.length == 0) {
