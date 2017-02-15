@@ -1,5 +1,6 @@
 package com.github.bachelorpraktikum.dbvisualization.view.train;
 
+import com.github.bachelorpraktikum.dbvisualization.config.ConfigFile;
 import com.github.bachelorpraktikum.dbvisualization.model.Context;
 import com.github.bachelorpraktikum.dbvisualization.model.Node;
 import com.github.bachelorpraktikum.dbvisualization.model.train.Train;
@@ -37,9 +38,7 @@ public final class TrainView {
     private final Paint color;
     private final Path path;
 
-    private static final Paint[] COLORS = new Paint[]{
-        Color.GREEN, Color.ORANGE, Color.BROWN, Color.DARKMAGENTA
-    };
+    private static final Paint[] COLORS = ConfigFile.getInstance().getColors();
 
     public TrainView(Train train, Graph graph) {
         this.train = train;
