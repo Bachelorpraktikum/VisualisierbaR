@@ -1,3 +1,7 @@
+dependencies:
+  override:
+  - mvn dependency:go-offline -P site
+
 test:
   post:
     - mvn site -P site
