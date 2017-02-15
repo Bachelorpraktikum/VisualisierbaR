@@ -6,8 +6,12 @@ import com.github.bachelorpraktikum.dbvisualization.model.Edge;
 import com.github.bachelorpraktikum.dbvisualization.model.Node;
 import com.sun.javafx.geom.Vec2d;
 
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.InputMismatchException;
+import java.util.LinkedHashSet;
+import java.util.Set;
 import java.util.Stack;
 
 import javax.annotation.Nonnull;
@@ -43,14 +47,17 @@ public final class ProportionalCoordinatesAdapter implements CoordinatesAdapter 
         // search for a starting Node
         // this will be the Node with the smallest x and y coordinates,
         // which is the Node in the top left corner
-        for(Node node: Node.in(context).getAll()) {
-            Coordinates c = node.getCoordinates();
-            if(c.getX() < x || c.getY() < y) {
-                startingNode = node;
-                x = c.getX();
-                y = c.getY();
-            }
-        }
+       startingNode = Node.in(context).getAll().stream()
+           .sorted((n1, n2) -> {
+               Coordinates c1 = n1.getCoordinates();
+               Coordinates c2 = n2.getCoordinates();
+               if (c1.getX() == c2.getX()) {
+                   return Integer.compare(c1.getY(), c2.getY());
+               } else {
+                   return Integer.compare(c1.getX(), c2.getY());
+               }
+           })
+           .findFirst().orElseThrow(IllegalStateException::new);
 
         startingCoordinates = startingNode.getCoordinates();
 
@@ -81,7 +88,7 @@ public final class ProportionalCoordinatesAdapter implements CoordinatesAdapter 
      */
     private void dfs() {
         Stack<Node> Q = new Stack<>();
-        HashSet<Node> S = new HashSet<>();
+        Set<Node> S = new LinkedHashSet<>();
         Q.push(startingNode);
         transformationMap.put(startingNode, new Vec2d(startingCoordinates.getX(), startingCoordinates.getY()));
 
@@ -111,7 +118,7 @@ public final class ProportionalCoordinatesAdapter implements CoordinatesAdapter 
      * @param Q the current set of nodes
      * @param S the set of already processed Nodes
      */
-    private void processNode(Node v, Node u, Edge edge, Stack<Node> Q, HashSet<Node> S) {
+    private void processNode(Node v, Node u, Edge edge, Stack<Node> Q, Set<Node> S) {
         if(S.contains(v))
             return;
         Coordinates vCoord = v.getCoordinates();
