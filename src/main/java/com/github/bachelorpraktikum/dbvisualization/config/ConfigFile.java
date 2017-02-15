@@ -3,6 +3,7 @@ package com.github.bachelorpraktikum.dbvisualization.config;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Arrays;
 import java.util.Objects;
@@ -37,21 +38,11 @@ public class ConfigFile extends Properties {
     }
 
     public void store() {
-        OutputStream outputStream = null;
-        try {
-            outputStream = new FileOutputStream(filepath);
+        try (OutputStream outputStream = new FileOutputStream(filepath)) {
             store(outputStream);
         } catch (IOException io) {
             log.severe(
                 String.format("Couldn't write to %s due to error: %s.", filepath, io.getMessage()));
-        } finally {
-            if (outputStream != null) {
-                try {
-                    outputStream.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
         }
     }
 
@@ -60,21 +51,11 @@ public class ConfigFile extends Properties {
     }
 
     public void load() {
-        FileInputStream inputStream = null;
-        try {
-            inputStream = new FileInputStream(filepath);
+        try (InputStream inputStream = new FileInputStream(filepath)) {
             load(inputStream);
         } catch (IOException io) {
             log.severe(
                 String.format("Couldn't load %s due to error: %s.", filepath, io.getMessage()));
-        } finally {
-            if (inputStream != null) {
-                try {
-                    inputStream.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
         }
     }
 
@@ -84,15 +65,16 @@ public class ConfigFile extends Properties {
 
     public Paint[] getTrainColors() {
         final String defaultColorString = "GREEN;ORANGE;BROWN;DARKMAGENTA";
-        final Paint[] defaultColors = new Paint[]{Color.GREEN, Color.ORANGE, Color.BROWN,
-            Color.DARKMAGENTA};
+        final Paint[] defaultColors = Arrays.stream(defaultColorString.split(";"))
+            .map(Paint::valueOf)
+            .toArray(Paint[]::new);
         String colorsKey = ResourceBundle.getBundle("config_keys").getString("colorsKey");
 
-        String colorValue = String.valueOf(getOrDefault(colorsKey, defaultColors));
+        String colorValue = String.valueOf(getOrDefault(colorsKey, defaultColorString));
         if (colorValue.isEmpty()) {
             colorValue = defaultColorString;
-            put(colorsKey, colorValue);
         }
+        put(colorsKey, colorValue);
 
         Paint[] colors = Arrays.stream(colorValue.split(";")).map(
             colorString -> {
@@ -109,7 +91,6 @@ public class ConfigFile extends Properties {
 
         if (colors.length == 0) {
             colors = defaultColors;
-            put(colorsKey, defaultColorString);
         }
         return colors;
     }
