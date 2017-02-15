@@ -27,7 +27,6 @@ import javafx.scene.shape.MoveTo;
 import javafx.scene.shape.Path;
 import javafx.scene.shape.PathElement;
 import javafx.scene.shape.Rectangle;
-import javafx.scene.shape.Shape;
 import javafx.scene.shape.StrokeLineCap;
 
 public final class TrainView {
@@ -74,16 +73,8 @@ public final class TrainView {
         TooltipUtil.install(path, new Tooltip(train.getReadableName() + " " + train.getLength()));
     }
 
-    public Paint getColor() {
-        return color;
-    }
-
     public void setOnMouseClicked(EventHandler<? super MouseEvent> eventHandler) {
         path.setOnMouseClicked(eventHandler);
-    }
-
-    public Shape getShape() {
-        return path;
     }
 
     public Train getTrain() {
