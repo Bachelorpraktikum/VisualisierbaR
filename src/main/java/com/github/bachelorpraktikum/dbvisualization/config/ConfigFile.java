@@ -1,9 +1,5 @@
 package com.github.bachelorpraktikum.dbvisualization.config;
 
-import com.sun.javafx.binding.Logging;
-import javafx.scene.paint.Color;
-import javafx.scene.paint.Paint;
-
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -13,6 +9,9 @@ import java.util.Objects;
 import java.util.Properties;
 import java.util.ResourceBundle;
 import java.util.logging.Logger;
+
+import javafx.scene.paint.Color;
+import javafx.scene.paint.Paint;
 
 public class ConfigFile extends Properties {
     private final static String USER_HOME = System.getProperty("user.home");
@@ -93,17 +92,16 @@ public class ConfigFile extends Properties {
         }
 
         Paint[] colors = Arrays.stream(colorValue.split(";")).map(
-                    colorString -> {
-                        try {
-                            return Paint.valueOf(colorString);
-                        }
-                        catch (IllegalArgumentException ignored) {
-                            Logger.getLogger(getClass().getName()).warning(String.format("%s is not a supported color.", colorString));
-                        }
-
-                        return null;
+                colorString -> {
+                    try {
+                        return Paint.valueOf(colorString);
+                    } catch (IllegalArgumentException ignored) {
+                        Logger.getLogger(getClass().getName()).warning(String.format("%s is not a supported color.", colorString));
                     }
-                ).filter(Objects::nonNull).toArray(Paint[]::new);
+
+                    return null;
+                }
+        ).filter(Objects::nonNull).toArray(Paint[]::new);
 
         if (colors.length == 0) {
             colors = defaultColors;
