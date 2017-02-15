@@ -5,7 +5,7 @@ test:
 
 deployment:
   packaging:
-    branch: [.*]
+    branch: [/.*/]
     commands:
       - mvn package -DskipTests
       - cp target/VisualisierbaR-*-jar-with-dependencies.jar $CIRCLE_ARTIFACTS/VisualisierbaR.jar
