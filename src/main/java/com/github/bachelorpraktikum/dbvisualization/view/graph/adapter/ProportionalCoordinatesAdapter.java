@@ -24,7 +24,6 @@ public final class ProportionalCoordinatesAdapter implements CoordinatesAdapter 
     private Coordinates startingCoordinates;
     private Context context;
     private HashMap<Node, Vec2d> transformationMap = new HashMap<>();
-    //private HashMap<Node, Node> prevMap = new HashMap<>();
 
     public ProportionalCoordinatesAdapter(Context context) {
         this.context = context;
@@ -85,12 +84,9 @@ public final class ProportionalCoordinatesAdapter implements CoordinatesAdapter 
         HashSet<Node> S = new HashSet<>();
         Q.push(startingNode);
         transformationMap.put(startingNode, new Vec2d(startingCoordinates.getX(), startingCoordinates.getY()));
-        Node lastCurrent = null;
 
         while(!Q.isEmpty()) {
             Node current = Q.pop();
-            if(lastCurrent != null && lastCurrent.equals(startingNode))
-                S.remove(startingNode);
 
             if(!S.contains(current)) {
                 S.add(current);
@@ -102,7 +98,6 @@ public final class ProportionalCoordinatesAdapter implements CoordinatesAdapter 
                     }
                 }
             }
-            lastCurrent = current;
         }
     }
 
@@ -114,6 +109,7 @@ public final class ProportionalCoordinatesAdapter implements CoordinatesAdapter 
      * @param u the currently processed node
      * @param edge the edge between u and v
      * @param Q the current set of nodes
+     * @param S the set of already processed Nodes
      */
     private void processNode(Node v, Node u, Edge edge, Stack<Node> Q, HashSet<Node> S) {
         if(S.contains(v))
