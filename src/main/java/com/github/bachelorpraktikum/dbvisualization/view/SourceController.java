@@ -1,6 +1,17 @@
 package com.github.bachelorpraktikum.dbvisualization.view;
 
 import com.github.bachelorpraktikum.dbvisualization.DataSource;
+
+import java.io.IOException;
+import java.net.URI;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Objects;
+import java.util.ResourceBundle;
+import java.util.logging.Logger;
+
+import javax.annotation.Nonnull;
+
 import javafx.beans.property.ReadOnlyProperty;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -11,14 +22,6 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
-
-import javax.annotation.Nonnull;
-import java.io.IOException;
-import java.net.URI;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Objects;
-import java.util.ResourceBundle;
 
 public class SourceController implements SourceChooser {
     @FXML
@@ -153,7 +156,7 @@ public class SourceController implements SourceChooser {
         try {
             mainLoader.load();
         } catch (IOException e) {
-            // This should never happen (see load function)
+            Logger.getLogger(getClass().getName()).severe("Main window couldn't be opened\n" + e);
             return;
         }
         MainController controller = mainLoader.getController();
