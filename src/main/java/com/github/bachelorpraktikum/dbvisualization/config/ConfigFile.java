@@ -8,6 +8,8 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.Arrays;
+import java.util.Objects;
 import java.util.Properties;
 import java.util.ResourceBundle;
 import java.util.logging.Logger;
@@ -80,26 +82,33 @@ public class ConfigFile extends Properties {
     }
 
     public Paint[] getTrainColors() {
-        final String defaultColorStrings = "GREEN;ORANGE;BROWN;DARKMAGENTA";
+        final String defaultColorString = "GREEN;ORANGE;BROWN;DARKMAGENTA";
         final Paint[] defaultColors = new Paint[]{Color.GREEN, Color.ORANGE, Color.BROWN, Color.DARKMAGENTA};
         String colorsKey = ResourceBundle.getBundle("config_keys").getString("colorsKey");
+
         String colorValue = String.valueOf(getOrDefault(colorsKey, defaultColors));
         if (colorValue.isEmpty()) {
-            colorValue = defaultColorStrings;
+            colorValue = defaultColorString;
+            put(colorsKey, colorValue);
         }
         String[] colorStrings = colorValue.split(";");
-        Paint[] colors = new Paint[colorStrings.length];
 
-        for (int i = 0; i < colorStrings.length; i++) {
-            try {
-                colors[i] = Color.valueOf(colorStrings[i]);
-            } catch (IllegalArgumentException ignored) {
-                Logger.getLogger(getClass().getName()).warning(String.format("%s is not a supported color.", colorStrings[i]));
-            }
-        }
+        Paint[] colors = Arrays.stream(colorStrings).map(
+                    colorString -> {
+                        try {
+                            return Paint.valueOf(colorString);
+                        }
+                        catch (IllegalArgumentException ignored) {
+                            Logger.getLogger(getClass().getName()).warning(String.format("%s is not a supported color.", colorString));
+                        }
+
+                        return null;
+                    }
+                ).filter(Objects::nonNull).toArray(Paint[]::new);
 
         if (colors.length == 0) {
             colors = defaultColors;
+            put(colorsKey, defaultColorString);
         }
         return colors;
     }
