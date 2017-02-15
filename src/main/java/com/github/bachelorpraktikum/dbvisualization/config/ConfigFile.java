@@ -80,8 +80,13 @@ public class ConfigFile extends Properties {
     }
 
     public Paint[] getTrainColors() {
+        final String defaultColorStrings = "GREEN;ORANGE;BROWN;DARKMAGENTA";
+        final Paint[] defaultColors = new Paint[]{Color.GREEN, Color.ORANGE, Color.BROWN, Color.DARKMAGENTA};
         String colorsKey = ResourceBundle.getBundle("config_keys").getString("colorsKey");
-        String colorValue = String.valueOf(getOrDefault(colorsKey, "GREEN;ORANGE;BROWN;DARKMAGENTA"));
+        String colorValue = String.valueOf(getOrDefault(colorsKey, defaultColors));
+        if (colorValue.isEmpty()) {
+            colorValue = defaultColorStrings;
+        }
         String[] colorStrings = colorValue.split(";");
         Paint[] colors = new Paint[colorStrings.length];
 
@@ -93,6 +98,9 @@ public class ConfigFile extends Properties {
             }
         }
 
+        if (colors.length == 0) {
+            colors = defaultColors;
+        }
         return colors;
     }
 }
