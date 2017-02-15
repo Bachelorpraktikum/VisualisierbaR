@@ -5,7 +5,7 @@ test:
 
 deployment:
   packaging:
-    branch: [master, develop]
+    branch: [.*]
     commands:
       - mvn package -DskipTests
-      - cp target/DBVisualization-*-jar-with-dependencies.jar $CIRCLE_ARTIFACTS/dbvisualization.jar
+      - cp target/VisualisierbaR-*-jar-with-dependencies.jar $CIRCLE_ARTIFACTS/VisualisierbaR.jar
