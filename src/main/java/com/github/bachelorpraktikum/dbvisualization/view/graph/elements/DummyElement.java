@@ -4,10 +4,10 @@ import com.github.bachelorpraktikum.dbvisualization.model.Element;
 import com.github.bachelorpraktikum.dbvisualization.model.Node;
 import com.github.bachelorpraktikum.dbvisualization.view.graph.adapter.CoordinatesAdapter;
 
+import javafx.scene.paint.Color;
 import javax.annotation.Nonnull;
 
 import javafx.geometry.Point2D;
-import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 
 final class DummyElement extends SingleElementBase<Rectangle> {
@@ -49,9 +49,5 @@ final class DummyElement extends SingleElementBase<Rectangle> {
         rectangle.setStroke(Color.RED);
         rectangle.setStrokeWidth(getCalibrationBase() * STROKE_WIDTH);
         return rectangle;
-    }
-
-    protected double getStrokeFactor() {
-        return 0;
     }
 }

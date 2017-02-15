@@ -3,7 +3,6 @@ package com.github.bachelorpraktikum.dbvisualization.view.graph.elements;
 import com.github.bachelorpraktikum.dbvisualization.model.Element;
 import com.github.bachelorpraktikum.dbvisualization.model.Node;
 import com.github.bachelorpraktikum.dbvisualization.view.graph.adapter.CoordinatesAdapter;
-
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -14,20 +13,17 @@ import java.util.Map;
 import java.util.concurrent.atomic.DoubleAdder;
 import java.util.concurrent.atomic.LongAdder;
 import java.util.stream.Collectors;
-
-import javax.annotation.Nonnull;
-
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.WeakChangeListener;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Bounds;
 import javafx.geometry.Point2D;
 import javafx.scene.Group;
-import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Polygon;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.Shape;
+import javax.annotation.Nonnull;
 
 final class CompositeElement extends ElementBase<Group> {
     private static final double MAX_SHAPE_WIDTH = 2.0;
@@ -82,12 +78,7 @@ final class CompositeElement extends ElementBase<Group> {
 
     @Override
     protected void resize(Group shape) {
-        double maxWidth = MAX_ELEMENT_WIDTH * getCalibrationBase();
-        resizeNode(shape, maxWidth);
-
-        for (Element ele : shapes.keySet()) {
-            shapes.get(ele).setStroke(Color.TRANSPARENT);
-        }
+        resizeNode(shape, MAX_ELEMENT_WIDTH * getCalibrationBase());
     }
 
     private void resizeNode(javafx.scene.Node node, double maxWidth) {
@@ -109,25 +100,20 @@ final class CompositeElement extends ElementBase<Group> {
             case VorSignalImpl:
             case HauptSignalImpl:
                 shape = createPathShape(type);
-                shape.setStrokeWidth(100);
                 break;
             case GeschwindigkeitsAnzeigerImpl:
                 shape = new Polygon(0, 2, 1, 0, 2, 2);
                 maxWidth *= GESCHWINDIGKEITS_ANZEIGER_WIDTH_FACTOR;
-                shape.setStrokeWidth(getStrokeFactor());
                 break;
             case GeschwindigkeitsVoranzeiger:
                 shape = new Polygon(0, 0, 1, 2, 2, 0);
                 maxWidth *= GESCHWINDIGKEITS_ANZEIGER_WIDTH_FACTOR;
-                shape.setStrokeWidth(getStrokeFactor());
                 break;
             case UnknownElement:
             default:
                 shape = new Rectangle(2, 2);
-                shape.setStrokeWidth(getStrokeFactor());
                 break;
         }
-        shape.setStrokeWidth(shape.getStrokeWidth() * getCalibrationBase());
         resizeNode(shape, getCalibrationBase() * maxWidth);
         return shape;
     }
@@ -172,10 +158,5 @@ final class CompositeElement extends ElementBase<Group> {
         group.getChildren().add(bottomLine);
         bottomLine.toBack();
         return group;
-    }
-
-    @Override
-    protected double getStrokeFactor() {
-        return 0.2;
     }
 }
