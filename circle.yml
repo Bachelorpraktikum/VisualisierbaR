@@ -1,3 +1,8 @@
+dependencies:
+  override:
+  - mvn package
+  - mvn site -P site
+
 test:
   post:
     - mvn site -P site
