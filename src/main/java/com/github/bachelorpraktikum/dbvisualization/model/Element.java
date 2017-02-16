@@ -16,7 +16,6 @@ import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.beans.property.ReadOnlyProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.collections.transformation.SortedList;
 import javafx.scene.paint.Color;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -242,15 +241,34 @@ public final class Element {
             Element element = elements.computeIfAbsent(Objects.requireNonNull(name), elementName ->
                     new Element(this, elementName, type, node, state)
             );
+            State resultInitState = getStateAtTime(element, Context.INIT_STATE_TIME);
             if (!element.getName().equals(name)
                     || !element.getType().equals(type)
-                    || !element.getNode().equals(node)) {
-                // we SHOULD also check for the initial state, but it's not easily accessible,
-                // so I'm going to let it slide for now
-                String errorMessage = String.format("element with this name (%s) already exists, but differently", name);
-                log.warning(errorMessage);
+                    || !element.getNode().equals(node)
+                    || !resultInitState.equals(state)) {
+                String elementFormat = "(type: %s, node: %s, initState: %s)";
+                String message = "Element with name: %s already exists:\n"
+                    + elementFormat + ", tried to recreate with following arguments:\n"
+                    + elementFormat;
+                message = String.format(message, name, type, node, state,
+                    element.getType(), element.getNode(), resultInitState);
+                log.warning(message);
             }
             return element;
+        }
+
+        /**
+         * Gets the state of an element at the given time, then resets the time to the previous value.
+         * @param element the element
+         * @param time the time to look up the state for
+         * @return the state of the element at the given time
+         */
+        private State getStateAtTime(Element element, int time) {
+            int resetTime = currentTime;
+            setTime(time);
+            State result = element.getState();
+            setTime(resetTime);
+            return result;
         }
 
         /**

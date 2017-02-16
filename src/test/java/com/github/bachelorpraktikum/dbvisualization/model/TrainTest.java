@@ -1,17 +1,15 @@
 package com.github.bachelorpraktikum.dbvisualization.model;
 
-import com.github.bachelorpraktikum.dbvisualization.model.train.Train;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
 
+import com.github.bachelorpraktikum.dbvisualization.model.train.Train;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
 
 public class TrainTest {
     private Context context;
@@ -42,18 +40,18 @@ public class TrainTest {
     public void testInstanceManagerExistsDifferentLength() {
         String name = "t";
         String readableName = "train";
-        Train.in(context).create(name, readableName, 10);
-        expected.expect(IllegalArgumentException.class);
-        Train.in(context).create(name, readableName, 20);
+        Train train = Train.in(context).create(name, readableName, 10);
+        Train same = Train.in(context).create(name, readableName, 20);
+        assertSame(train, same);
     }
 
     @Test
     public void testInstanceManagerExistsDifferentReadableName() {
         String name = "t";
         String readableName = "train";
-        Train.in(context).create(name, readableName, 10);
-        expected.expect(IllegalArgumentException.class);
-        Train.in(context).create(name, "trainz", 10);
+        Train train = Train.in(context).create(name, readableName, 10);
+        Train same = Train.in(context).create(name, "trainz", 10);
+        assertSame(train, same);
     }
 
     private Edge[] createEdges(Integer edgeLength, Integer... edgeLengths) {

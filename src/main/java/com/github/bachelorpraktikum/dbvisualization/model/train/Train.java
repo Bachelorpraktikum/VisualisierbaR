@@ -42,6 +42,13 @@ public class Train {
     @Nonnull
     private final ObservableList<TrainEvent> events;
 
+    /**
+     * Creates a new train.
+     * @param name the unique name of the train
+     * @param readableName the human readable name of the train
+     * @param length the length of the train
+     * @throws IllegalArgumentException if length <= 0
+     */
     private Train(String name, String readableName, int length) {
         this.name = Objects.requireNonNull(name);
         this.readableName = Objects.requireNonNull(readableName);
@@ -85,20 +92,24 @@ public class Train {
          * @param readableName human readable name of the train
          * @param length       length of the train in meters
          * @return an instance of {@link Train}
-         * @throws IllegalArgumentException if another instance with the same name but <b>with a
-         *                                  different readableName or length.</b> exists
          * @throws IllegalArgumentException if length is negative or zero
          * @throws NullPointerException     if name or readableName is null
          */
         @Nonnull
         public Train create(String name, String readableName, int length) {
-            Train result = trains.get(Objects.requireNonNull(name));
-            if (result == null) {
-                result = new Train(name, readableName, length);
-                trains.put(name, result);
-            } else if (result.getLength() != length
-                    || !result.getReadableName().equals(readableName)) {
-                throw new IllegalArgumentException("train already exists, but differently");
+            Train result = trains.computeIfAbsent(Objects.requireNonNull(name), n ->
+                new Train(n, readableName, length)
+            );
+
+            if (result.getLength() != length
+                || !result.getReadableName().equals(readableName)) {
+                String trainFormat = "(readableName: %s, length: %d)";
+                String message = "Train with name: %s already exists:\n"
+                    + trainFormat + ", tried to recreate with following arguments:\n"
+                    + trainFormat;
+                message = String.format(message, name, readableName, length,
+                    result.getReadableName(), result.getLength());
+                log.warning(message);
             }
 
             return result;

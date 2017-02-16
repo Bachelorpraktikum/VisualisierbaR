@@ -1,17 +1,16 @@
 package com.github.bachelorpraktikum.dbvisualization.model;
 
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
-
-import java.util.Collection;
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
+
+import java.util.Collection;
+import org.junit.Before;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.rules.ExpectedException;
 
 public class NodeTest {
     private Context context;
@@ -42,8 +41,8 @@ public class NodeTest {
     public void testInstanceManagerExistsDifferentCoordinates() {
         String name = "node";
         Node node = Node.in(context).create(name, new Coordinates(0, 0));
-        expected.expect(IllegalArgumentException.class);
-        Node.in(context).create(name, new Coordinates(0, 1));
+        Node same = Node.in(context).create(name, new Coordinates(0, 1));
+        assertSame(node, same);
     }
 
     @Test

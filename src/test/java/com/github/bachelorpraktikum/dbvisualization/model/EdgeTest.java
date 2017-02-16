@@ -1,15 +1,14 @@
 package com.github.bachelorpraktikum.dbvisualization.model;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
+
+import java.util.Random;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
-
-import java.util.Random;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
 
 /**
  * Created by chabare on 19.11.16
@@ -58,26 +57,24 @@ public class EdgeTest {
     public void testInstanceManagerExistsDifferentLength() {
         String name = "Edge";
         Edge edge = Edge.in(context).create(name, 10, getNode(), getNode());
-        expected.expect(IllegalArgumentException.class);
-        Edge.in(context).create(name, 20, edge.getNode1(), edge.getNode2());
+        Edge same = Edge.in(context).create(name, 20, edge.getNode1(), edge.getNode2());
+        assertSame(edge, same);
     }
 
     @Test
     public void testInstanceManagerExistsDifferentNode1() {
         String name = "t";
-        String readableName = "Edge";
         Edge edge = Edge.in(context).create(name, 10, getNode(), getNode());
-        expected.expect(IllegalArgumentException.class);
-        Edge.in(context).create(name, 10, getNode(), edge.getNode2());
+        Edge same = Edge.in(context).create(name, 10, getNode(), edge.getNode2());
+        assertSame(edge, same);
     }
 
     @Test
     public void testInstanceManagerExistsDifferentNode2() {
         String name = "t";
-        String readableName = "Edge";
         Edge edge = Edge.in(context).create(name, 10, getNode(), getNode());
-        expected.expect(IllegalArgumentException.class);
-        Edge.in(context).create(name, 10, edge.getNode1(), getNode());
+        Edge same = Edge.in(context).create(name, 10, edge.getNode1(), getNode());
+        assertSame(edge, same);
     }
 
     @Test

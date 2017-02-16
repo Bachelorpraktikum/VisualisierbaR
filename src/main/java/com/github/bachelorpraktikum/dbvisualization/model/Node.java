@@ -2,15 +2,14 @@ package com.github.bachelorpraktikum.dbvisualization.model;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.WeakHashMap;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
-
 import javax.annotation.Nonnull;
 import javax.annotation.ParametersAreNonnullByDefault;
 
@@ -20,6 +19,9 @@ import javax.annotation.ParametersAreNonnullByDefault;
  */
 @ParametersAreNonnullByDefault
 public final class Node {
+
+    private static final Logger log = Logger.getLogger(Node.class.getName());
+
     @Nonnull
     private final String name;
     @Nonnull
@@ -67,17 +69,20 @@ public final class Node {
          * @param coordinates the {@link Coordinates} of this node
          * @return an element
          * @throws NullPointerException     if either of the arguments is null
-         * @throws IllegalArgumentException if an node with this name already exists, but with
-         *                                  different coordinates
          */
         @Nonnull
         public Node create(String name, Coordinates coordinates) {
             Node result = nodes.computeIfAbsent(Objects.requireNonNull(name), nodeName ->
-                    new Node(nodeName, coordinates
-                    ));
+                new Node(nodeName, coordinates)
+            );
 
             if (!result.getCoordinates().equals(coordinates)) {
-                throw new IllegalArgumentException("node with that name already exists, but differently");
+                String nodeFormat = "(Coordinates: %s)";
+                String message = "Node with name: %s already exists:\n"
+                    + nodeFormat + ", tried to recreate with following arguments:\n"
+                    + nodeFormat;
+                message = String.format(message, name, coordinates, result.getCoordinates());
+                log.warning(message);
             }
 
             return result;

@@ -9,7 +9,6 @@ import java.util.concurrent.atomic.AtomicReference;
 import javafx.beans.property.Property;
 import javafx.beans.property.ReadOnlyProperty;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -62,13 +61,13 @@ public class ElementTest {
         assertSame(element, Element.in(context).create(element.getName(), element.getType(), otherNode, element.getState()));
     }
 
-    @Ignore("the initial state is currently not checked in the factory")
     @Test
     public void testInstanceManagerExistsDifferentState() {
         Element element = createElement();
 
-        expected.expect(IllegalArgumentException.class);
-        Element.in(context).create(element.getName(), element.getType(), element.getNode(), Element.State.FAHRT);
+        Element same = Element.in(context)
+            .create(element.getName(), element.getType(), element.getNode(), Element.State.FAHRT);
+        assertSame(element, same);
     }
 
     @Test
