@@ -18,6 +18,7 @@ import javafx.scene.layout.VBox;
 import javafx.scene.shape.Shape;
 
 public class ElementDetailController {
+
     @FXML
     private Label coordinateLabel;
     @FXML
@@ -57,14 +58,17 @@ public class ElementDetailController {
         elementBox.setVisible(!detail.isTrain());
 
         elementName.textProperty().setValue(detail.getName());
-        coordinateValue.textProperty().setValue(String.valueOf(detail.getCoordinatesString(detail.getCoordinates())));
+        coordinateValue.textProperty()
+            .setValue(String.valueOf(detail.getCoordinatesString(detail.getCoordinates())));
 
         Shape shape = detail.getShape();
 
         if (detail.isTrain()) {
             TrainDetail trainDetail = (TrainDetail) detail;
-            coordinateValueBack.textProperty().setValue(detail.getCoordinatesString(trainDetail.getBackCoordinate()));
-            coordinateLabel.setText(ResourceBundle.getBundle("bundles.localization").getString("coordinate_front"));
+            coordinateValueBack.textProperty()
+                .setValue(detail.getCoordinatesString(trainDetail.getBackCoordinate()));
+            coordinateLabel.setText(
+                ResourceBundle.getBundle("bundles.localization").getString("coordinate_front"));
             speedValue.textProperty().setValue(String.format("%dm/s", trainDetail.getSpeed()));
             lengthValue.textProperty().setValue(String.format("%dm", trainDetail.getLength()));
             shape.setRotate(180);
@@ -107,9 +111,9 @@ public class ElementDetailController {
     }
 
     private <X, Y> void updateChart(LineChart<X, Y> chart,
-            Function<State, X> xFunction,
-            Function<State, Y> yFunction,
-            int time) {
+        Function<State, X> xFunction,
+        Function<State, Y> yFunction,
+        int time) {
         Train train = (Train) detail.getElement();
 
         ObservableList<Data<X, Y>> data = FXCollections.observableArrayList();
@@ -119,7 +123,7 @@ public class ElementDetailController {
             if (event.getTime() > time) {
                 break;
             }
-            if(event.getTime() < 0) {
+            if (event.getTime() < 0) {
                 continue;
             }
             state = train.getState(event.getTime(), state);
@@ -129,7 +133,6 @@ public class ElementDetailController {
         data.add(new Data<>(xFunction.apply(state), yFunction.apply(state)));
         chart.setData(FXCollections.singletonObservableList(new Series<>(data)));
     }
-
 
 
     public void setTime(int time) {

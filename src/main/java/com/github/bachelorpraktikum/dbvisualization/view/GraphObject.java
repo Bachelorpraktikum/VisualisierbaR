@@ -1,10 +1,8 @@
 package com.github.bachelorpraktikum.dbvisualization.view;
 
 import com.github.bachelorpraktikum.dbvisualization.model.Element;
-
 import java.io.IOException;
 import java.net.URL;
-
 import javafx.fxml.FXMLLoader;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Polygon;
@@ -14,6 +12,7 @@ import javax.annotation.ParametersAreNonnullByDefault;
 
 @ParametersAreNonnullByDefault
 public final class GraphObject<T> {
+
     private static final Object TRAINS = new Object();
     private final T t;
     private final Shape image;
@@ -59,7 +58,7 @@ public final class GraphObject<T> {
                 }
             }
 
-            if(shape == null) {
+            if (shape == null) {
                 return new Rectangle(2, 2);
             }
 
@@ -91,8 +90,12 @@ public final class GraphObject<T> {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
 
         GraphObject<?> that = (GraphObject<?>) o;
 

@@ -29,6 +29,7 @@ import javax.annotation.ParametersAreNonnullByDefault;
  */
 @ParametersAreNonnullByDefault
 public final class Element {
+
     private static final Logger log = Logger.getLogger(Element.class.getName());
     @Nonnull
     private final Factory factory;
@@ -70,7 +71,7 @@ public final class Element {
          * @param name the name
          * @return a state
          * @throws IllegalArgumentException if there is no state with that name
-         * @throws NullPointerException     if name is null
+         * @throws NullPointerException if name is null
          */
         @Nonnull
         public static State fromName(String name) {
@@ -100,7 +101,8 @@ public final class Element {
             List<URL> imageUrls = new ArrayList<>(imageNames.length);
 
             for (String imageName : imageNames) {
-                imageUrls.add(Element.class.getResource(String.format("symbols/%s.fxml", imageName)));
+                imageUrls
+                    .add(Element.class.getResource(String.format("symbols/%s.fxml", imageName)));
             }
 
             this.imageUrls = Collections.unmodifiableList(imageUrls);
@@ -190,6 +192,7 @@ public final class Element {
      */
     @ParametersAreNonnullByDefault
     public static final class Factory {
+
         private static final int INITIAL_ELEMENTS_CAPACITY = 256;
         private static final Map<Context, Factory> instances = new WeakHashMap<>();
 
@@ -234,19 +237,19 @@ public final class Element {
          * @param state the initial state of the element
          * @return an element
          * @throws NullPointerException if either of the arguments is null
-         * @throws IllegalArgumentException if an element with the same name but different parameters
-         * already exists
+         * @throws IllegalArgumentException if an element with the same name but different
+         * parameters already exists
          */
         @Nonnull
         public Element create(String name, Type type, Node node, State state) {
             Element element = elements.computeIfAbsent(Objects.requireNonNull(name), elementName ->
-                    new Element(this, elementName, type, node, state)
+                new Element(this, elementName, type, node, state)
             );
             State resultInitState = getStateAtTime(element, Context.INIT_STATE_TIME);
             if (!element.getName().equals(name)
-                    || !element.getType().equals(type)
-                    || !element.getNode().equals(node)
-                    || !resultInitState.equals(state)) {
+                || !element.getType().equals(type)
+                || !element.getNode().equals(node)
+                || !resultInitState.equals(state)) {
                 String elementFormat = "(type: %s, node: %s, initState: %s)";
                 String message = "Element with name: %s already exists:\n"
                     + elementFormat + ", tried to recreate with following arguments:\n"
@@ -259,7 +262,9 @@ public final class Element {
         }
 
         /**
-         * Gets the state of an element at the given time, then resets the time to the previous value.
+         * Gets the state of an element at the given time, then resets the time to the previous
+         * value.
+         *
          * @param element the element
          * @param time the time to look up the state for
          * @return the state of the element at the given time
@@ -277,7 +282,7 @@ public final class Element {
          *
          * @param name the element's name
          * @return the element instance with this name
-         * @throws NullPointerException     if the name is null
+         * @throws NullPointerException if the name is null
          * @throws IllegalArgumentException if there is no element associated with the name
          */
         @Nonnull
@@ -330,7 +335,7 @@ public final class Element {
          */
         public void setTime(int time) {
             if (time < -1) {
-               throw new IllegalArgumentException("invalid time: " + time);
+                throw new IllegalArgumentException("invalid time: " + time);
             }
 
             if (time == currentTime) {
@@ -377,9 +382,9 @@ public final class Element {
      * If the time is negative, it will be corrected to 0 and a warning will be added to the event.
      *
      * @param state new state after this event
-     * @param time  the time of the event in milliseconds
-     * @throws NullPointerException     if state is null
-     * @throws IllegalStateException    if there is already another event after this one
+     * @param time the time of the event in milliseconds
+     * @throws NullPointerException if state is null
+     * @throws IllegalStateException if there is already another event after this one
      */
     public void addEvent(State state, int time) {
         List<String> warnings = new LinkedList<>();
@@ -457,13 +462,14 @@ public final class Element {
     @Override
     public String toString() {
         return "Element{"
-                + "name='" + name + '\''
-                + ", state=" + stateProperty.getValue()
-                + '}';
+            + "name='" + name + '\''
+            + ", state=" + stateProperty.getValue()
+            + '}';
     }
 
     @ParametersAreNonnullByDefault
     private static class ElementEvent implements Event {
+
         @Nonnull
         private final Element element;
         private final int time;
@@ -517,12 +523,18 @@ public final class Element {
 
         @Override
         public boolean equals(Object obj) {
-            if (this == obj) return true;
-            if (obj == null || getClass() != obj.getClass()) return false;
+            if (this == obj) {
+                return true;
+            }
+            if (obj == null || getClass() != obj.getClass()) {
+                return false;
+            }
 
             ElementEvent event = (ElementEvent) obj;
 
-            if (time != event.time) return false;
+            if (time != event.time) {
+                return false;
+            }
             return state == event.state;
         }
 
@@ -536,10 +548,10 @@ public final class Element {
         @Override
         public String toString() {
             return "ElementEvent{"
-                    + "time=" + time
-                    + ", element=" + getElement().getName()
-                    + ", state=" + state
-                    + '}';
+                + "time=" + time
+                + ", element=" + getElement().getName()
+                + ", state=" + state
+                + '}';
         }
     }
 }

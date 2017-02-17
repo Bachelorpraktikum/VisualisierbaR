@@ -4,26 +4,27 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TextField?>
-<?import javafx.scene.layout.*?>
+<?import javafx.scene.layout.BorderPane?>
 <BorderPane xmlns="http://javafx.com/javafx/8.0.111"
-            xmlns:fx="http://javafx.com/fxml/1"
-            fx:id="rootPane"
-            fx:controller="com.github.bachelorpraktikum.dbvisualization.view.DatabaseChooserController">
-    <center>
-        <TextField fx:id="uriField" prefWidth="300" maxWidth="1.7976931348623157E308"
-                   BorderPane.alignment="CENTER"/>
-    </center>
-    <left>
-        <Label minWidth="-Infinity" text="%choose_database" BorderPane.alignment="CENTER">
-            <BorderPane.margin>
-                <Insets right="6.0"/>
-            </BorderPane.margin>
-        </Label>
-    </left>
-    <bottom>
-        <Label fx:id="uriError" text="%uri_error" BorderPane.alignment="CENTER" textFill="#ff0000" visible="False"/>
-    </bottom>
-    <padding>
-        <Insets bottom="6.0" left="6.0" right="6.0" top="6.0"/>
-    </padding>
+  xmlns:fx="http://javafx.com/fxml/1"
+  fx:id="rootPane"
+  fx:controller="com.github.bachelorpraktikum.dbvisualization.view.DatabaseChooserController">
+  <center>
+    <TextField fx:id="uriField" prefWidth="300" maxWidth="1.7976931348623157E308"
+      BorderPane.alignment="CENTER"/>
+  </center>
+  <left>
+    <Label minWidth="-Infinity" text="%choose_database" BorderPane.alignment="CENTER">
+      <BorderPane.margin>
+        <Insets right="6.0"/>
+      </BorderPane.margin>
+    </Label>
+  </left>
+  <bottom>
+    <Label fx:id="uriError" text="%uri_error" BorderPane.alignment="CENTER" textFill="#ff0000"
+      visible="False"/>
+  </bottom>
+  <padding>
+    <Insets bottom="6.0" left="6.0" right="6.0" top="6.0"/>
+  </padding>
 </BorderPane>

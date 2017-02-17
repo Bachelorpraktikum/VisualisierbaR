@@ -2,15 +2,14 @@ package com.github.bachelorpraktikum.dbvisualization.view;
 
 import java.util.function.Consumer;
 import java.util.function.Supplier;
-
-import javax.annotation.Nonnull;
-
 import javafx.geometry.Bounds;
 import javafx.scene.Node;
 import javafx.scene.control.Tooltip;
+import javax.annotation.Nonnull;
 
 @Nonnull
 public final class TooltipUtil {
+
     private TooltipUtil() {
     }
 

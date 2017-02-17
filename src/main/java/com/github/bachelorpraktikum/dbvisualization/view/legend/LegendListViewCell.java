@@ -1,7 +1,6 @@
 package com.github.bachelorpraktikum.dbvisualization.view.legend;
 
 import java.io.IOException;
-
 import javafx.beans.binding.Binding;
 import javafx.beans.binding.Bindings;
 import javafx.fxml.FXML;
@@ -17,6 +16,7 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.Shape;
 
 public class LegendListViewCell extends ListCell<LegendItem> {
+
     @FXML
     private Label eleName;
     @FXML

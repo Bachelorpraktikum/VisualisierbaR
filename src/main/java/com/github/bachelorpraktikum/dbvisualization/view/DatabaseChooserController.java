@@ -1,21 +1,19 @@
 package com.github.bachelorpraktikum.dbvisualization.view;
 
 import com.github.bachelorpraktikum.dbvisualization.DataSource;
-
 import java.net.URI;
 import java.net.URISyntaxException;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
 import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.BorderPane;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 public class DatabaseChooserController implements SourceChooser {
+
     @FXML
     public BorderPane rootPane;
     @FXML

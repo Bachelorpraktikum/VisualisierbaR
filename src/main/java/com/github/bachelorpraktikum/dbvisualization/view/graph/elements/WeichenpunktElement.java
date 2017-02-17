@@ -4,7 +4,6 @@ import com.github.bachelorpraktikum.dbvisualization.model.Element;
 import com.github.bachelorpraktikum.dbvisualization.model.Node;
 import com.github.bachelorpraktikum.dbvisualization.model.Switch;
 import com.github.bachelorpraktikum.dbvisualization.view.graph.adapter.CoordinatesAdapter;
-
 import javafx.collections.ObservableList;
 import javafx.geometry.Point2D;
 import javafx.scene.shape.Polygon;
@@ -12,6 +11,7 @@ import javafx.scene.shape.Shape;
 import javax.annotation.Nonnull;
 
 final class WeichenpunktElement extends ElementBase<Polygon> {
+
     private final Switch aSwitch;
 
     WeichenpunktElement(Switch aSwitch, Node node, CoordinatesAdapter adapter) {
@@ -43,14 +43,15 @@ final class WeichenpunktElement extends ElementBase<Polygon> {
         Point2D vec1 = others[0].subtract(nodePos);
         Point2D vec2 = others[1].subtract(nodePos);
 
-        Point2D start = nodePos.add(vec1.add(vec2).normalize().multiply(0.1 * getCalibrationBase()));
+        Point2D start = nodePos
+            .add(vec1.add(vec2).normalize().multiply(0.1 * getCalibrationBase()));
         Point2D fin1 = start.add(vec1.normalize().multiply(0.3 * getCalibrationBase()));
         Point2D fin2 = start.add(vec2.normalize().multiply(0.3 * getCalibrationBase()));
 
         ObservableList<Double> p = shape.getPoints();
         p.addAll(start.getX(), start.getY(),
-                fin1.getX(), fin1.getY(),
-                fin2.getX(), fin2.getY());
+            fin1.getX(), fin1.getY(),
+            fin2.getX(), fin2.getY());
     }
 
     @Override

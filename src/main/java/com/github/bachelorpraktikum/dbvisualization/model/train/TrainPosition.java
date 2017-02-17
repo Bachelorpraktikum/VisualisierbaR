@@ -16,6 +16,7 @@ import javax.annotation.concurrent.Immutable;
 @Immutable
 @ParametersAreNonnullByDefault
 final class TrainPosition implements Train.Position {
+
     private final Train train;
     private final LinkedList<Edge> edges;
     private final Node frontNode;
@@ -26,13 +27,13 @@ final class TrainPosition implements Train.Position {
     private final int backDistance;
 
     private TrainPosition(Train train,
-            LinkedList<Edge> edges,
-            int frontDistance,
-            Node frontNode,
-            Node unreachedFrontNode,
-            int backDistance,
-            Node backNode,
-            Node unreachedBackNode) {
+        LinkedList<Edge> edges,
+        int frontDistance,
+        Node frontNode,
+        Node unreachedFrontNode,
+        int backDistance,
+        Node backNode,
+        Node unreachedBackNode) {
         this.train = train;
         this.edges = edges;
         this.frontDistance = frontDistance;
@@ -47,15 +48,14 @@ final class TrainPosition implements Train.Position {
         LinkedList<Edge> edges = new LinkedList<>();
         edges.add(edge);
 
-
         return new TrainPosition(train,
-                edges,
-                Math.min(train.getLength(), edge.getLength()),
-                start,
-                end,
-                edge.getLength(),
-                end,
-                start);
+            edges,
+            Math.min(train.getLength(), edge.getLength()),
+            start,
+            end,
+            edge.getLength(),
+            end,
+            start);
     }
 
     @Nonnull
@@ -87,7 +87,8 @@ final class TrainPosition implements Train.Position {
         Point2D front = adapter.apply(frontNode);
         Point2D unreached = adapter.apply(unreachedFrontNode);
         Point2D vector = getVector(front, unreached);
-        double length = ((double) getFrontDistance()) / getFrontEdge().getLength() * vector.magnitude();
+        double length =
+            ((double) getFrontDistance()) / getFrontEdge().getLength() * vector.magnitude();
         return front.add(vector.normalize().multiply(length));
     }
 
@@ -114,7 +115,8 @@ final class TrainPosition implements Train.Position {
         Point2D back = adapter.apply(backNode);
         Point2D unreached = adapter.apply(unreachedBackNode);
         Point2D vector = getVector(back, unreached);
-        double length = ((double) getBackDistance()) / getBackEdge().getLength() * vector.magnitude();
+        double length =
+            ((double) getBackDistance()) / getBackEdge().getLength() * vector.magnitude();
         return back.add(vector.normalize().multiply(length));
     }
 
@@ -153,9 +155,9 @@ final class TrainPosition implements Train.Position {
         Iterator<Edge> iterator = edges.iterator();
         Edge first = iterator.next();
 
-        if(!iterator.hasNext()) {
-           points.add(getBackPosition(adapter));
-           return points;
+        if (!iterator.hasNext()) {
+            points.add(getBackPosition(adapter));
+            return points;
         }
 
         addNode(points, adapter.apply(frontNode));
@@ -191,13 +193,13 @@ final class TrainPosition implements Train.Position {
     TrainPosition move(int distance) {
         int newDistance = getFrontDistance() + distance;
         return new TrainPosition(train,
-                new LinkedList<>(edges),
-                newDistance,
-                frontNode,
-                unreachedFrontNode,
-                backDistance - distance,
-                backNode,
-                unreachedBackNode);
+            new LinkedList<>(edges),
+            newDistance,
+            frontNode,
+            unreachedFrontNode,
+            backDistance - distance,
+            backNode,
+            unreachedBackNode);
     }
 
     @Nonnull
@@ -207,13 +209,13 @@ final class TrainPosition implements Train.Position {
         Node unreachedBackNode = backNode;
         Node backNode = newBack.getOtherNode(unreachedBackNode);
         return new TrainPosition(getTrain(),
-                edges,
-                getFrontDistance() + movedDistance,
-                frontNode,
-                unreachedFrontNode,
-                newBack.getLength(),
-                backNode,
-                unreachedBackNode);
+            edges,
+            getFrontDistance() + movedDistance,
+            frontNode,
+            unreachedFrontNode,
+            newBack.getLength(),
+            backNode,
+            unreachedBackNode);
     }
 
     @Nonnull
@@ -223,23 +225,23 @@ final class TrainPosition implements Train.Position {
         Node frontNode = unreachedFrontNode;
         Node unreachedFrontNode = newStart.getOtherNode(frontNode);
         return new TrainPosition(getTrain(),
-                edges,
-                0,
-                frontNode,
-                unreachedFrontNode,
-                calculateBackDistance(getTrain().getLength(), edges, 0),
-                backNode,
-                unreachedBackNode);
+            edges,
+            0,
+            frontNode,
+            unreachedFrontNode,
+            calculateBackDistance(getTrain().getLength(), edges, 0),
+            backNode,
+            unreachedBackNode);
     }
 
     private static int calculateBackDistance(int trainLength, List<Edge> edges, int frontDistance) {
-        if(edges.size() == 1) {
+        if (edges.size() == 1) {
             return edges.get(0).getLength() - frontDistance + trainLength;
         }
 
         trainLength -= frontDistance;
         Iterator<Edge> iterator = edges.listIterator(1);
-        while(iterator.hasNext()) {
+        while (iterator.hasNext()) {
             Edge edge = iterator.next();
             if (iterator.hasNext()) {
                 // Subtract the lengths of all intermediate edges, just not the last one
@@ -267,7 +269,7 @@ final class TrainPosition implements Train.Position {
         Node backNode = this.backNode;
         Node unreachedBackNode = this.unreachedBackNode;
         int backDistance = calculateBackDistance(trainLength, edges, newDistance);
-        while(backDistance < 0) {
+        while (backDistance < 0) {
             Edge removed = edges.removeLast();
             Edge newLast = edges.getLast();
             unreachedBackNode = backNode;
@@ -276,26 +278,38 @@ final class TrainPosition implements Train.Position {
         }
 
         return new TrainPosition(getTrain(),
-                edges,
-                newDistance,
-                frontNode,
-                unreachedFrontNode,
-                backDistance,
-                backNode,
-                unreachedBackNode);
+            edges,
+            newDistance,
+            frontNode,
+            unreachedFrontNode,
+            backDistance,
+            backNode,
+            unreachedBackNode);
     }
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj) return true;
-        if (!(obj instanceof Train.Position)) return false;
+        if (this == obj) {
+            return true;
+        }
+        if (!(obj instanceof Train.Position)) {
+            return false;
+        }
 
         Train.Position that = (Train.Position) obj;
 
-        if (!train.equals(that.getTrain())) return false;
-        if (frontDistance != that.getFrontDistance()) return false;
-        if (!getFrontEdge().equals(that.getFrontEdge())) return false;
-        if (backDistance != that.getBackDistance()) return false;
+        if (!train.equals(that.getTrain())) {
+            return false;
+        }
+        if (frontDistance != that.getFrontDistance()) {
+            return false;
+        }
+        if (!getFrontEdge().equals(that.getFrontEdge())) {
+            return false;
+        }
+        if (backDistance != that.getBackDistance()) {
+            return false;
+        }
         return getBackEdge().equals(that.getBackEdge());
     }
 
@@ -309,8 +323,8 @@ final class TrainPosition implements Train.Position {
     @Override
     public String toString() {
         return "Position{"
-                + "edge=" + getFrontEdge()
-                + ", frontDistance=" + frontDistance
-                + '}';
+            + "edge=" + getFrontEdge()
+            + ", frontDistance=" + frontDistance
+            + '}';
     }
 }

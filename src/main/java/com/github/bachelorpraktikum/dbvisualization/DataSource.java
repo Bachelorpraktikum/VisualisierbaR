@@ -1,9 +1,9 @@
 package com.github.bachelorpraktikum.dbvisualization;
 
-import javax.annotation.Nonnull;
-import javax.annotation.ParametersAreNonnullByDefault;
 import java.net.URI;
 import java.util.Objects;
+import javax.annotation.Nonnull;
+import javax.annotation.ParametersAreNonnullByDefault;
 
 /**
  * Represents a data source for a graph. The way the {@link #getUri() uri} is loaded should be
@@ -11,6 +11,7 @@ import java.util.Objects;
  */
 @ParametersAreNonnullByDefault
 public final class DataSource {
+
     @Nonnull
     private final Type type;
     @Nonnull
@@ -34,7 +35,7 @@ public final class DataSource {
      * Creates a new instance.
      *
      * @param type the type of the data source
-     * @param uri  the URL to the resource
+     * @param uri the URL to the resource
      * @throws NullPointerException if type or uri is null
      */
     public DataSource(Type type, URI uri) {
@@ -64,8 +65,12 @@ public final class DataSource {
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj) return true;
-        if (obj == null || getClass() != obj.getClass()) return false;
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null || getClass() != obj.getClass()) {
+            return false;
+        }
 
         DataSource that = (DataSource) obj;
 
@@ -82,8 +87,8 @@ public final class DataSource {
     @Override
     public String toString() {
         return "DataSource{"
-                + "type=" + type
-                + ", uri=" + uri
-                + '}';
+            + "type=" + type
+            + ", uri=" + uri
+            + '}';
     }
 }

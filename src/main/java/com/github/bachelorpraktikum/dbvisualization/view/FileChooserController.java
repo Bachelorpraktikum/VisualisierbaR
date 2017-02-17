@@ -2,15 +2,9 @@ package com.github.bachelorpraktikum.dbvisualization.view;
 
 import com.github.bachelorpraktikum.dbvisualization.DataSource;
 import com.github.bachelorpraktikum.dbvisualization.config.ConfigFile;
-
 import java.io.File;
 import java.net.URI;
 import java.util.ResourceBundle;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import javax.annotation.Resource;
-
 import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.fxml.FXML;
@@ -20,9 +14,12 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.Pane;
 import javafx.stage.FileChooser;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 
 public class FileChooserController implements SourceChooser {
+
     @FXML
     private TextField pathField;
     @FXML
@@ -144,11 +141,13 @@ public class FileChooserController implements SourceChooser {
     private String getInitialDirectory() {
         String defaultDirectory = System.getProperty("user.home");
 
-        return String.valueOf(ConfigFile.getInstance().getOrDefault(getLogFileKey(), defaultDirectory));
+        return String
+            .valueOf(ConfigFile.getInstance().getOrDefault(getLogFileKey(), defaultDirectory));
     }
 
     private String getLogFileKey() {
-        String logFileKey = ResourceBundle.getBundle("config_keys").getString("initialDirectoryKey");
+        String logFileKey = ResourceBundle.getBundle("config_keys")
+            .getString("initialDirectoryKey");
         return String.format(logFileKey, getResourceType().toString());
     }
 }

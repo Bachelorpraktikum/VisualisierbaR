@@ -3,19 +3,17 @@ package com.github.bachelorpraktikum.dbvisualization.view.graph.elements;
 import com.github.bachelorpraktikum.dbvisualization.model.Element;
 import com.github.bachelorpraktikum.dbvisualization.model.Node;
 import com.github.bachelorpraktikum.dbvisualization.view.graph.adapter.CoordinatesAdapter;
-
 import java.io.IOException;
 import java.net.URL;
 import java.util.List;
-
-import javax.annotation.Nonnull;
-
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Bounds;
 import javafx.geometry.Point2D;
 import javafx.scene.shape.Shape;
+import javax.annotation.Nonnull;
 
 class PathElement extends SingleElementBase<Shape> {
+
     PathElement(Element element, Node node, CoordinatesAdapter adapter) {
         super(element, node, adapter);
     }

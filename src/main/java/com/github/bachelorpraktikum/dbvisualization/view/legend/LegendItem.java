@@ -1,14 +1,12 @@
 package com.github.bachelorpraktikum.dbvisualization.view.legend;
 
 import com.github.bachelorpraktikum.dbvisualization.view.GraphObject;
-
-import java.net.URL;
-
 import javafx.beans.property.Property;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.scene.shape.Shape;
 
 public class LegendItem {
+
     private final GraphObject<?> graphObject;
     private final Property<State> stateProperty;
 

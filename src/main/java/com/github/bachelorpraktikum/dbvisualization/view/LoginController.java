@@ -3,20 +3,16 @@ package com.github.bachelorpraktikum.dbvisualization.view;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
-import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
-
 import javax.annotation.Nonnull;
-import java.io.IOException;
-import java.util.ResourceBundle;
 
 public class LoginController {
+
     @FXML
     private Button openButton;
     @FXML

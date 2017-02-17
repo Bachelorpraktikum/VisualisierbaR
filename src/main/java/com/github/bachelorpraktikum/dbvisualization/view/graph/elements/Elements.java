@@ -5,7 +5,6 @@ import com.github.bachelorpraktikum.dbvisualization.model.Node;
 import com.github.bachelorpraktikum.dbvisualization.model.Switch;
 import com.github.bachelorpraktikum.dbvisualization.view.graph.GraphShape;
 import com.github.bachelorpraktikum.dbvisualization.view.graph.adapter.CoordinatesAdapter;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -14,6 +13,7 @@ import java.util.List;
 import java.util.Map;
 
 public final class Elements {
+
     private Elements() {
     }
 
@@ -36,8 +36,9 @@ public final class Elements {
                     break;
                 case WeichenPunktImpl:
                     Switch aSwitch = element.getSwitch().get();
-                    if(!switches.containsKey(aSwitch)) {
-                        GraphShape<Element> switchShape = new WeichenpunktElement(aSwitch, node, adapter);
+                    if (!switches.containsKey(aSwitch)) {
+                        GraphShape<Element> switchShape = new WeichenpunktElement(aSwitch, node,
+                            adapter);
                         switches.put(aSwitch, switchShape);
                         shapes.add(switchShape);
                     }

@@ -18,6 +18,7 @@ import javax.annotation.concurrent.Immutable;
 @Immutable
 @ParametersAreNonnullByDefault
 public final class Edge {
+
     private static final Logger log = Logger.getLogger(Edge.class.getName());
 
     @Nonnull
@@ -43,6 +44,7 @@ public final class Edge {
      */
     @ParametersAreNonnullByDefault
     public static final class Factory {
+
         private static final int INITIAL_EDGES_CAPACITY = 512;
         private static final Map<Context, Factory> instances = new WeakHashMap<>();
 
@@ -98,7 +100,7 @@ public final class Edge {
          *
          * @param name the edge's name
          * @return the edge
-         * @throws NullPointerException     if name is null
+         * @throws NullPointerException if name is null
          * @throws IllegalArgumentException if no edge with this name exists
          */
         @Nonnull
@@ -199,10 +201,10 @@ public final class Edge {
     @Override
     public String toString() {
         return "Edge{"
-                + "name='" + name + '\''
-                + ", length=" + length
-                + ", node1=" + node1
-                + ", node2=" + node2
-                + '}';
+            + "name='" + name + '\''
+            + ", length=" + length
+            + ", node1=" + node1
+            + ", node2=" + node2
+            + '}';
     }
 }

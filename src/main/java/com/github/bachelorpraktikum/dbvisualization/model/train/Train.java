@@ -24,13 +24,15 @@ import javax.annotation.concurrent.Immutable;
 
 /**
  * Represents a train.<br> There will always be exactly one instance of this class per name per
- * {@link Context}. <p>Once {@link EventFactory#init(int, Edge) initialized}, a train has exactly one
- * {@link #getState(int) state} at any given point of time (represented by a positive integer).</p>
- * <p>Only the state at a point of time after or at the time of the last registered event can
- * change.</p> <p>{@link EventFactory#terminate(int, int) Terminated} trains are immutable.</p>
+ * {@link Context}. <p>Once {@link EventFactory#init(int, Edge) initialized}, a train has exactly
+ * one {@link #getState(int) state} at any given point of time (represented by a positive
+ * integer).</p> <p>Only the state at a point of time after or at the time of the last registered
+ * event can change.</p> <p>{@link EventFactory#terminate(int, int) Terminated} trains are
+ * immutable.</p>
  */
 @ParametersAreNonnullByDefault
 public class Train {
+
     private static final Logger log = Logger.getLogger(Train.class.getName());
 
     @Nonnull
@@ -44,6 +46,7 @@ public class Train {
 
     /**
      * Creates a new train.
+     *
      * @param name the unique name of the train
      * @param readableName the human readable name of the train
      * @param length the length of the train
@@ -67,6 +70,7 @@ public class Train {
      */
     @ParametersAreNonnullByDefault
     public static final class Factory {
+
         private static final int INITIAL_TRAINS_CAPACITY = 16;
         private static final Map<Context, Factory> instances = new WeakHashMap<>();
 
@@ -122,9 +126,9 @@ public class Train {
          *
          * @param name the train's name
          * @return the train instance for the given name
-         * @throws NullPointerException     if name is null
+         * @throws NullPointerException if name is null
          * @throws IllegalArgumentException if there is no train with the given name in this
-         *                                  context
+         * context
          */
         @Nonnull
         public Train get(String name) {
@@ -216,8 +220,8 @@ public class Train {
      * @param time the time in milliseconds since the start of the simulation
      * @return the state of the train at the given point in time.
      * @throws IllegalArgumentException if time is less than {@link Context#INIT_STATE_TIME}
-     * @throws IllegalStateException    if this train has not been {@link EventFactory#init(int, Edge)
-     *                                  initialized}
+     * @throws IllegalStateException if this train has not been {@link EventFactory#init(int, Edge)
+     * initialized}
      */
     @Nonnull
     public State getState(int time) {
@@ -230,14 +234,14 @@ public class Train {
      * point for searching the wanted state, which is potentially more efficient. If the time of the
      * given starting state is after the wanted time, this method won't improve performance.
      *
-     * @param time   the time in milliseconds since the start of the simulation
+     * @param time the time in milliseconds since the start of the simulation
      * @param before the state to use as a jumping off point
      * @return the state of the train at the given point in time.
      * @throws IllegalArgumentException if time is less than {@link Context#INIT_STATE_TIME}
      * @throws IllegalArgumentException if before is a state of a different train
-     * @throws NullPointerException     if before is null
-     * @throws IllegalStateException    if this train has not been {@link EventFactory#init(int, Edge)
-     *                                  initialized}
+     * @throws NullPointerException if before is null
+     * @throws IllegalStateException if this train has not been {@link EventFactory#init(int, Edge)
+     * initialized}
      */
     @Nonnull
     public State getState(int time, State before) {
@@ -293,14 +297,15 @@ public class Train {
     @Override
     public String toString() {
         return "Train{"
-                + "name='" + name + '\''
-                + ", readableName='" + readableName + '\''
-                + ", length=" + length
-                + '}';
+            + "name='" + name + '\''
+            + ", readableName='" + readableName + '\''
+            + ", length=" + length
+            + '}';
     }
 
     @FunctionalInterface
     private interface EventCreator {
+
         @Nonnull
         TrainEvent create(int eventTime, TrainEvent before);
     }
@@ -310,6 +315,7 @@ public class Train {
      */
     @ParametersAreNonnullByDefault
     public final class EventFactory {
+
         private EventFactory() {
         }
 
@@ -356,28 +362,29 @@ public class Train {
         /**
          * Registers a speed event.
          *
-         * @param time       the time of the event
-         * @param distance   the distance travelled since the last event
+         * @param time the time of the event
+         * @param distance the distance travelled since the last event
          * @param speedAfter the speed at this point of time
          * @throws IllegalStateException if the train has not been initialized
          * @throws IllegalStateException if the train has been terminated
          * @throws IllegalStateException if the specified time lies before the time of the last
-         *                               event
+         * event
          */
         public void speed(int time, int distance, int speedAfter) {
-            addState(time, (eventTime, before) -> new TrainEvent.Speed(before, eventTime, distance, speedAfter));
+            addState(time, (eventTime, before) -> new TrainEvent.Speed(before, eventTime, distance,
+                speedAfter));
         }
 
         /**
          * Registers a speed event without a new speed.
          * This is a workaround for speed log entries without a speed.
          *
-         * @param time       the time of the event
-         * @param distance   the distance travelled since the last event
+         * @param time the time of the event
+         * @param distance the distance travelled since the last event
          * @throws IllegalStateException if the train has not been initialized
          * @throws IllegalStateException if the train has been terminated
          * @throws IllegalStateException if the specified time lies before the time of the last
-         *                               event
+         * event
          */
         public void move(int time, int distance) {
             addState(time, (eventTime, before) -> new TrainEvent.Move(before, eventTime, distance));
@@ -387,46 +394,49 @@ public class Train {
          * Registers a reachStart event.<br> After this event the front of the train will be at
          * distance 0 from the start of the given {@link Edge}.
          *
-         * @param time     the time of the event
-         * @param edge     the edge the train reached
+         * @param time the time of the event
+         * @param edge the edge the train reached
          * @param distance the distance travelled since the last event
          * @throws IllegalStateException if the train has not been initialized
          * @throws IllegalStateException if the train has been terminated
          * @throws IllegalStateException if the specified time lies before the time of the last
-         *                               event
+         * event
          */
         public void reach(int time, Edge edge, int distance) {
-            addState(time, (eventTime, before) -> new TrainEvent.Reach(before, eventTime, distance, edge));
+            addState(time,
+                (eventTime, before) -> new TrainEvent.Reach(before, eventTime, distance, edge));
         }
 
         /**
          * Registers a leave event.<br> After this event the back of the train will be at
          * distance 0 from the start of the given {@link Edge}.
          *
-         * @param time     the time of the event
-         * @param edge     the edge the train reached
+         * @param time the time of the event
+         * @param edge the edge the train reached
          * @param distance the distance travelled since the last event
          * @throws IllegalStateException if the train has not been initialized
          * @throws IllegalStateException if the train has been terminated
          * @throws IllegalStateException if the specified time lies before the time of the last
-         *                               event
+         * event
          */
         public void leave(int time, Edge edge, int distance) {
-            addState(time, (eventTime, before) -> new TrainEvent.Leave(before, eventTime, distance, edge));
+            addState(time,
+                (eventTime, before) -> new TrainEvent.Leave(before, eventTime, distance, edge));
         }
 
         /**
          * Terminates this train. Can only be called once.
          *
-         * @param time     the time of the event
+         * @param time the time of the event
          * @param distance the distance travelled since the last event
          * @throws IllegalStateException if the train has not been initialized
          * @throws IllegalStateException if the train has already been terminated
          * @throws IllegalStateException if the specified time lies before the time of the last
-         *                               event
+         * event
          */
         public void terminate(int time, int distance) {
-            addState(time, (eventTime, before) -> new TrainEvent.Terminate(before, eventTime, distance));
+            addState(time,
+                (eventTime, before) -> new TrainEvent.Terminate(before, eventTime, distance));
         }
     }
 
@@ -436,6 +446,7 @@ public class Train {
     @Immutable
     @ParametersAreNonnullByDefault
     public interface State extends Comparable<State> {
+
         @Nonnull
         Train getTrain();
 
@@ -449,6 +460,7 @@ public class Train {
 
         /**
          * Gets the position of the train.
+         *
          * @return the train position
          * @throws IllegalStateException if {@link #isInitialized()} is false
          */
@@ -474,6 +486,7 @@ public class Train {
     @Immutable
     @ParametersAreNonnullByDefault
     public interface Position {
+
         /**
          * Gets the {@link Train} corresponding to this {@link Position}.
          *
@@ -563,6 +576,7 @@ public class Train {
         /**
          * Gets all significant points this train is on, from front to start.
          * This includes all nodes and the exact positions of the front and back.
+         *
          * @param adapter the adapter to translate Node Coordinates to real positions.
          * @return a list of real positions
          */

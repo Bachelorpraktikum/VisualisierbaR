@@ -2,11 +2,11 @@ package com.github.bachelorpraktikum.dbvisualization.database;
 
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
-
 import java.net.URI;
 import java.sql.SQLException;
 
 public class Database implements AutoCloseable {
+
     private HikariDataSource connection;
 
     public Database(URI uri) {

@@ -5,7 +5,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.WeakHashMap;
-
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -16,6 +15,7 @@ import javax.annotation.ParametersAreNonnullByDefault;
  */
 @ParametersAreNonnullByDefault
 public final class Switch {
+
     @Nonnull
     private final List<Element> elements;
 
@@ -39,7 +39,8 @@ public final class Switch {
     @Nonnull
     public List<Element> getElements() {
         if (elements.size() < 3) {
-            throw new IllegalStateException("Switch not completely initialized. Elements: " + elements);
+            throw new IllegalStateException(
+                "Switch not completely initialized. Elements: " + elements);
         }
         return Collections.unmodifiableList(elements);
     }
@@ -52,16 +53,16 @@ public final class Switch {
     @Nonnull
     public Element getMainElement() {
         return elements.stream()
-                .filter(element -> element.getNode().getEdges().size() == 3)
-                .findFirst()
-                .orElseThrow(IllegalStateException::new);
+            .filter(element -> element.getNode().getEdges().size() == 3)
+            .findFirst()
+            .orElseThrow(IllegalStateException::new);
     }
 
     @Override
     public String toString() {
         return "Switch{"
-                + "elements=" + elements
-                + '}';
+            + "elements=" + elements
+            + '}';
     }
 
     /**
@@ -77,6 +78,7 @@ public final class Switch {
     }
 
     static final class Factory {
+
         private static final Map<Context, Factory> instances = new WeakHashMap<>();
         @Nullable
         private Switch currentSwitch;

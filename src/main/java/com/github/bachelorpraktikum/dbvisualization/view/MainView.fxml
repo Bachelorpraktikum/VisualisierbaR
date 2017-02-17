@@ -15,67 +15,69 @@
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.StackPane?>
 <BorderPane fx:id="rootPane" prefHeight="600" prefWidth="800"
-            xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="com.github.bachelorpraktikum.dbvisualization.view.MainController">
-    <center>
-        <Pane fx:id="centerPane" />
-    </center>
-    <top>
-        <StackPane>
-            <children>
-                <ToolBar>
-                    <items>
-                        <ToggleButton fx:id="logToggle" text="%show_hide_logs"/>
-                        <Label text="%current_simulation_time"/>
-                        <TextField fx:id="timeText" prefHeight="25.0" prefWidth="100.0" text="-1ms"/>
-                        <Button fx:id="resetButton" text="%reset"/>
-                        <Label text="%velocity"/>
-                        <TextField fx:id="velocityText" prefWidth="100.0" text="1000"/>
-                        <ToggleButton fx:id="playToggle" text="%play_simulation"/>
-                        <ToggleButton fx:id="eventTraversal" text="%eventTravsersal"/>
-                        <HBox fx:id="rightSpacer" alignment="CENTER_RIGHT"/>
-                        <ToggleButton fx:id="proportionalToggle" mnemonicParsing="false" text="%layout" />
-                        <ToggleButton fx:id="legendButton" text="%legend"/>
-                        <Button fx:id="closeButton" text="%close_data_source"/>
-                    </items>
-                </ToolBar>
-            </children>
-        </StackPane>
-    </top>
-    <left>
-        <StackPane fx:id="leftPane">
-            <ListView fx:id="logList" />
-        </StackPane>
-    </left>
-    <right>
-        <StackPane fx:id="sidebar" maxWidth="240" style="-fx-background-color: #f4f4f4;">
-            <AnchorPane fx:id="detail" style="-fx-background-color: #f4f4f4;">
-                <fx:include fx:id="detailBox" source="detail/ElementDetails.fxml"
-                            AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0"
-                            AnchorPane.topAnchor="0"/>
-                <Button fx:id="closeDetailButton" text="%close_detail" AnchorPane.bottomAnchor="5"
-                        AnchorPane.rightAnchor="5"/>
-            </AnchorPane>
-            <ListView fx:id="legend" fixedCellSize="0.0" style="-fx-background-color: #ccc;">
-                <Label text="Legend goes here." />
-            </ListView>
-            <BorderPane>
-                <center>
-                    <ListView fx:id="elementList" style="-fx-padding: 1px;" />
-                </center>
-                <top>
-                    <AnchorPane style="-fx-background-color: #f4f4f4">
-                        <TextField fx:id="filterText" promptText="%filter" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
-                        <FlowPane fx:id="filterPane" hgap="4" vgap="4" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="30.0">
-                            <CheckBox fx:id="elementFilter" selected="true" text="%filter_elements" />
-                            <CheckBox fx:id="trainFilter" selected="true" text="%filter_trains" />
-                        </FlowPane>
-                        <padding>
-                            <Insets bottom="5.0" />
-                        </padding>
-                    </AnchorPane>
-                </top>
-            </BorderPane>
-        </StackPane>
-    </right>
+  xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1"
+  fx:controller="com.github.bachelorpraktikum.dbvisualization.view.MainController">
+  <center>
+    <Pane fx:id="centerPane"/>
+  </center>
+  <top>
+    <StackPane>
+      <children>
+        <ToolBar>
+          <items>
+            <ToggleButton fx:id="logToggle" text="%show_hide_logs"/>
+            <Label text="%current_simulation_time"/>
+            <TextField fx:id="timeText" prefHeight="25.0" prefWidth="100.0" text="-1ms"/>
+            <Button fx:id="resetButton" text="%reset"/>
+            <Label text="%velocity"/>
+            <TextField fx:id="velocityText" prefWidth="100.0" text="1000"/>
+            <ToggleButton fx:id="playToggle" text="%play_simulation"/>
+            <ToggleButton fx:id="eventTraversal" text="%eventTravsersal"/>
+            <HBox fx:id="rightSpacer" alignment="CENTER_RIGHT"/>
+            <ToggleButton fx:id="proportionalToggle" mnemonicParsing="false" text="%layout"/>
+            <ToggleButton fx:id="legendButton" text="%legend"/>
+            <Button fx:id="closeButton" text="%close_data_source"/>
+          </items>
+        </ToolBar>
+      </children>
+    </StackPane>
+  </top>
+  <left>
+    <StackPane fx:id="leftPane">
+      <ListView fx:id="logList"/>
+    </StackPane>
+  </left>
+  <right>
+    <StackPane fx:id="sidebar" maxWidth="240" style="-fx-background-color: #f4f4f4;">
+      <AnchorPane fx:id="detail" style="-fx-background-color: #f4f4f4;">
+        <fx:include fx:id="detailBox" source="detail/ElementDetails.fxml"
+          AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0"
+          AnchorPane.topAnchor="0"/>
+        <Button fx:id="closeDetailButton" text="%close_detail" AnchorPane.bottomAnchor="5"
+          AnchorPane.rightAnchor="5"/>
+      </AnchorPane>
+      <ListView fx:id="legend" fixedCellSize="0.0" style="-fx-background-color: #ccc;">
+        <Label text="Legend goes here."/>
+      </ListView>
+      <BorderPane>
+        <center>
+          <ListView fx:id="elementList" style="-fx-padding: 1px;"/>
+        </center>
+        <top>
+          <AnchorPane style="-fx-background-color: #f4f4f4">
+            <TextField fx:id="filterText" promptText="%filter" AnchorPane.leftAnchor="0.0"
+              AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0"/>
+            <FlowPane fx:id="filterPane" hgap="4" vgap="4" AnchorPane.bottomAnchor="0.0"
+              AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="30.0">
+              <CheckBox fx:id="elementFilter" selected="true" text="%filter_elements"/>
+              <CheckBox fx:id="trainFilter" selected="true" text="%filter_trains"/>
+            </FlowPane>
+            <padding>
+              <Insets bottom="5.0"/>
+            </padding>
+          </AnchorPane>
+        </top>
+      </BorderPane>
+    </StackPane>
+  </right>
 </BorderPane>

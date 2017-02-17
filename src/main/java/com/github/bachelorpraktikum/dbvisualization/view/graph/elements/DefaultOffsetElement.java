@@ -3,10 +3,10 @@ package com.github.bachelorpraktikum.dbvisualization.view.graph.elements;
 import com.github.bachelorpraktikum.dbvisualization.model.Element;
 import com.github.bachelorpraktikum.dbvisualization.model.Node;
 import com.github.bachelorpraktikum.dbvisualization.view.graph.adapter.CoordinatesAdapter;
-
 import javafx.geometry.Point2D;
 
 class DefaultOffsetElement extends PathElement {
+
     private final int count;
 
     DefaultOffsetElement(Element element, Node node, CoordinatesAdapter adapter, int count) {

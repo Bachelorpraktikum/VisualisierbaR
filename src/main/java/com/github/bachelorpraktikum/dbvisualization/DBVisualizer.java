@@ -2,13 +2,11 @@ package com.github.bachelorpraktikum.dbvisualization;
 
 import com.github.bachelorpraktikum.dbvisualization.config.ConfigFile;
 import com.github.bachelorpraktikum.dbvisualization.view.SourceController;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ResourceBundle;
 import java.util.logging.LogManager;
 import java.util.logging.Logger;
-
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.stage.Stage;

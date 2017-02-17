@@ -15,6 +15,7 @@ import javax.annotation.ParametersAreNonnullByDefault;
 
 @ParametersAreNonnullByDefault
 abstract class TrainEvent implements Event {
+
     private final int index;
     @Nonnull
     private final Train train;
@@ -27,11 +28,11 @@ abstract class TrainEvent implements Event {
     private final List<String> warnings;
 
     private TrainEvent(int index,
-            Train train,
-            int time,
-            int distance,
-            int totalDistance,
-            Supplier<TrainPosition> position) {
+        Train train,
+        int time,
+        int distance,
+        int totalDistance,
+        Supplier<TrainPosition> position) {
         this.index = index;
         this.train = train;
         this.time = time;
@@ -83,11 +84,11 @@ abstract class TrainEvent implements Event {
     @Nonnull
     InterpolatableState.Builder stateBuilder() {
         return new InterpolatableState.Builder(getTrain())
-                .index(getIndex())
-                .time(getTime())
-                .distance(getTotalDistance())
-                .speed(getSpeed())
-                .position(getPosition());
+            .index(getIndex())
+            .time(getTime())
+            .distance(getTotalDistance())
+            .speed(getSpeed())
+            .position(getPosition());
     }
 
     /**
@@ -106,13 +107,14 @@ abstract class TrainEvent implements Event {
      */
     @ParametersAreNonnullByDefault
     static class Move extends Position {
+
         Move(TrainEvent before, int time, int distance) {
             super(before.getIndex() + 1,
-                    before.getTrain(),
-                    time,
-                    distance,
-                    before.getTotalDistance() + distance,
-                    () -> before.getPosition().move(distance)
+                before.getTrain(),
+                time,
+                distance,
+                before.getTotalDistance() + distance,
+                () -> before.getPosition().move(distance)
             );
             addWarning("Speed event without speed!");
         }
@@ -121,30 +123,32 @@ abstract class TrainEvent implements Event {
         @Override
         public String getDescription() {
             return getTrain().getReadableName() + ": Speed{"
-                    + "time=" + getTime()
-                    + ", distance=" + getDistance()
-                    + ", speed=NULL"
-                    + "}";
+                + "time=" + getTime()
+                + ", distance=" + getDistance()
+                + ", speed=NULL"
+                + "}";
         }
     }
 
     @ParametersAreNonnullByDefault
     static class Speed extends TrainEvent {
+
         private final int speed;
 
-        private Speed(int index, Train train, int time, int distance, int totalDistance, @Nullable Supplier<TrainPosition> position, int speed) {
+        private Speed(int index, Train train, int time, int distance, int totalDistance,
+            @Nullable Supplier<TrainPosition> position, int speed) {
             super(index, train, time, distance, totalDistance, position);
             this.speed = speed;
         }
 
         Speed(TrainEvent before, int time, int distance, int speed) {
             this(before.getIndex() + 1,
-                    before.getTrain(),
-                    time,
-                    distance,
-                    before.getTotalDistance() + distance,
-                    () -> before.getPosition().move(distance),
-                    speed
+                before.getTrain(),
+                time,
+                distance,
+                before.getTotalDistance() + distance,
+                () -> before.getPosition().move(distance),
+                speed
             );
         }
 
@@ -157,15 +161,16 @@ abstract class TrainEvent implements Event {
         @Override
         public String getDescription() {
             return getTrain().getReadableName() + ": Speed{"
-                    + "time=" + getTime()
-                    + ", distance=" + getDistance()
-                    + ", speed=" + getSpeed()
-                    + "}";
+                + "time=" + getTime()
+                + ", distance=" + getDistance()
+                + ", speed=" + getSpeed()
+                + "}";
         }
     }
 
     @ParametersAreNonnullByDefault
     static class Start extends Speed {
+
         Start(Train train) {
             super(0, train, Context.INIT_STATE_TIME, 0, 0, () -> null, 0);
         }
@@ -180,21 +185,22 @@ abstract class TrainEvent implements Event {
         @Override
         public String getDescription() {
             return getTrain().getReadableName() + ": Start{"
-                    + "time=" +getTime()
-                    + ", this event purely serves as a helper for interpolation";
+                + "time=" + getTime()
+                + ", this event purely serves as a helper for interpolation";
         }
     }
 
     @ParametersAreNonnullByDefault
     static class Init extends Speed {
+
         Init(int time, Train train, Edge startEdge) {
             super(1,
-                    train,
-                    time,
-                    0,
-                    0,
-                    () -> Init.getPositionWithLookahead(train, startEdge),
-                    0);
+                train,
+                time,
+                0,
+                0,
+                () -> Init.getPositionWithLookahead(train, startEdge),
+                0);
 
         }
 
@@ -202,7 +208,7 @@ abstract class TrainEvent implements Event {
             Reach reach = findFirstReachEvent(train);
             if (reach == null) {
                 return TrainPosition
-                        .init(train, startEdge, startEdge.getNode1(), startEdge.getNode2());
+                    .init(train, startEdge, startEdge.getNode1(), startEdge.getNode2());
             }
             Edge reached = reach.getReached();
             Node common = reached.getCommonNode(startEdge);
@@ -211,8 +217,8 @@ abstract class TrainEvent implements Event {
         }
 
         private static Reach findFirstReachEvent(Train train) {
-            for(Event event : train.getEvents()) {
-                if(event instanceof Reach) {
+            for (Event event : train.getEvents()) {
+                if (event instanceof Reach) {
                     return (Reach) event;
                 }
             }
@@ -223,20 +229,21 @@ abstract class TrainEvent implements Event {
         @Override
         public String getDescription() {
             return getTrain().getReadableName() + ": Init{"
-                    + "time=" + getTime()
-                    + ", startEdge=" + getPosition().getBackEdge().getName()
-                    + "}";
+                + "time=" + getTime()
+                + ", startEdge=" + getPosition().getBackEdge().getName()
+                + "}";
         }
     }
 
     static class Terminate extends Position {
+
         Terminate(TrainEvent before, int time, int distance) {
             super(before.getIndex() + 1,
-                    before.getTrain(),
-                    time,
-                    distance,
-                    before.getTotalDistance() + distance,
-                    () -> before.getPosition().move(distance)
+                before.getTrain(),
+                time,
+                distance,
+                before.getTotalDistance() + distance,
+                () -> before.getPosition().move(distance)
             );
         }
 
@@ -244,23 +251,24 @@ abstract class TrainEvent implements Event {
         @Override
         public String getDescription() {
             return getTrain().getReadableName() + ": Terminate{"
-                    + "time=" + getTime()
-                    + ", totalDistance=" + getTotalDistance()
-                    + "}";
+                + "time=" + getTime()
+                + ", totalDistance=" + getTotalDistance()
+                + "}";
         }
 
         @Nonnull
         @Override
         InterpolatableState.Builder stateBuilder() {
             return super.stateBuilder()
-                    .terminated(true);
+                .terminated(true);
         }
     }
 
     @ParametersAreNonnullByDefault
     private abstract static class Position extends TrainEvent {
 
-        Position(int index, Train train, int time, int distance, int totalDistance, Supplier<TrainPosition> position) {
+        Position(int index, Train train, int time, int distance, int totalDistance,
+            Supplier<TrainPosition> position) {
             super(index, train, time, distance, totalDistance, position);
         }
 
@@ -271,27 +279,27 @@ abstract class TrainEvent implements Event {
         @Override
         int getSpeed() {
             List<TrainEvent> events = getTrain().getTrainEvents();
-            if(getIndex() == events.size() - 1) {
+            if (getIndex() == events.size() - 1) {
                 return getSpeedBefore();
             }
             Speed speedEvent = null;
-            for(TrainEvent event : events.subList(getIndex() + 1, events.size())) {
+            for (TrainEvent event : events.subList(getIndex() + 1, events.size())) {
                 // look for a speed event on the current front edge
-                if(event instanceof Speed) {
+                if (event instanceof Speed) {
                     speedEvent = (Speed) event;
                     break;
-                } else if(event instanceof Reach) {
+                } else if (event instanceof Reach) {
                     // there is no speed event on this edge
                     return getSpeedBefore();
                 }
             }
-            if(speedEvent == null) {
+            if (speedEvent == null) {
                 return getSpeedBefore();
             }
 
             TrainEvent reachEvent = null;
             ListIterator<TrainEvent> trainEvents = events.listIterator(getIndex());
-            while(trainEvents.hasPrevious()) {
+            while (trainEvents.hasPrevious()) {
                 TrainEvent event = trainEvents.previous();
                 if (event instanceof Reach || event instanceof Init) {
                     reachEvent = event;
@@ -320,17 +328,18 @@ abstract class TrainEvent implements Event {
 
     @ParametersAreNonnullByDefault
     static class Reach extends Position {
+
         @Nonnull
         private final Edge reached;
         private final int speed;
 
         Reach(TrainEvent before, int time, int distance, Edge reached) {
             super(before.getIndex() + 1,
-                    before.getTrain(),
-                    time,
-                    distance,
-                    before.getTotalDistance() + distance,
-                    () -> before.getPosition().reachFront(reached));
+                before.getTrain(),
+                time,
+                distance,
+                before.getTotalDistance() + distance,
+                () -> before.getPosition().reachFront(reached));
             this.reached = reached;
             this.speed = getSpeedBefore();
         }
@@ -348,25 +357,26 @@ abstract class TrainEvent implements Event {
         @Override
         public String getDescription() {
             return getTrain().getReadableName() + ": Reach{"
-                    + "time=" + getTime()
-                    + ", distance=" + getDistance()
-                    + ", reached=" + reached.getName()
-                    + "}";
+                + "time=" + getTime()
+                + ", distance=" + getDistance()
+                + ", reached=" + reached.getName()
+                + "}";
         }
     }
 
     @ParametersAreNonnullByDefault
     static class Leave extends Position {
+
         @Nonnull
         private final Edge left;
 
         Leave(TrainEvent before, int time, int distance, Edge left) {
             super(before.getIndex() + 1,
-                    before.getTrain(),
-                    time,
-                    distance,
-                    before.getTotalDistance() + distance,
-                    () -> before.getPosition().leaveBack(left, distance));
+                before.getTrain(),
+                time,
+                distance,
+                before.getTotalDistance() + distance,
+                () -> before.getPosition().leaveBack(left, distance));
             this.left = left;
         }
 
@@ -374,10 +384,10 @@ abstract class TrainEvent implements Event {
         @Override
         public String getDescription() {
             return getTrain().getReadableName() + ": Leave{"
-                    + "time=" + getTime()
-                    + ", distance=" + getDistance()
-                    + ", backEdge=" + left.getName()
-                    + "}";
+                + "time=" + getTime()
+                + ", distance=" + getDistance()
+                + ", backEdge=" + left.getName()
+                + "}";
         }
     }
 }

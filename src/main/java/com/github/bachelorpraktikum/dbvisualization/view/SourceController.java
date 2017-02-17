@@ -1,20 +1,16 @@
 package com.github.bachelorpraktikum.dbvisualization.view;
 
 import com.github.bachelorpraktikum.dbvisualization.DataSource;
-
+import com.github.bachelorpraktikum.dbvisualization.config.ConfigFile;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.logging.Logger;
 import java.util.Map;
 import java.util.Objects;
 import java.util.ResourceBundle;
-
-import javax.annotation.Nonnull;
-
-import com.github.bachelorpraktikum.dbvisualization.config.ConfigFile;
+import java.util.logging.Logger;
 import javafx.beans.property.ReadOnlyProperty;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -25,8 +21,10 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
+import javax.annotation.Nonnull;
 
 public class SourceController implements SourceChooser {
+
     @FXML
     private Button closeWindowButton;
     @FXML
@@ -56,13 +54,13 @@ public class SourceController implements SourceChooser {
 
         // Set the activeController based on the selected tab
         tabPane.getSelectionModel().selectedItemProperty().addListener(
-                (observable, oldValue, newValue) ->
-                        activeController = getTabController(newValue.getContent().getId())
+            (observable, oldValue, newValue) ->
+                activeController = getTabController(newValue.getContent().getId())
         );
 
         // Enable the "Open" button if path is set
         resourceURIProperty().addListener((observable, oldValue, newValue) ->
-                openSource.setDisable(newValue == null || newValue.toString().isEmpty())
+            openSource.setDisable(newValue == null || newValue.toString().isEmpty())
         );
 
         openSource.setOnAction(event -> openMainWindow());
@@ -196,7 +194,8 @@ public class SourceController implements SourceChooser {
     }
 
     private String geInitialDirKey() {
-        String logFileKey = ResourceBundle.getBundle("config_keys").getString("initialDirectoryKey");
+        String logFileKey = ResourceBundle.getBundle("config_keys")
+            .getString("initialDirectoryKey");
         return String.format(logFileKey, getResourceType().toString());
     }
 

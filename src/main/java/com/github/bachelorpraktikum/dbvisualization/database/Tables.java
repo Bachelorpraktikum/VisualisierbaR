@@ -11,6 +11,7 @@ public enum Tables {
 
 
     private String name;
+
     Tables(String name) {
         this.name = name;
     }

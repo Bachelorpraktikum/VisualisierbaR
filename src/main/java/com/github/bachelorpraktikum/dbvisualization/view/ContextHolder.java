@@ -1,7 +1,6 @@
 package com.github.bachelorpraktikum.dbvisualization.view;
 
 import com.github.bachelorpraktikum.dbvisualization.model.Context;
-
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
@@ -9,6 +8,7 @@ import javax.annotation.Nullable;
  * Singleton class that stores an instance of {@link Context}.
  */
 public class ContextHolder {
+
     private static ContextHolder instance = new ContextHolder();
 
     public static ContextHolder getInstance() {

@@ -10,7 +10,6 @@ import java.util.Objects;
 import java.util.Properties;
 import java.util.ResourceBundle;
 import java.util.logging.Logger;
-import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 
 public class ConfigFile extends Properties {

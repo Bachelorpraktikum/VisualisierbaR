@@ -1,6 +1,7 @@
 package com.github.bachelorpraktikum.dbvisualization.database;
 
 public class DatabaseUser {
+
     private final String user;
     private final String password;
 

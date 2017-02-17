@@ -43,6 +43,7 @@ public final class Node {
      * Ensures there is always only one instance of node per name per {@link Context}.
      */
     public static final class Factory {
+
         private static final int INITIAL_NODES_CAPACITY = 128;
         private static final Map<Context, Factory> instances = new WeakHashMap<>();
 
@@ -95,7 +96,7 @@ public final class Node {
          *
          * @param name the node's name
          * @return the node instance with this name
-         * @throws NullPointerException     if the name is null
+         * @throws NullPointerException if the name is null
          * @throws IllegalArgumentException if there is no node associated with the name
          */
         @Nonnull
@@ -166,8 +167,8 @@ public final class Node {
             throw new NullPointerException("edge is null");
         }
         return edges.stream()
-                .filter(e -> !e.equals(edge))
-                .collect(Collectors.toSet());
+            .filter(e -> !e.equals(edge))
+            .collect(Collectors.toSet());
     }
 
     /**
@@ -197,8 +198,8 @@ public final class Node {
     @Override
     public String toString() {
         return "Node{"
-                + "name='" + name + '\''
-                + ", coordinates=" + coordinates
-                + '}';
+            + "name='" + name + '\''
+            + ", coordinates=" + coordinates
+            + '}';
     }
 }

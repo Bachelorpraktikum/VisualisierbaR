@@ -6,45 +6,45 @@
 <?import javafx.scene.control.TabPane?>
 <?import javafx.scene.layout.BorderPane?>
 <BorderPane fx:id="rootPane" xmlns="http://javafx.com/javafx/8.0.111"
-            xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="com.github.bachelorpraktikum.dbvisualization.view.SourceController">
-    <center>
-        <TabPane fx:id="tabPane" maxHeight="1.7976931348623157E308"
-                 maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity"
-                 prefHeight="100.0" tabClosingPolicy="UNAVAILABLE">
-            <Tab text="%log_file">
-                <fx:include fx:id="fileChooserTab" source="FileChooserTab.fxml"/>
-            </Tab>
-            <Tab text="%database">
-                <fx:include fx:id="databaseChooserTab" source="DatabaseChooserTab.fxml" />
-            </Tab>
-        </TabPane>
-    </center>
-    <bottom>
-        <BorderPane minWidth="-Infinity" BorderPane.alignment="CENTER">
-            <center>
-                <Button fx:id="openSource" contentDisplay="TEXT_ONLY" disable="true"
-                        minWidth="-Infinity" mnemonicParsing="false" text="%open_data_source"
-                        textAlignment="CENTER">
-                    <BorderPane.margin>
-                        <Insets left="75.0"/>
-                    </BorderPane.margin>
-                </Button>
-            </center>
-            <right>
-                <Button fx:id="closeWindowButton" contentDisplay="TEXT_ONLY" mnemonicParsing="false"
-                        text="%close">
-                    <BorderPane.margin>
-                        <Insets right="4.0"/>
-                    </BorderPane.margin>
-                </Button>
-            </right>
-            <BorderPane.margin>
-                <Insets/>
-            </BorderPane.margin>
-            <padding>
-                <Insets bottom="5.0" top="5.0"/>
-            </padding>
-        </BorderPane>
-    </bottom>
+  xmlns:fx="http://javafx.com/fxml/1"
+  fx:controller="com.github.bachelorpraktikum.dbvisualization.view.SourceController">
+  <center>
+    <TabPane fx:id="tabPane" maxHeight="1.7976931348623157E308"
+      maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity"
+      prefHeight="100.0" tabClosingPolicy="UNAVAILABLE">
+      <Tab text="%log_file">
+        <fx:include fx:id="fileChooserTab" source="FileChooserTab.fxml"/>
+      </Tab>
+      <Tab text="%database">
+        <fx:include fx:id="databaseChooserTab" source="DatabaseChooserTab.fxml"/>
+      </Tab>
+    </TabPane>
+  </center>
+  <bottom>
+    <BorderPane minWidth="-Infinity" BorderPane.alignment="CENTER">
+      <center>
+        <Button fx:id="openSource" contentDisplay="TEXT_ONLY" disable="true"
+          minWidth="-Infinity" mnemonicParsing="false" text="%open_data_source"
+          textAlignment="CENTER">
+          <BorderPane.margin>
+            <Insets left="75.0"/>
+          </BorderPane.margin>
+        </Button>
+      </center>
+      <right>
+        <Button fx:id="closeWindowButton" contentDisplay="TEXT_ONLY" mnemonicParsing="false"
+          text="%close">
+          <BorderPane.margin>
+            <Insets right="4.0"/>
+          </BorderPane.margin>
+        </Button>
+      </right>
+      <BorderPane.margin>
+        <Insets/>
+      </BorderPane.margin>
+      <padding>
+        <Insets bottom="5.0" top="5.0"/>
+      </padding>
+    </BorderPane>
+  </bottom>
 </BorderPane>

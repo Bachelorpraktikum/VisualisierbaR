@@ -16,6 +16,7 @@ import javax.annotation.concurrent.Immutable;
  */
 @Immutable
 public final class Context {
+
     public static final int INIT_STATE_TIME = -1;
 
     private final List<Object> objects;
@@ -33,12 +34,12 @@ public final class Context {
     @Nonnull
     public ObservableList<Event> getObservableEvents() {
         CompositeObservableList<Event> elementEvents = new CompositeObservableList<>(
-                Element.in(this).getEvents());
+            Element.in(this).getEvents());
         return elementEvents.union(Train.in(this).getAll().stream()
-                .map(Train::getEvents)
-                .reduce(new CompositeObservableList<>(),
-                        CompositeObservableList::union,
-                        CompositeObservableList::union));
+            .map(Train::getEvents)
+            .reduce(new CompositeObservableList<>(),
+                CompositeObservableList::union,
+                CompositeObservableList::union));
     }
 
     /**

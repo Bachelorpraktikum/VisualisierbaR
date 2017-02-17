@@ -9,6 +9,7 @@ import javafx.geometry.Point2D;
 import javax.annotation.Nullable;
 
 public class TrainDetail extends ElementDetailBase<Train> {
+
     public TrainDetail(Train train) {
         super(train);
     }

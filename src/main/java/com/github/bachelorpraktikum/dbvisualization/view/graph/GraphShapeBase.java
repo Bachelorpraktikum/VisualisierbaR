@@ -1,16 +1,15 @@
 package com.github.bachelorpraktikum.dbvisualization.view.graph;
 
 import com.github.bachelorpraktikum.dbvisualization.view.graph.adapter.CoordinatesAdapter;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
 import javafx.beans.value.ChangeListener;
 import javafx.geometry.Point2D;
 import javafx.scene.Node;
 import javafx.scene.transform.Transform;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 public abstract class GraphShapeBase<R, S extends Node> implements GraphShape<R> {
+
     private final CoordinatesAdapter adapter;
     private ChangeListener<Transform> listener;
 

@@ -3,11 +3,11 @@ package com.github.bachelorpraktikum.dbvisualization.view.graph.elements;
 import com.github.bachelorpraktikum.dbvisualization.model.Element;
 import com.github.bachelorpraktikum.dbvisualization.model.Node;
 import com.github.bachelorpraktikum.dbvisualization.view.graph.adapter.CoordinatesAdapter;
-
 import javafx.geometry.Point2D;
 import javafx.scene.shape.Shape;
 
 final class MagnetElement extends PathElement {
+
     MagnetElement(Element element, Node node, CoordinatesAdapter adapter) {
         super(element, node, adapter);
     }

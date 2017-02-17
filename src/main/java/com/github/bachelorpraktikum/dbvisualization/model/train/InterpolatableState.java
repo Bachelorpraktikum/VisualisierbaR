@@ -2,7 +2,6 @@ package com.github.bachelorpraktikum.dbvisualization.model.train;
 
 import com.github.bachelorpraktikum.dbvisualization.model.Context;
 import java.util.Objects;
-
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -11,6 +10,7 @@ import javax.annotation.concurrent.Immutable;
 @Immutable
 @ParametersAreNonnullByDefault
 final class InterpolatableState implements Train.State {
+
     @Nonnull
     private final Train train;
     private final int index;
@@ -23,13 +23,13 @@ final class InterpolatableState implements Train.State {
     private final boolean initialized;
 
     private InterpolatableState(Train train,
-                                int index,
-                                boolean terminated,
-                                boolean initialized,
-                                int time,
-                                int distance,
-                                @Nullable TrainPosition position,
-                                int speed) {
+        int index,
+        boolean terminated,
+        boolean initialized,
+        int time,
+        int distance,
+        @Nullable TrainPosition position,
+        int speed) {
         this.train = train;
         this.index = index;
         this.terminated = terminated;
@@ -42,6 +42,7 @@ final class InterpolatableState implements Train.State {
 
     @ParametersAreNonnullByDefault
     static class Builder {
+
         @Nonnull
         private final Train train;
 
@@ -177,36 +178,36 @@ final class InterpolatableState implements Train.State {
          */
         InterpolatableState build() {
             if (time < Context.INIT_STATE_TIME
-                    || speed < 0
-                    || index < 0
-                    || distance < 0
-                    || (initialized && position == null)) {
+                || speed < 0
+                || index < 0
+                || distance < 0
+                || (initialized && position == null)) {
                 throw new IllegalStateException("not all required values set");
             }
             return new InterpolatableState(
-                    train,
-                    index,
-                    terminated,
-                    initialized,
-                    time,
-                    distance,
-                    position,
-                    speed
+                train,
+                index,
+                terminated,
+                initialized,
+                time,
+                distance,
+                position,
+                speed
             );
         }
 
         @Override
         public String toString() {
             return "Builder{"
-                    + "train=" + train
-                    + ", time=" + time
-                    + ", speed=" + speed
-                    + ", terminated=" + terminated
-                    + ", initialized=" + initialized
-                    + ", index=" + index
-                    + ", distance=" + distance
-                    + ", position=" + position
-                    + '}';
+                + "train=" + train
+                + ", time=" + time
+                + ", speed=" + speed
+                + ", terminated=" + terminated
+                + ", initialized=" + initialized
+                + ", index=" + index
+                + ", distance=" + distance
+                + ", position=" + position
+                + '}';
         }
     }
 
@@ -220,15 +221,15 @@ final class InterpolatableState implements Train.State {
             throw new IllegalArgumentException("time not between states");
         }
 
-        if(!isInitialized()) {
+        if (!isInitialized()) {
             return new Builder(getTrain())
-                    .index(getIndex())
-                    .time(targetTime)
-                    .distance(0)
-                    .speed(0)
-                    .initialized(false)
-                    .position(null)
-                    .build();
+                .index(getIndex())
+                .time(targetTime)
+                .distance(0)
+                .speed(0)
+                .initialized(false)
+                .position(null)
+                .build();
         }
 
         int relativeTargetTime = targetTime - getTime();
@@ -238,25 +239,28 @@ final class InterpolatableState implements Train.State {
         // interpolate speed
         if (!other.isTerminated() && getSpeed() != other.getSpeed()) {
             int speedDiff = other.getSpeed() - getSpeed();
-            interpolatedSpeed += (int) (((double) speedDiff) / relativeOtherTime * relativeTargetTime);
+            interpolatedSpeed += (int) (((double) speedDiff) / relativeOtherTime
+                * relativeTargetTime);
         }
 
         int interpolatedDistance = getTotalDistance();
         TrainPosition interpolatedPosition = getPosition();
         if (!getPosition().equals(other.getPosition())) {
             int distanceDiff = other.getTotalDistance() - getTotalDistance();
-            int interpolationDistance = (int) (((double) distanceDiff) / relativeOtherTime * relativeTargetTime);
+            int interpolationDistance = (int) (((double) distanceDiff) / relativeOtherTime
+                * relativeTargetTime);
             interpolatedDistance += interpolationDistance;
-            interpolatedPosition = interpolatedPosition.interpolationMove(interpolationDistance, other.getPosition().getFrontEdge());
+            interpolatedPosition = interpolatedPosition
+                .interpolationMove(interpolationDistance, other.getPosition().getFrontEdge());
         }
 
         return new Builder(getTrain())
-                .index(getIndex())
-                .time(targetTime)
-                .distance(interpolatedDistance)
-                .speed(interpolatedSpeed)
-                .position(interpolatedPosition)
-                .build();
+            .index(getIndex())
+            .time(targetTime)
+            .distance(interpolatedDistance)
+            .speed(interpolatedSpeed)
+            .position(interpolatedPosition)
+            .build();
     }
 
     @Nonnull
@@ -305,14 +309,24 @@ final class InterpolatableState implements Train.State {
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj) return true;
-        if (!(obj instanceof InterpolatableState)) return false;
+        if (this == obj) {
+            return true;
+        }
+        if (!(obj instanceof InterpolatableState)) {
+            return false;
+        }
 
         InterpolatableState that = (InterpolatableState) obj;
 
-        if (time != that.time) return false;
-        if (getSpeed() != that.getSpeed()) return false;
-        if (!train.equals(that.train)) return false;
+        if (time != that.time) {
+            return false;
+        }
+        if (getSpeed() != that.getSpeed()) {
+            return false;
+        }
+        if (!train.equals(that.train)) {
+            return false;
+        }
         return getPosition().equals(that.getPosition());
     }
 

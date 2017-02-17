@@ -3,14 +3,13 @@ package com.github.bachelorpraktikum.dbvisualization.view.graph;
 import com.github.bachelorpraktikum.dbvisualization.model.Node;
 import com.github.bachelorpraktikum.dbvisualization.view.TooltipUtil;
 import com.github.bachelorpraktikum.dbvisualization.view.graph.adapter.CoordinatesAdapter;
-
-import javax.annotation.Nonnull;
-
 import javafx.geometry.Point2D;
 import javafx.scene.control.Tooltip;
 import javafx.scene.shape.Circle;
+import javax.annotation.Nonnull;
 
 final class Junction extends SingleGraphShapeBase<Node, Circle> {
+
     private static final double CALIBRATION_COEFFICIENT = 0.1;
 
     Junction(Node node, CoordinatesAdapter adapter) {

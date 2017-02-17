@@ -3,12 +3,10 @@ package com.github.bachelorpraktikum.dbvisualization.view.graph.elements;
 import com.github.bachelorpraktikum.dbvisualization.model.Element;
 import com.github.bachelorpraktikum.dbvisualization.model.Node;
 import com.github.bachelorpraktikum.dbvisualization.view.graph.adapter.CoordinatesAdapter;
-
-import javafx.scene.paint.Color;
-import javax.annotation.Nonnull;
-
 import javafx.geometry.Point2D;
+import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
+import javax.annotation.Nonnull;
 
 final class DummyElement extends SingleElementBase<Rectangle> {
 

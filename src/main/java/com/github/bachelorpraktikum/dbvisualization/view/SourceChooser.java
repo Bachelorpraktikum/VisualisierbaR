@@ -1,13 +1,10 @@
 package com.github.bachelorpraktikum.dbvisualization.view;
 
 import com.github.bachelorpraktikum.dbvisualization.DataSource;
-
 import java.net.URI;
-
+import javafx.beans.property.ReadOnlyProperty;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-
-import javafx.beans.property.ReadOnlyProperty;
 
 /**
  * Represents a chooser for a data source.<br>The user can input a URL by which the data source can
@@ -20,6 +17,7 @@ import javafx.beans.property.ReadOnlyProperty;
  * @see DataSource.Type
  */
 interface SourceChooser {
+
     /**
      * Returns the url for the resource.
      *

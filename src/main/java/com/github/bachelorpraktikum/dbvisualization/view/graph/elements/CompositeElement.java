@@ -11,7 +11,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.DoubleAdder;
-import java.util.concurrent.atomic.LongAdder;
 import java.util.stream.Collectors;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.WeakChangeListener;
@@ -26,6 +25,7 @@ import javafx.scene.shape.Shape;
 import javax.annotation.Nonnull;
 
 final class CompositeElement extends ElementBase<Group> {
+
     private static final double MAX_SHAPE_WIDTH = 2.0;
     private static final double ELEMENT_SPACING = 0.7;
     private static final double GESCHWINDIGKEITS_ANZEIGER_WIDTH_FACTOR = 0.5;
@@ -143,7 +143,7 @@ final class CompositeElement extends ElementBase<Group> {
     @Override
     protected Group createShape() {
         Group group = new Group(shapes.values().stream()
-                .collect(Collectors.toList()));
+            .collect(Collectors.toList()));
         Bounds bounds = group.getLayoutBounds();
         double endY = bounds.getHeight() + FOOT_HEIGHT * getCalibrationBase();
         Line line = new Line(0, 0, 0, endY);
