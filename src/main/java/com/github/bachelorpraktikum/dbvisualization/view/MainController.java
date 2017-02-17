@@ -411,9 +411,7 @@ public class MainController {
                     trains.get(train).setHighlighted(true);
                 }
 
-                showDetailView();
-                detailBoxController.setDetail(detail);
-                detailBoxController.setTime(simulationTime.get());
+                setDetail(detail);
             });
 
         eventTraversalTimeline = new Timeline(new KeyFrame(Duration.seconds(1), event -> {
@@ -676,10 +674,11 @@ public class MainController {
     private Graph getGraph() {
         if (graph == null) {
             Context context = ContextHolder.getInstance().getContext();
-            if(proportionalToggle.isSelected())
+            if (proportionalToggle.isSelected()) {
                 graph = new Graph(context, new ProportionalCoordinatesAdapter(context));
-            else
+            } else {
                 graph = new Graph(context, new SimpleCoordinatesAdapter());
+            }
             centerPane.getChildren().add(graph.getGroup());
             showLegend();
             graph.getElements().entrySet()
@@ -693,14 +692,15 @@ public class MainController {
                     context.addObject(binding);
                     entry.getValue().getShape().visibleProperty().bind(binding);
                     entry.getValue().getShape(element).setOnMouseClicked(event -> {
-                        setDetail(new ElementDetail(element));
+                        elementList.getSelectionModel().select(element.getName());
                     });
                 });
             for (Train train : Train.in(context).getAll()) {
                 TrainView trainView = new TrainView(train, graph);
                 trainView.timeProperty().bind(simulationTime);
                 trains.put(train, trainView);
-                trainView.setOnMouseClicked(e -> setDetail(new TrainDetail(train)));
+                trainView.setOnMouseClicked(
+                    e -> elementList.getSelectionModel().select(train.getReadableName()));
             }
             graph.getGroup().getChildren().add(highlighters);
         }
