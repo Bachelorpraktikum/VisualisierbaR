@@ -357,6 +357,14 @@ public class MainController {
             timeText.setDisable(newValue);
         });
 
+        Callback<ListView<String>, ListCell<String>> textFactory = TextFieldListCell.forListView();
+        Callback<ListView<String>, ListCell<String>> elementListCellFactory = (listView) -> {
+            ListCell<String> cell = textFactory.call(listView);
+            TooltipUtil.install(cell, cell::getItem);
+            return cell;
+        };
+
+        elementList.setCellFactory(elementListCellFactory);
         elementList.getSelectionModel().selectedItemProperty()
             .addListener((observable, oldValue, newValue) -> {
                 for (TrainView tv : trains.values()) {
