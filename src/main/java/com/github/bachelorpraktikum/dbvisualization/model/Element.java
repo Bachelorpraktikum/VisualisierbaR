@@ -226,15 +226,16 @@ public final class Element {
         }
 
         /**
-         * Potentially creates a new instance of {@link Element}.<br>
-         * If an element with the same name already exists, it is returned.
+         * Potentially creates a new instance of {@link Element}.
          *
-         * @param name  the unique name of this element
-         * @param type  the {@link Type}
-         * @param node  the {@link Node} this element is located on
+         * @param name the unique name of this element
+         * @param type the {@link Type}
+         * @param node the {@link Node} this element is located on
          * @param state the initial state of the element
          * @return an element
-         * @throws NullPointerException     if either of the arguments is null
+         * @throws NullPointerException if either of the arguments is null
+         * @throws IllegalArgumentException if an element with the same name but different parameters
+         * already exists
          */
         @Nonnull
         public Element create(String name, Type type, Node node, State state) {
@@ -252,7 +253,7 @@ public final class Element {
                     + elementFormat;
                 message = String.format(message, name, type, node, state,
                     element.getType(), element.getNode(), resultInitState);
-                log.warning(message);
+                throw new IllegalArgumentException(message);
             }
             return element;
         }

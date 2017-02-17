@@ -63,12 +63,14 @@ public final class Edge {
         /**
          * Potentially creates a new instance of {@link Edge}.
          *
-         * @param name   the unique name of the edge
+         * @param name the unique name of the edge
          * @param length the length in meters
-         * @param node1  the first declared node at the end of the edge
-         * @param node2  the second declared node at the end of the edge
+         * @param node1 the first declared node at the end of the edge
+         * @param node2 the second declared node at the end of the edge
          * @return an instance of Edge
-         * @throws NullPointerException     if at least one of the arguments is null
+         * @throws NullPointerException if at least one of the arguments is null
+         * @throws IllegalArgumentException if an edge with the same name but different parameters
+         * already exists
          */
         @Nonnull
         public Edge create(String name, int length, Node node1, Node node2) {
@@ -85,7 +87,7 @@ public final class Edge {
                     + edgeFormat;
                 message = String.format(message, name, length, node1, node2,
                     result.getLength(), result.getNode1(), result.getNode2());
-                log.warning(message);
+                throw new IllegalArgumentException(message);
             }
 
             return result;

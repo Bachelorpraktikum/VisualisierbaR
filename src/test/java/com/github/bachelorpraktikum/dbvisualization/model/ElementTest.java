@@ -50,7 +50,10 @@ public class ElementTest {
     public void testInstanceManagerExistsDifferentType() {
         Element element = createElement();
 
-        assertSame(element, Element.in(context).create(element.getName(), Element.Type.GefahrenPunktImpl, element.getNode(), element.getState()));
+        expected.expect(IllegalArgumentException.class);
+        Element.in(context)
+            .create(element.getName(), Element.Type.GefahrenPunktImpl, element.getNode(),
+                element.getState());
     }
 
     @Test
@@ -58,16 +61,18 @@ public class ElementTest {
         Element element = createElement();
         Node otherNode = Node.in(context).create("otherNode", new Coordinates(10, 10));
 
-        assertSame(element, Element.in(context).create(element.getName(), element.getType(), otherNode, element.getState()));
+        expected.expect(IllegalArgumentException.class);
+        Element.in(context)
+            .create(element.getName(), element.getType(), otherNode, element.getState());
     }
 
     @Test
     public void testInstanceManagerExistsDifferentState() {
         Element element = createElement();
 
-        Element same = Element.in(context)
+        expected.expect(IllegalArgumentException.class);
+        Element.in(context)
             .create(element.getName(), element.getType(), element.getNode(), Element.State.FAHRT);
-        assertSame(element, same);
     }
 
     @Test

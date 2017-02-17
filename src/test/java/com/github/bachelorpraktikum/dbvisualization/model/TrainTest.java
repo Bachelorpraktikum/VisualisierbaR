@@ -41,8 +41,8 @@ public class TrainTest {
         String name = "t";
         String readableName = "train";
         Train train = Train.in(context).create(name, readableName, 10);
-        Train same = Train.in(context).create(name, readableName, 20);
-        assertSame(train, same);
+        expected.expect(IllegalArgumentException.class);
+        Train.in(context).create(name, readableName, 20);
     }
 
     @Test
@@ -50,8 +50,8 @@ public class TrainTest {
         String name = "t";
         String readableName = "train";
         Train train = Train.in(context).create(name, readableName, 10);
-        Train same = Train.in(context).create(name, "trainz", 10);
-        assertSame(train, same);
+        expected.expect(IllegalArgumentException.class);
+        Train.in(context).create(name, "trainz", 10);
     }
 
     private Edge[] createEdges(Integer edgeLength, Integer... edgeLengths) {

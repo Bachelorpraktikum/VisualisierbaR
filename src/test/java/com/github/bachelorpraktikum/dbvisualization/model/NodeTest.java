@@ -41,8 +41,8 @@ public class NodeTest {
     public void testInstanceManagerExistsDifferentCoordinates() {
         String name = "node";
         Node node = Node.in(context).create(name, new Coordinates(0, 0));
-        Node same = Node.in(context).create(name, new Coordinates(0, 1));
-        assertSame(node, same);
+        expected.expect(IllegalArgumentException.class);
+        Node.in(context).create(name, new Coordinates(0, 1));
     }
 
     @Test

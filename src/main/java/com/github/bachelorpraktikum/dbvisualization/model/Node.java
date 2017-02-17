@@ -65,10 +65,12 @@ public final class Node {
          * Potentially creates a new instance of {@link Node}.<br>
          * If an node with the same name already exists, it is returned.
          *
-         * @param name        the unique name of this node
+         * @param name the unique name of this node
          * @param coordinates the {@link Coordinates} of this node
          * @return an element
-         * @throws NullPointerException     if either of the arguments is null
+         * @throws NullPointerException if either of the arguments is null
+         * @throws IllegalArgumentException if a node with the same name but different coordinates
+         * already exists
          */
         @Nonnull
         public Node create(String name, Coordinates coordinates) {
@@ -82,7 +84,7 @@ public final class Node {
                     + nodeFormat + ", tried to recreate with following arguments:\n"
                     + nodeFormat;
                 message = String.format(message, name, coordinates, result.getCoordinates());
-                log.warning(message);
+                throw new IllegalArgumentException(message);
             }
 
             return result;

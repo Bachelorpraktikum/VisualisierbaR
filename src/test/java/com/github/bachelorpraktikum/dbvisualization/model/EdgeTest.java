@@ -57,24 +57,27 @@ public class EdgeTest {
     public void testInstanceManagerExistsDifferentLength() {
         String name = "Edge";
         Edge edge = Edge.in(context).create(name, 10, getNode(), getNode());
-        Edge same = Edge.in(context).create(name, 20, edge.getNode1(), edge.getNode2());
-        assertSame(edge, same);
+
+        expected.expect(IllegalArgumentException.class);
+        Edge.in(context).create(name, 20, edge.getNode1(), edge.getNode2());
     }
 
     @Test
     public void testInstanceManagerExistsDifferentNode1() {
         String name = "t";
         Edge edge = Edge.in(context).create(name, 10, getNode(), getNode());
-        Edge same = Edge.in(context).create(name, 10, getNode(), edge.getNode2());
-        assertSame(edge, same);
+
+        expected.expect(IllegalArgumentException.class);
+        Edge.in(context).create(name, 10, getNode(), edge.getNode2());
     }
 
     @Test
     public void testInstanceManagerExistsDifferentNode2() {
         String name = "t";
         Edge edge = Edge.in(context).create(name, 10, getNode(), getNode());
-        Edge same = Edge.in(context).create(name, 10, edge.getNode1(), getNode());
-        assertSame(edge, same);
+
+        expected.expect(IllegalArgumentException.class);
+        Edge.in(context).create(name, 10, edge.getNode1(), getNode());
     }
 
     @Test

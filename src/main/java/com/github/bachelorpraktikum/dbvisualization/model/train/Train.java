@@ -88,12 +88,14 @@ public class Train {
         /**
          * Potentially creates a new train instance.
          *
-         * @param name         unique name of the train
+         * @param name unique name of the train
          * @param readableName human readable name of the train
-         * @param length       length of the train in meters
+         * @param length length of the train in meters
          * @return an instance of {@link Train}
          * @throws IllegalArgumentException if length is negative or zero
-         * @throws NullPointerException     if name or readableName is null
+         * @throws IllegalArgumentException if a train with the same name but a different readable
+         * name or length already exists
+         * @throws NullPointerException if name or readableName is null
          */
         @Nonnull
         public Train create(String name, String readableName, int length) {
@@ -109,7 +111,7 @@ public class Train {
                     + trainFormat;
                 message = String.format(message, name, readableName, length,
                     result.getReadableName(), result.getLength());
-                log.warning(message);
+                throw new IllegalArgumentException(message);
             }
 
             return result;
