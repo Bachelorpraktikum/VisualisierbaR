@@ -1,20 +1,17 @@
 package com.github.bachelorpraktikum.dbvisualization.model;
 
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
-
-import java.util.concurrent.atomic.AtomicReference;
-
-import javafx.beans.property.Property;
-import javafx.beans.property.ReadOnlyProperty;
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
+
+import java.util.concurrent.atomic.AtomicReference;
+import javafx.beans.property.Property;
+import javafx.beans.property.ReadOnlyProperty;
+import org.junit.Before;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.rules.ExpectedException;
 
 public class ElementTest {
 
@@ -54,7 +51,9 @@ public class ElementTest {
         Element element = createElement();
 
         expected.expect(IllegalArgumentException.class);
-        Element.in(context).create(element.getName(), Element.Type.GefahrenPunktImpl, element.getNode(), element.getState());
+        Element.in(context)
+            .create(element.getName(), Element.Type.GefahrenPunktImpl, element.getNode(),
+                element.getState());
     }
 
     @Test
@@ -63,16 +62,39 @@ public class ElementTest {
         Node otherNode = Node.in(context).create("otherNode", new Coordinates(10, 10));
 
         expected.expect(IllegalArgumentException.class);
-        Element.in(context).create(element.getName(), element.getType(), otherNode, element.getState());
+        Element.in(context)
+            .create(element.getName(), element.getType(), otherNode, element.getState());
     }
 
-    @Ignore("the initial state is currently not checked in the factory")
     @Test
     public void testInstanceManagerExistsDifferentState() {
         Element element = createElement();
 
         expected.expect(IllegalArgumentException.class);
-        Element.in(context).create(element.getName(), element.getType(), element.getNode(), Element.State.FAHRT);
+        Element.in(context)
+            .create(element.getName(), element.getType(), element.getNode(), Element.State.FAHRT);
+    }
+
+    @Test
+    public void testInitialState() {
+        Node node = Node.in(context).create("node", new Coordinates(10, 10));
+
+        Element.State initState = Element.State.FAHRT;
+        Element element = Element.in(context).create("e", Element.Type.GefahrenPunktImpl, node, initState);
+
+        Element.State otherState = Element.State.STOP;
+        int otherTime = 20;
+        element.addEvent(otherState, otherTime);
+
+        assertEquals(initState, element.getState());
+
+        Element.in(context).setTime(10);
+        assertEquals(initState, element.getState());
+
+        Element.in(context).setTime(30);
+        assertEquals(otherState, element.getState());
+        Element.in(context).setTime(0);
+        assertEquals(initState, element.getState());
     }
 
     @Test
@@ -92,6 +114,19 @@ public class ElementTest {
             Element.in(context).setTime(0);
             time += 1;
         }
+    }
+
+    @Test
+    public void testAddTwoEventsSameTime() {
+        Element element = createElement();
+
+        int time = 20;
+
+        element.addEvent(Element.State.FAHRT, time);
+        element.addEvent(Element.State.STOP, time);
+
+        Element.in(context).setTime(time);
+        assertEquals(Element.State.STOP, element.getState());
     }
 
     @Test
@@ -120,7 +155,7 @@ public class ElementTest {
         boolean hasZeroTime = false;
         boolean zeroTimeHasWarnings = false;
         for (Event event : Element.in(context).getEvents()) {
-            assertFalse(event.getTime() < 0);
+            assertFalse(event.getTime() < Context.INIT_STATE_TIME);
             if (event.getTime() == 0) {
                 hasZeroTime = true;
                 if (!event.getWarnings().isEmpty()) {
@@ -139,7 +174,8 @@ public class ElementTest {
 
         // Expected to be added at time 10 with warning
         element.addEvent(Element.State.STOP, 9);
-        Event event = Element.in(context).getEvents().get(1);
+        // the index of the new event is 2, because the init event has index 0
+        Event event = Element.in(context).getEvents().get(2);
         assertEquals(10, event.getTime());
         assertFalse(event.getWarnings().isEmpty());
     }

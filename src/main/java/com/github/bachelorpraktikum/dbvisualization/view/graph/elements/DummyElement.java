@@ -4,12 +4,16 @@ import com.github.bachelorpraktikum.dbvisualization.model.Element;
 import com.github.bachelorpraktikum.dbvisualization.model.Node;
 import com.github.bachelorpraktikum.dbvisualization.view.graph.adapter.CoordinatesAdapter;
 
+import javafx.scene.paint.Color;
 import javax.annotation.Nonnull;
 
 import javafx.geometry.Point2D;
 import javafx.scene.shape.Rectangle;
 
 final class DummyElement extends SingleElementBase<Rectangle> {
+
+    private static final double STROKE_WIDTH = 0.04;
+
     private final int count;
 
     DummyElement(Element element, Node node, CoordinatesAdapter adapter, int count) {
@@ -41,6 +45,9 @@ final class DummyElement extends SingleElementBase<Rectangle> {
     @Nonnull
     @Override
     protected Rectangle createShape() {
-        return new Rectangle();
+        Rectangle rectangle = new Rectangle();
+        rectangle.setStroke(Color.RED);
+        rectangle.setStrokeWidth(getCalibrationBase() * STROKE_WIDTH);
+        return rectangle;
     }
 }

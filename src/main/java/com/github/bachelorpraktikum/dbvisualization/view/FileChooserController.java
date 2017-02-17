@@ -1,12 +1,15 @@
 package com.github.bachelorpraktikum.dbvisualization.view;
 
 import com.github.bachelorpraktikum.dbvisualization.DataSource;
+import com.github.bachelorpraktikum.dbvisualization.config.ConfigFile;
 
 import java.io.File;
 import java.net.URI;
+import java.util.ResourceBundle;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import javax.annotation.Resource;
 
 import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.beans.property.ReadOnlyObjectWrapper;
@@ -35,7 +38,8 @@ public class FileChooserController implements SourceChooser {
     private void initialize() {
         fileURIProperty = new ReadOnlyObjectWrapper<>();
         fileChooser = new FileChooser();
-        fileChooser.setInitialDirectory(new File(System.getProperty("user.home")));
+        String initialDirectory = getInitialDirectory();
+        setInitialDirectory(initialDirectory);
         explorerButton.setOnAction(event -> updatePath(openFileChooser()));
 
         explorerButton.addEventHandler(KeyEvent.KEY_PRESSED, event -> {
@@ -84,6 +88,10 @@ public class FileChooserController implements SourceChooser {
         pathField.setText(file.getAbsolutePath());
     }
 
+    private void setInitialDirectory(String initialDirectory) {
+        fileChooser.setInitialDirectory(new File(initialDirectory));
+    }
+
     /**
      * {@inheritDoc}
      */
@@ -118,5 +126,29 @@ public class FileChooserController implements SourceChooser {
     @Override
     public DataSource.Type getResourceType() {
         return DataSource.Type.LOG_FILE;
+    }
+
+    @Override
+    public void setInitialURI(URI initialURI) {
+        setInitialDirectory(initialURI.getPath());
+
+        ConfigFile.getInstance().put(getLogFileKey(), initialURI.getPath());
+    }
+
+    /**
+     * Tries to retrieve the initial directory from the configuration file.
+     * If that fails, the $HOME directory will be used.
+     *
+     * @return Initial directory for the file chooser
+     */
+    private String getInitialDirectory() {
+        String defaultDirectory = System.getProperty("user.home");
+
+        return String.valueOf(ConfigFile.getInstance().getOrDefault(getLogFileKey(), defaultDirectory));
+    }
+
+    private String getLogFileKey() {
+        String logFileKey = ResourceBundle.getBundle("config_keys").getString("initialDirectoryKey");
+        return String.format(logFileKey, getResourceType().toString());
     }
 }

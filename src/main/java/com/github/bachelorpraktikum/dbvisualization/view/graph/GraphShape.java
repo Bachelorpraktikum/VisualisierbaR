@@ -6,6 +6,7 @@ import javafx.scene.Node;
 import javafx.scene.shape.Shape;
 
 public interface GraphShape<Represented> {
+
     Node getShape();
 
     Shape getShape(Represented represented);

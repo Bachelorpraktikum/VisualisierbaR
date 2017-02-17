@@ -1,5 +1,6 @@
 package com.github.bachelorpraktikum.dbvisualization;
 
+import com.github.bachelorpraktikum.dbvisualization.config.ConfigFile;
 import com.github.bachelorpraktikum.dbvisualization.view.SourceController;
 
 import java.io.IOException;
@@ -43,5 +44,6 @@ public class DBVisualizer extends Application {
 
     public static void main(String[] args) {
         Application.launch(DBVisualizer.class, args);
+        ConfigFile.getInstance().store();
     }
 }

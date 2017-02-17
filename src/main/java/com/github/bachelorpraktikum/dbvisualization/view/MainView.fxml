@@ -25,16 +25,18 @@
             <children>
                 <ToolBar>
                     <items>
-                        <ToggleButton fx:id="logToggle" text="%show_hide_logs" />
-                        <Label text="%current_simulation_time" />
-                        <TextField fx:id="timeText" prefHeight="25.0" prefWidth="100.0" text="0ms" />
-                        <Label text="%velocity" />
-                        <TextField fx:id="velocityText" prefWidth="100.0" text="1000" />
-                        <ToggleButton fx:id="playToggle" text="%play_simulation" />
-                        <HBox fx:id="rightSpacer" alignment="CENTER_RIGHT" />
-                        <ToggleButton fx:id="legendButton" text="%legend" />
-                  <ToggleButton fx:id="proportionalToggle" mnemonicParsing="false" text="%layout" />
-                        <Button fx:id="closeButton" text="%close_data_source" />
+                        <ToggleButton fx:id="logToggle" text="%show_hide_logs"/>
+                        <Label text="%current_simulation_time"/>
+                        <TextField fx:id="timeText" prefHeight="25.0" prefWidth="100.0" text="-1ms"/>
+                        <Button fx:id="resetButton" text="%reset"/>
+                        <Label text="%velocity"/>
+                        <TextField fx:id="velocityText" prefWidth="100.0" text="1000"/>
+                        <ToggleButton fx:id="playToggle" text="%play_simulation"/>
+                        <ToggleButton fx:id="eventTraversal" text="%eventTravsersal"/>
+                        <HBox fx:id="rightSpacer" alignment="CENTER_RIGHT"/>
+                        <ToggleButton fx:id="proportionalToggle" mnemonicParsing="false" text="%layout" />
+                        <ToggleButton fx:id="legendButton" text="%legend"/>
+                        <Button fx:id="closeButton" text="%close_data_source"/>
                     </items>
                 </ToolBar>
             </children>
@@ -48,8 +50,11 @@
     <right>
         <StackPane fx:id="sidebar" maxWidth="240" style="-fx-background-color: #f4f4f4;">
             <AnchorPane fx:id="detail" style="-fx-background-color: #f4f4f4;">
-                <fx:include fx:id="detailBox" source="detail/ElementDetails.fxml" AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0" AnchorPane.topAnchor="0" />
-                <Button fx:id="closeDetailButton" text="%close_detail" AnchorPane.bottomAnchor="5" AnchorPane.rightAnchor="5" />
+                <fx:include fx:id="detailBox" source="detail/ElementDetails.fxml"
+                            AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0"
+                            AnchorPane.topAnchor="0"/>
+                <Button fx:id="closeDetailButton" text="%close_detail" AnchorPane.bottomAnchor="5"
+                        AnchorPane.rightAnchor="5"/>
             </AnchorPane>
             <ListView fx:id="legend" fixedCellSize="0.0" style="-fx-background-color: #ccc;">
                 <Label text="Legend goes here." />

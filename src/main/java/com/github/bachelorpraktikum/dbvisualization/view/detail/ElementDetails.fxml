@@ -8,72 +8,79 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.VBox?>
 <VBox fx:id="detailView" prefHeight="600" xmlns="http://javafx.com/javafx/8.0.111"
-      xmlns:fx="http://javafx.com/fxml/1"
-      fx:controller="com.github.bachelorpraktikum.dbvisualization.view.detail.ElementDetailController">
+  xmlns:fx="http://javafx.com/fxml/1"
+  fx:controller="com.github.bachelorpraktikum.dbvisualization.view.detail.ElementDetailController">
+  <AnchorPane>
+    <Label fx:id="elementName" AnchorPane.leftAnchor="0"/>
+    <Group fx:id="elementImage" AnchorPane.rightAnchor="0" AnchorPane.topAnchor="0"/>
+    <VBox.margin>
+      <Insets bottom="3" left="10" right="10" top="3"/>
+    </VBox.margin>
+  </AnchorPane>
+  <AnchorPane>
+    <Label fx:id="coordinateLabel" AnchorPane.leftAnchor="0" text="%coordinate"/>
+    <Label fx:id="coordinateValue" AnchorPane.rightAnchor="0"/>
+    <VBox.margin>
+      <Insets bottom="3" left="10" right="10" top="3"/>
+    </VBox.margin>
+  </AnchorPane>
+  <VBox fx:id="elementBox">
     <AnchorPane>
-        <Label fx:id="elementName" AnchorPane.leftAnchor="0"/>
-        <Group fx:id="elementImage" AnchorPane.rightAnchor="0" AnchorPane.topAnchor="0"/>
-        <VBox.margin>
-            <Insets bottom="3" left="10" right="10" top="3"/>
-        </VBox.margin>
+      <Label AnchorPane.leftAnchor="0" text="%state"/>
+      <Label fx:id="stateValue" AnchorPane.rightAnchor="0"/>
+      <VBox.margin>
+        <Insets bottom="3" left="10" right="10" top="3"/>
+      </VBox.margin>
+    </AnchorPane>
+  </VBox>
+  <VBox fx:id="trainBox">
+    <AnchorPane>
+      <Label AnchorPane.leftAnchor="0" text="%coordinate_back"/>
+      <Label fx:id="coordinateValueBack" AnchorPane.rightAnchor="0"/>
+      <VBox.margin>
+        <Insets bottom="3" left="10" right="10" top="3"/>
+      </VBox.margin>
     </AnchorPane>
     <AnchorPane>
-        <Label AnchorPane.leftAnchor="0" text="%coordinate"/>
-        <Label fx:id="coordinateValue" AnchorPane.rightAnchor="0"/>
-        <VBox.margin>
-            <Insets bottom="3" left="10" right="10" top="3"/>
-        </VBox.margin>
+      <Label AnchorPane.leftAnchor="0" text="%speed"/>
+      <Label fx:id="speedValue" AnchorPane.rightAnchor="0"/>
+      <VBox.margin>
+        <Insets bottom="3" left="10" right="10" top="3"/>
+      </VBox.margin>
     </AnchorPane>
-    <VBox fx:id="elementBox">
-        <AnchorPane>
-            <Label AnchorPane.leftAnchor="0" text="%state"/>
-            <Label fx:id="stateValue" AnchorPane.rightAnchor="0"/>
-            <VBox.margin>
-                <Insets bottom="3" left="10" right="10" top="3"/>
-            </VBox.margin>
-        </AnchorPane>
-    </VBox>
-    <VBox fx:id="trainBox">
-        <AnchorPane>
-            <Label AnchorPane.leftAnchor="0" text="%speed"/>
-            <Label fx:id="speedValue" AnchorPane.rightAnchor="0"/>
-            <VBox.margin>
-                <Insets bottom="3" left="10" right="10" top="3"/>
-            </VBox.margin>
-        </AnchorPane>
-        <AnchorPane>
-            <Label AnchorPane.leftAnchor="0" text="%length"/>
-            <Label fx:id="lengthValue" AnchorPane.rightAnchor="0"/>
-            <VBox.margin>
-                <Insets bottom="3" left="10" right="10" top="3"/>
-            </VBox.margin>
-        </AnchorPane>
-        <LineChart fx:id="vt_chart" createSymbols="false"
-                   legendVisible="false" prefHeight="0.0" prefWidth="0.0" title="%title_vt">
-            <xAxis>
-                <NumberAxis side="BOTTOM"/>
-            </xAxis>
-            <yAxis>
-                <NumberAxis side="LEFT"/>
-            </yAxis>
-        </LineChart>
-        <LineChart fx:id="vd_chart" createSymbols="false"
-                   legendVisible="false" prefHeight="0.0" prefWidth="0.0" title="%title_vd">
-            <xAxis>
-                <NumberAxis side="BOTTOM"/>
-            </xAxis>
-            <yAxis>
-                <NumberAxis side="LEFT"/>
-            </yAxis>
-        </LineChart>
-        <LineChart fx:id="dt_chart" createSymbols="false"
-                   legendVisible="false" prefHeight="0.0" prefWidth="0.0" title="%title_dt">
-            <xAxis>
-                <NumberAxis side="BOTTOM"/>
-            </xAxis>
-            <yAxis>
-                <NumberAxis side="LEFT"/>
-            </yAxis>
-        </LineChart>
-    </VBox>
+    <AnchorPane>
+      <Label AnchorPane.leftAnchor="0" text="%length"/>
+      <Label fx:id="lengthValue" AnchorPane.rightAnchor="0"/>
+      <VBox.margin>
+        <Insets bottom="3" left="10" right="10" top="3"/>
+      </VBox.margin>
+    </AnchorPane>
+    <LineChart fx:id="vt_chart" createSymbols="false"
+      legendVisible="false" prefHeight="0.0" prefWidth="0.0" title="%title_vt">
+      <xAxis>
+        <NumberAxis side="BOTTOM" label="s"/>
+      </xAxis>
+      <yAxis>
+        <NumberAxis side="LEFT" label="m/s"/>
+      </yAxis>
+    </LineChart>
+    <LineChart fx:id="vd_chart" createSymbols="false"
+      legendVisible="false" prefHeight="0.0" prefWidth="0.0" title="%title_vd">
+      <xAxis>
+        <NumberAxis side="BOTTOM" label="km"/>
+      </xAxis>
+      <yAxis>
+        <NumberAxis side="LEFT" label="m/s"/>
+      </yAxis>
+    </LineChart>
+    <LineChart fx:id="dt_chart" createSymbols="false"
+      legendVisible="false" prefHeight="0.0" prefWidth="0.0" title="%title_dt">
+      <xAxis>
+        <NumberAxis side="BOTTOM" label="s"/>
+      </xAxis>
+      <yAxis>
+        <NumberAxis side="LEFT" label="km"/>
+      </yAxis>
+    </LineChart>
+  </VBox>
 </VBox>

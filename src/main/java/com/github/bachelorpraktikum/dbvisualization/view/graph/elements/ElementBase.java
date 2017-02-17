@@ -17,6 +17,8 @@ import javafx.scene.control.Tooltip;
 import javafx.scene.shape.Shape;
 
 abstract class ElementBase<T extends Node> extends GraphShapeBase<Element, T> {
+    protected static final double MAX_ELEMENT_WIDTH = 0.3;
+
     private final List<Element> elements;
     private final com.github.bachelorpraktikum.dbvisualization.model.Node node;
     private final List<ChangeListener<Element.State>> listeners;

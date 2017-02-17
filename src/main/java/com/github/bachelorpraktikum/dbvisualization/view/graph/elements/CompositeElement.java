@@ -3,7 +3,6 @@ package com.github.bachelorpraktikum.dbvisualization.view.graph.elements;
 import com.github.bachelorpraktikum.dbvisualization.model.Element;
 import com.github.bachelorpraktikum.dbvisualization.model.Node;
 import com.github.bachelorpraktikum.dbvisualization.view.graph.adapter.CoordinatesAdapter;
-
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -12,10 +11,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.DoubleAdder;
+import java.util.concurrent.atomic.LongAdder;
 import java.util.stream.Collectors;
-
-import javax.annotation.Nonnull;
-
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.WeakChangeListener;
 import javafx.fxml.FXMLLoader;
@@ -26,8 +23,13 @@ import javafx.scene.shape.Line;
 import javafx.scene.shape.Polygon;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.Shape;
+import javax.annotation.Nonnull;
 
 final class CompositeElement extends ElementBase<Group> {
+    private static final double MAX_SHAPE_WIDTH = 2.0;
+    private static final double ELEMENT_SPACING = 0.7;
+    private static final double GESCHWINDIGKEITS_ANZEIGER_WIDTH_FACTOR = 0.5;
+    private static final double FOOT_HEIGHT = 0.5;
 
     private final Map<Element, Shape> shapes;
     private final List<ChangeListener<Element.State>> stateListeners;
@@ -43,8 +45,9 @@ final class CompositeElement extends ElementBase<Group> {
         elements.stream().sorted(Comparator.comparing(Element::getType)).forEach(element -> {
             Shape shape = createShape(element.getType());
             Bounds bounds = shape.getLayoutBounds();
-            shape.relocate(0 - bounds.getWidth() / 2, y.doubleValue() - bounds.getHeight() / 2);
-            y.add(shape.getLayoutBounds().getHeight());
+            shape.relocate(0 - bounds.getWidth() / 2, 0 - bounds.getHeight() / 2);
+            shape.setTranslateY(y.doubleValue());
+            y.add(shape.getBoundsInParent().getHeight() + ELEMENT_SPACING);
             ChangeListener<Element.State> listener = (observable, oldValue, newValue) -> {
                 shape.setFill(newValue.getColor());
             };
@@ -75,12 +78,12 @@ final class CompositeElement extends ElementBase<Group> {
 
     @Override
     protected void resize(Group shape) {
-        resizeNode(shape, 0.3);
+        resizeNode(shape, MAX_ELEMENT_WIDTH * getCalibrationBase());
     }
 
-    private void resizeNode(javafx.scene.Node node, double maxSize) {
+    private void resizeNode(javafx.scene.Node node, double maxWidth) {
         Bounds bounds = node.getLayoutBounds();
-        double f = maxSize / bounds.getWidth();
+        double f = maxWidth / bounds.getWidth();
         node.setScaleX(node.getScaleX() * f);
         node.setScaleY(node.getScaleY() * f);
     }
@@ -91,18 +94,28 @@ final class CompositeElement extends ElementBase<Group> {
     }
 
     private Shape createShape(Element.Type type) {
+        double maxWidth = MAX_SHAPE_WIDTH;
+        Shape shape = null;
         switch (type) {
-            case HauptSignalImpl:
-                return createPathShape(type);
             case VorSignalImpl:
-                return createPathShape(type);
+            case HauptSignalImpl:
+                shape = createPathShape(type);
+                break;
             case GeschwindigkeitsAnzeigerImpl:
-                Polygon polygon = new Polygon(0, 2, 1, 0, 2, 2);
-                resizeNode(polygon, 1.0);
-                return polygon;
+                shape = new Polygon(0, 2, 1, 0, 2, 2);
+                maxWidth *= GESCHWINDIGKEITS_ANZEIGER_WIDTH_FACTOR;
+                break;
+            case GeschwindigkeitsVoranzeiger:
+                shape = new Polygon(0, 0, 1, 2, 2, 0);
+                maxWidth *= GESCHWINDIGKEITS_ANZEIGER_WIDTH_FACTOR;
+                break;
+            case UnknownElement:
             default:
-                return new Rectangle(2, 2);
+                shape = new Rectangle(2, 2);
+                break;
         }
+        resizeNode(shape, getCalibrationBase() * maxWidth);
+        return shape;
     }
 
     private Shape createPathShape(Element.Type type) {
@@ -119,7 +132,6 @@ final class CompositeElement extends ElementBase<Group> {
             }
 
             shape.setRotate(90);
-            resizeNode(shape, 2);
             return shape;
         } catch (IOException e) {
             e.printStackTrace();
@@ -133,16 +145,16 @@ final class CompositeElement extends ElementBase<Group> {
         Group group = new Group(shapes.values().stream()
                 .collect(Collectors.toList()));
         Bounds bounds = group.getLayoutBounds();
-        double endY = bounds.getHeight() + 0.5;
+        double endY = bounds.getHeight() + FOOT_HEIGHT * getCalibrationBase();
         Line line = new Line(0, 0, 0, endY);
-        line.setStrokeWidth(0.16);
+        line.setStrokeWidth(0.16 * getCalibrationBase());
         group.getChildren().add(line);
         line.toBack();
 
         bounds = group.getLayoutBounds();
         double x = bounds.getWidth() / 2;
         Line bottomLine = new Line(-x, endY, x, endY);
-        bottomLine.setStrokeWidth(0.16);
+        bottomLine.setStrokeWidth(0.16 * getCalibrationBase());
         group.getChildren().add(bottomLine);
         bottomLine.toBack();
         return group;

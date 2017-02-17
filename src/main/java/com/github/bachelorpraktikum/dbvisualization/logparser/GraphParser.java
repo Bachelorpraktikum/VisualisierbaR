@@ -6,7 +6,12 @@ import com.github.bachelorpraktikum.dbvisualization.model.Edge;
 import com.github.bachelorpraktikum.dbvisualization.model.Element;
 import com.github.bachelorpraktikum.dbvisualization.model.Node;
 import com.github.bachelorpraktikum.dbvisualization.model.train.Train;
-
+import java.io.IOException;
+import java.math.BigInteger;
+import java.util.Objects;
+import java.util.logging.Logger;
+import javax.annotation.Nonnull;
+import javax.annotation.ParametersAreNonnullByDefault;
 import org.antlr.v4.runtime.ANTLRFileStream;
 import org.antlr.v4.runtime.BailErrorStrategy;
 import org.antlr.v4.runtime.CharStream;
@@ -14,32 +19,20 @@ import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.atn.PredictionMode;
 import org.antlr.v4.runtime.tree.ParseTree;
 
-import java.io.IOException;
-import java.math.BigInteger;
-import java.util.Objects;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import javax.annotation.ParametersAreNonnullByDefault;
-
 @ParametersAreNonnullByDefault
 public final class GraphParser {
 
+    private static final Logger log = Logger.getLogger(GraphParser.class.getName());
+
     @Nonnull
     private final String fileName;
-    @Nullable
-    private Context context;
 
     public GraphParser(String fileName) {
         this.fileName = Objects.requireNonNull(fileName);
     }
 
     @Nonnull
-    public synchronized Context parse() throws IOException {
-        if (context != null) {
-            return context;
-        }
-
+    public Context parse() throws IOException {
         CharStream input = new ANTLRFileStream(fileName);
         LogLexer lexer = new LogLexer(input);
         CommonTokenStream tokens = new CommonTokenStream(lexer);
@@ -57,13 +50,13 @@ public final class GraphParser {
             // if we parse ok, it's LL not SLL
         }
 
-        return (context = new ContextVisitor().visit(parseTree));
+        return new ContextVisitor().visit(parseTree);
     }
 
     private static class ContextVisitor extends LogBaseVisitor<Context> {
+
         @Nonnull
         private final Context context;
-
         @Nonnull
         private final NodeVisitor nodeVisitor;
         @Nonnull
@@ -96,25 +89,49 @@ public final class GraphParser {
 
         @Override
         public Context visitNode(LogParser.NodeContext ctx) {
-            nodeVisitor.visitNode(ctx);
+            try {
+                nodeVisitor.visitNode(ctx);
+            } catch (IllegalArgumentException e) {
+                log.warning("Could not parse line: " + ctx.getText()
+                    + "\nReason: " + e.getMessage()
+                );
+            }
             return context;
         }
 
         @Override
         public Context visitElem(LogParser.ElemContext ctx) {
-            elementVisitor.visitElem(ctx);
+            try {
+                elementVisitor.visitElem(ctx);
+            } catch (IllegalArgumentException e) {
+                log.warning("Could not parse line: " + ctx.getText()
+                    + "\nReason: " + e.getMessage()
+                );
+            }
             return context;
         }
 
         @Override
         public Context visitEdge(LogParser.EdgeContext ctx) {
-            edgeVisitor.visitEdge(ctx);
+            try {
+                edgeVisitor.visitEdge(ctx);
+            } catch (IllegalArgumentException e) {
+                log.warning("Could not parse line: " + ctx.getText()
+                    + "\nReason: " + e.getMessage()
+                );
+            }
             return context;
         }
 
         @Override
         public Context visitTrain(LogParser.TrainContext ctx) {
-            trainVisitor.visitTrain(ctx);
+            try {
+                trainVisitor.visitTrain(ctx);
+            } catch (IllegalArgumentException e) {
+                log.warning("Could not parse line: " + ctx.getText()
+                    + "\nReason: " + e.getMessage()
+                );
+            }
             return context;
         }
 
@@ -122,7 +139,8 @@ public final class GraphParser {
         public Context visitMv_init(LogParser.Mv_initContext ctx) {
             Train train = Train.in(context).get(ctx.train_name().getText());
             Edge edge = Edge.in(context).get(ctx.edge_name().getText());
-            train.eventFactory().init(edge);
+            int time = timeVisitor.visitTime(ctx.time());
+            train.eventFactory().init(time, edge);
             return context;
         }
 
@@ -186,6 +204,7 @@ public final class GraphParser {
         }
 
         private class NodeVisitor extends LogBaseVisitor<Node> {
+
             @Override
             public Node visitNode(LogParser.NodeContext ctx) {
                 String nodeName = ctx.node_name().getText();
@@ -195,6 +214,7 @@ public final class GraphParser {
         }
 
         private class ElementVisitor extends LogBaseVisitor<Element> {
+
             @Override
             public Element visitElem(LogParser.ElemContext ctx) {
                 String elementName = ctx.elem_name().getText();
@@ -207,6 +227,7 @@ public final class GraphParser {
         }
 
         private class EdgeVisitor extends LogBaseVisitor<Edge> {
+
             @Override
             public Edge visitEdge(LogParser.EdgeContext ctx) {
                 String edgeName = ctx.edge_name().getText();
@@ -221,6 +242,7 @@ public final class GraphParser {
         }
 
         private class TrainVisitor extends LogBaseVisitor<Train> {
+
             @Override
             public Train visitTrain(LogParser.TrainContext ctx) {
                 String trainName = ctx.train_name().getText();
@@ -232,6 +254,7 @@ public final class GraphParser {
         }
 
         private static class CoordinatesVisitor extends LogBaseVisitor<Coordinates> {
+
             @Override
             public Coordinates visitCoord(LogParser.CoordContext ctx) {
                 int x = Integer.parseInt(ctx.INT(0).getText());
@@ -241,6 +264,7 @@ public final class GraphParser {
         }
 
         private static class TimeVisitor extends LogBaseVisitor<Integer> {
+
             private final BigInteger thousandInt;
 
             TimeVisitor() {

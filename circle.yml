@@ -1,3 +1,9 @@
+
+dependencies:
+  override:
+      - mvn --fail-never dependency:go-offline || true
+      - mvn --fail-never dependency:resolve-plugins || true
+
 test:
   post:
     - mvn site -P site
@@ -5,7 +11,7 @@ test:
 
 deployment:
   packaging:
-    branch: [master, develop]
+    branch: [/.*/]
     commands:
       - mvn package -DskipTests
-      - cp target/DBVisualization-*-jar-with-dependencies.jar $CIRCLE_ARTIFACTS/dbvisualization.jar
+      - cp target/VisualisierbaR-*-jar-with-dependencies.jar $CIRCLE_ARTIFACTS/VisualisierbaR.jar

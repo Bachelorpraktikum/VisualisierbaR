@@ -4,7 +4,6 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -12,17 +11,15 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.WeakHashMap;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import javax.annotation.ParametersAreNonnullByDefault;
-
+import java.util.logging.Logger;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.beans.property.ReadOnlyProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.collections.transformation.SortedList;
 import javafx.scene.paint.Color;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import javax.annotation.ParametersAreNonnullByDefault;
 
 /**
  * Represents an element on the track.<p>Every element is associated with a {@link Node}.</p>
@@ -32,6 +29,7 @@ import javafx.scene.paint.Color;
  */
 @ParametersAreNonnullByDefault
 public final class Element {
+    private static final Logger log = Logger.getLogger(Element.class.getName());
     @Nonnull
     private final Factory factory;
     @Nonnull
@@ -88,6 +86,7 @@ public final class Element {
         GeschwindigkeitsAnzeigerImpl,
         VorSignalImpl("VorsignalImpl"),
         HauptSignalImpl("HauptsignalImpl"),
+        GeschwindigkeitsVoranzeiger,
         SichtbarkeitsPunktImpl("SichtbarkeitspunktImpl", "SichtbarkeitspunktImpl2"),
         GefahrenPunktImpl("GefahrenpunktImpl"),
         MagnetImpl("MagnetImpl"),
@@ -157,6 +156,8 @@ public final class Element {
                     return SwWechselImpl;
                 case "GeschwindigkeitsAnzeigerImpl":
                     return GeschwindigkeitsAnzeigerImpl;
+                case "GeschwindigkeitsVorAnzeigerImpl":
+                    return GeschwindigkeitsVoranzeiger;
                 default:
                     return UnknownElement;
             }
@@ -179,7 +180,7 @@ public final class Element {
         }
 
         // Add an event at time 0 with the initial state
-        factory.addEvent(this, state, 0);
+        factory.addEvent(this, state, Context.INIT_STATE_TIME);
     }
 
     /**
@@ -198,9 +199,7 @@ public final class Element {
         @Nonnull
         private final Switch.Factory switchFactory;
         @Nonnull
-        private final ObservableList<ElementEvent> unorderedEvents;
-        @Nonnull
-        private final SortedList<ElementEvent> events;
+        private final ObservableList<ElementEvent> events;
         private int currentTime;
         private int nextIndex;
 
@@ -216,8 +215,7 @@ public final class Element {
             this.elements = new LinkedHashMap<>(INITIAL_ELEMENTS_CAPACITY);
 
             this.switchFactory = Switch.in(context);
-            this.unorderedEvents = FXCollections.observableArrayList();
-            this.events = unorderedEvents.sorted();
+            this.events = FXCollections.observableArrayList();
             this.currentTime = -1;
             this.nextIndex = 0;
         }
@@ -228,32 +226,50 @@ public final class Element {
         }
 
         /**
-         * Potentially creates a new instance of {@link Element}.<br>
-         * If an element with the same name already exists, it is returned.
+         * Potentially creates a new instance of {@link Element}.
          *
-         * @param name  the unique name of this element
-         * @param type  the {@link Type}
-         * @param node  the {@link Node} this element is located on
+         * @param name the unique name of this element
+         * @param type the {@link Type}
+         * @param node the {@link Node} this element is located on
          * @param state the initial state of the element
          * @return an element
-         * @throws NullPointerException     if either of the arguments is null
-         * @throws IllegalArgumentException if an element with this name already exists, but with
-         *                                  different arguments
+         * @throws NullPointerException if either of the arguments is null
+         * @throws IllegalArgumentException if an element with the same name but different parameters
+         * already exists
          */
         @Nonnull
         public Element create(String name, Type type, Node node, State state) {
             Element element = elements.computeIfAbsent(Objects.requireNonNull(name), elementName ->
                     new Element(this, elementName, type, node, state)
             );
+            State resultInitState = getStateAtTime(element, Context.INIT_STATE_TIME);
             if (!element.getName().equals(name)
                     || !element.getType().equals(type)
-                    || !element.getNode().equals(node)) {
-                // we SHOULD also check for the initial state, but it's not easily accessible,
-                // so I'm going to let it slide for now
-                String errorMessage = String.format("element with this name (%s) already exists, but differently", name);
-                throw new IllegalArgumentException(errorMessage);
+                    || !element.getNode().equals(node)
+                    || !resultInitState.equals(state)) {
+                String elementFormat = "(type: %s, node: %s, initState: %s)";
+                String message = "Element with name: %s already exists:\n"
+                    + elementFormat + ", tried to recreate with following arguments:\n"
+                    + elementFormat;
+                message = String.format(message, name, type, node, state,
+                    element.getType(), element.getNode(), resultInitState);
+                throw new IllegalArgumentException(message);
             }
             return element;
+        }
+
+        /**
+         * Gets the state of an element at the given time, then resets the time to the previous value.
+         * @param element the element
+         * @param time the time to look up the state for
+         * @return the state of the element at the given time
+         */
+        private State getStateAtTime(Element element, int time) {
+            int resetTime = currentTime;
+            setTime(time);
+            State result = element.getState();
+            setTime(resetTime);
+            return result;
         }
 
         /**
@@ -284,17 +300,16 @@ public final class Element {
         }
 
         private void addEvent(Element element, State state, int time) {
-            List<String> warnings = new LinkedList<>();
-            if (time < 0) {
-                warnings.add("original time was " + time);
-                time = 0;
-            }
+            addEvent(element, state, new LinkedList<>(), time);
+        }
+
+        private void addEvent(Element element, State state, List<String> warnings, int time) {
             if (!events.isEmpty() && time < events.get(events.size() - 1).getTime()) {
                 warnings.add("tried to add before last event at " + time);
                 time = events.get(events.size() - 1).getTime();
             }
-            unorderedEvents.add(new ElementEvent(element, time, state, warnings));
-            // maybe the states has to be updated
+            events.add(new ElementEvent(element, time, state, warnings));
+            // maybe the states have to be updated
             if (time <= currentTime) {
                 int refreshTime = currentTime;
                 resetTime();
@@ -303,7 +318,7 @@ public final class Element {
         }
 
         private void resetTime() {
-            currentTime = -1;
+            currentTime = Context.INIT_STATE_TIME;
             nextIndex = 0;
         }
 
@@ -311,11 +326,11 @@ public final class Element {
          * Changes the time for all {@link Element elements} in this context.
          *
          * @param time the time in milliseconds
-         * @throws IllegalArgumentException if time is negative
+         * @throws IllegalArgumentException if time is less than {@link Context#INIT_STATE_TIME}
          */
         public void setTime(int time) {
-            if (time < 0) {
-                throw new IllegalArgumentException("negative time: " + time);
+            if (time < -1) {
+               throw new IllegalArgumentException("invalid time: " + time);
             }
 
             if (time == currentTime) {
@@ -359,15 +374,20 @@ public final class Element {
 
     /**
      * Adds an event for this {@link Element}.
+     * If the time is negative, it will be corrected to 0 and a warning will be added to the event.
      *
      * @param state new state after this event
      * @param time  the time of the event in milliseconds
      * @throws NullPointerException     if state is null
      * @throws IllegalStateException    if there is already another event after this one
-     * @throws IllegalArgumentException if time is negative
      */
     public void addEvent(State state, int time) {
-        getFactory().addEvent(this, Objects.requireNonNull(state), time);
+        List<String> warnings = new LinkedList<>();
+        if (time < 0) {
+            warnings.add("original time was " + time);
+            time = 0;
+        }
+        getFactory().addEvent(this, Objects.requireNonNull(state), warnings, time);
     }
 
     /**

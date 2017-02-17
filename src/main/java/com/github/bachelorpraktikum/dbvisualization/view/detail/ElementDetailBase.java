@@ -1,28 +1,41 @@
 package com.github.bachelorpraktikum.dbvisualization.view.detail;
 
-import com.github.bachelorpraktikum.dbvisualization.model.Coordinates;
-
 import java.io.IOException;
 import java.net.URL;
 import java.util.List;
-
+import java.util.ResourceBundle;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Point2D;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.Shape;
+import javax.annotation.Nullable;
 
-public abstract class ElementDetailBase {
+public abstract class ElementDetailBase<E> {
+
+    private final E e;
     private int time;
+
+    ElementDetailBase(E e) {
+        this.e = e;
+    }
+
+    E getElement() {
+        return e;
+    }
 
     abstract String getName();
 
     abstract List<URL> getImageUrls();
 
-    abstract Coordinates getCoordinates();
+    @Nullable
+    abstract Point2D getCoordinates();
 
-    String getCoordinatesString() {
-        Coordinates coord = getCoordinates();
-
-        return String.format("x: %d | y: %d", coord.getX(), coord.getY());
+    String getCoordinatesString(Point2D coord) {
+        if (coord == null) {
+            return ResourceBundle.getBundle("bundles.localization").getString("unavailable");
+        } else {
+            return String.format("x: %f | y: %f", coord.getX(), coord.getY());
+        }
     }
 
     abstract boolean isTrain();

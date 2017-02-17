@@ -34,7 +34,7 @@ public class ContextHolder {
      *
      * @return whether there is a context
      */
-    boolean hasContext() {
+    public boolean hasContext() {
         return context != null;
     }
 
@@ -45,7 +45,7 @@ public class ContextHolder {
      * @throws IllegalStateException if there is no context
      */
     @Nonnull
-    Context getContext() {
+    public Context getContext() {
         if (context == null) {
             throw new IllegalStateException();
         }

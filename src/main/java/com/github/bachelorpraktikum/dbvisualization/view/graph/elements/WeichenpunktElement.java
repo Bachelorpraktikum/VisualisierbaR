@@ -5,26 +5,36 @@ import com.github.bachelorpraktikum.dbvisualization.model.Node;
 import com.github.bachelorpraktikum.dbvisualization.model.Switch;
 import com.github.bachelorpraktikum.dbvisualization.view.graph.adapter.CoordinatesAdapter;
 
-import javax.annotation.Nonnull;
-
 import javafx.collections.ObservableList;
 import javafx.geometry.Point2D;
 import javafx.scene.shape.Polygon;
+import javafx.scene.shape.Shape;
+import javax.annotation.Nonnull;
 
-final class WeichenpunktElement extends SingleElementBase<Polygon> {
-    WeichenpunktElement(Element element, Node node, CoordinatesAdapter adapter) {
-        super(element, node, adapter);
+final class WeichenpunktElement extends ElementBase<Polygon> {
+    private final Switch aSwitch;
+
+    WeichenpunktElement(Switch aSwitch, Node node, CoordinatesAdapter adapter) {
+        super(aSwitch.getElements(), node, adapter);
+        this.aSwitch = aSwitch;
+    }
+
+    private Element getMainElement() {
+        return aSwitch.getMainElement();
+    }
+
+    @Override
+    public Shape getShape(Element element) {
+        return getShape();
     }
 
     @Override
     protected void relocate(Polygon shape) {
-        Switch swit = getElement().getSwitch().get();
-
         CoordinatesAdapter adapter = getCoordinatesAdapter();
         Point2D[] others = new Point2D[2];
         int i = 0;
-        for (Element element : swit.getElements()) {
-            if (!element.equals(getElement())) {
+        for (Element element : aSwitch.getElements()) {
+            if (!element.equals(getMainElement())) {
                 others[i++] = adapter.apply(element.getNode());
             }
         }

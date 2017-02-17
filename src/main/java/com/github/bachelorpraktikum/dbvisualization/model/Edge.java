@@ -2,12 +2,11 @@ package com.github.bachelorpraktikum.dbvisualization.model;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.WeakHashMap;
-
+import java.util.logging.Logger;
 import javax.annotation.Nonnull;
 import javax.annotation.ParametersAreNonnullByDefault;
 import javax.annotation.concurrent.Immutable;
@@ -19,6 +18,8 @@ import javax.annotation.concurrent.Immutable;
 @Immutable
 @ParametersAreNonnullByDefault
 public final class Edge {
+    private static final Logger log = Logger.getLogger(Edge.class.getName());
+
     @Nonnull
     private final String name;
     private final int length;
@@ -62,25 +63,31 @@ public final class Edge {
         /**
          * Potentially creates a new instance of {@link Edge}.
          *
-         * @param name   the unique name of the edge
+         * @param name the unique name of the edge
          * @param length the length in meters
-         * @param node1  the first declared node at the end of the edge
-         * @param node2  the second declared node at the end of the edge
+         * @param node1 the first declared node at the end of the edge
+         * @param node2 the second declared node at the end of the edge
          * @return an instance of Edge
-         * @throws NullPointerException     if at least one of the arguments is null
-         * @throws IllegalArgumentException if there is another edge with the same name but
-         *                                  different values
+         * @throws NullPointerException if at least one of the arguments is null
+         * @throws IllegalArgumentException if an edge with the same name but different parameters
+         * already exists
          */
         @Nonnull
         public Edge create(String name, int length, Node node1, Node node2) {
             Edge result = edges.computeIfAbsent(Objects.requireNonNull(name), edgeName ->
-                    new Edge(edgeName, length, node1, node2)
+                new Edge(edgeName, length, node1, node2)
             );
 
             if (result.getLength() != length
-                    || !result.getNode1().equals(node1)
-                    || !result.getNode2().equals(node2)) {
-                throw new IllegalArgumentException("edge already exists, but differently");
+                || !result.getNode1().equals(node1)
+                || !result.getNode2().equals(node2)) {
+                String edgeFormat = "(length: %d, node1: %s, node2: %s)";
+                String message = "Edge with name: %s already exists:\n"
+                    + edgeFormat + ", tried to recreate with following arguments:\n"
+                    + edgeFormat;
+                message = String.format(message, name, length, node1, node2,
+                    result.getLength(), result.getNode1(), result.getNode2());
+                throw new IllegalArgumentException(message);
             }
 
             return result;
@@ -153,6 +160,30 @@ public final class Edge {
     @Nonnull
     public Node getNode2() {
         return node2;
+    }
+
+    @Nonnull
+    public Node getOtherNode(Node node) {
+        if (getNode1().equals(node)) {
+            return getNode2();
+        } else if (getNode2().equals(node)) {
+            return getNode1();
+        } else {
+            throw new IllegalArgumentException();
+        }
+    }
+
+    public Node getCommonNode(Edge other) {
+        Node n1 = getNode1();
+        Node n2 = getNode2();
+
+        if (n1.equals(other.getNode1()) || n1.equals(other.getNode2())) {
+            return n1;
+        } else if (n2.equals(other.getNode1()) || n2.equals(other.getNode2())) {
+            return n2;
+        } else {
+            throw new IllegalArgumentException();
+        }
     }
 
     /**

@@ -1,6 +1,20 @@
 package com.github.bachelorpraktikum.dbvisualization.view;
 
 import com.github.bachelorpraktikum.dbvisualization.DataSource;
+
+import java.io.File;
+import java.io.IOException;
+import java.net.URI;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.logging.Logger;
+import java.util.Map;
+import java.util.Objects;
+import java.util.ResourceBundle;
+
+import javax.annotation.Nonnull;
+
+import com.github.bachelorpraktikum.dbvisualization.config.ConfigFile;
 import javafx.beans.property.ReadOnlyProperty;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -11,14 +25,6 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
-
-import javax.annotation.Nonnull;
-import java.io.IOException;
-import java.net.URI;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Objects;
-import java.util.ResourceBundle;
 
 public class SourceController implements SourceChooser {
     @FXML
@@ -94,6 +100,25 @@ public class SourceController implements SourceChooser {
         return null;
     }
 
+    public void setInitialDirectories(Map<DataSource.Type, URI> typeURIMapping) {
+        for (Map.Entry<DataSource.Type, URI> entry : typeURIMapping.entrySet()) {
+            SourceChooser controller = getControllerByType(entry.getKey());
+            if (controller != null) {
+                controller.setInitialURI(entry.getValue());
+            }
+        }
+    }
+
+    private SourceChooser getControllerByType(DataSource.Type type) {
+        for (SourceChooser controller : controllers) {
+            if (controller.getResourceType() == type) {
+                return controller;
+            }
+        }
+
+        return null;
+    }
+
     /**
      * {@inheritDoc}
      */
@@ -110,6 +135,11 @@ public class SourceController implements SourceChooser {
     @Override
     public DataSource.Type getResourceType() {
         return activeController.getResourceType();
+    }
+
+    @Override
+    public void setInitialURI(URI initialURI) {
+
     }
 
     /**
@@ -153,12 +183,21 @@ public class SourceController implements SourceChooser {
         try {
             mainLoader.load();
         } catch (IOException e) {
-            // This should never happen (see load function)
+            Logger.getLogger(getClass().getName()).severe("Main window couldn't be opened\n" + e);
             return;
         }
         MainController controller = mainLoader.getController();
         controller.setStage(stage);
-        controller.setDataSource(new DataSource(DataSource.Type.LOG_FILE, getResourceURI()));
+        controller.setDataSource(new DataSource(getResourceType(), getResourceURI()));
+
+        String initialDirKey = String.format(geInitialDirKey(), getResourceType().toString());
+        String parentFolder = new File(getResourceURI()).getParent();
+        ConfigFile.getInstance().put(initialDirKey, parentFolder);
+    }
+
+    private String geInitialDirKey() {
+        String logFileKey = ResourceBundle.getBundle("config_keys").getString("initialDirectoryKey");
+        return String.format(logFileKey, getResourceType().toString());
     }
 
     private void closeWindow() {
