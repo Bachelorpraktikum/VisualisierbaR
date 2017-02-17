@@ -360,6 +360,7 @@ public class MainController {
                 simulation.stop();
             }
             timeText.setDisable(newValue);
+            eventTraversal.setDisable(newValue);
         });
 
         Callback<ListView<String>, ListCell<String>> textFactory = TextFieldListCell.forListView();
@@ -425,6 +426,7 @@ public class MainController {
                 eventTraversalTimeline.stop();
             }
             timeText.setDisable(newValue);
+            playToggle.setDisable(newValue);
         });
         eventTraversalTimeline.setCycleCount(Timeline.INDEFINITE);
     }
