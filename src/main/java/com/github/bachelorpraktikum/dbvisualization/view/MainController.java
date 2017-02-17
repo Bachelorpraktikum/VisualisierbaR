@@ -382,8 +382,8 @@ public class MainController {
                 Element element = null;
                 Train train = null;
 
+                highlighters.getChildren().clear();
                 if (newValue == null) {
-                    highlighters.getChildren().clear();
                     return;
                 }
 
