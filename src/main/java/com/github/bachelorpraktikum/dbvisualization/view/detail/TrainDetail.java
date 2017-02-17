@@ -38,7 +38,7 @@ public class TrainDetail extends ElementDetailBase<Train> {
         return getElement().getState(timeProperty().get());
     }
 
-    int getSpeed() {
+    double getSpeed() {
         return getState().getSpeed();
     }
 

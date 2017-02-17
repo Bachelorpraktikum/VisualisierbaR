@@ -170,14 +170,27 @@ public final class Edge implements GraphObject<Line> {
         return node2;
     }
 
+    /**
+     * Gets the node on the other end of this edge.
+     *
+     * @param node the node on this edge you're not looking for
+     * @return the node on this edge not passed as an argument
+     * @throws NullPointerException if node is null
+     * @throws IllegalArgumentException if the specified node is not on this edge
+     */
     @Nonnull
     public Node getOtherNode(Node node) {
+        Objects.requireNonNull(node);
         if (getNode1().equals(node)) {
             return getNode2();
         } else if (getNode2().equals(node)) {
             return getNode1();
         } else {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException(String.format(
+                "Node %s is not on Edge %s",
+                node.getName(),
+                this
+            ));
         }
     }
 

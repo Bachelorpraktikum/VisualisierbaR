@@ -330,7 +330,9 @@ public final class Element implements GraphObject<Shape> {
                 warnings.add("tried to add before last event at " + time);
                 time = events.get(events.size() - 1).getTime();
             }
-            events.add(new ElementEvent(element, time, state, warnings));
+            events.add(new ElementEvent(
+                element, time, state, FXCollections.observableList(warnings)
+            ));
             // maybe the states have to be updated
             if (time <= currentTime) {
                 int refreshTime = currentTime;
@@ -505,13 +507,14 @@ public final class Element implements GraphObject<Shape> {
         @Nonnull
         private final State state;
         @Nonnull
-        private final List<String> warnings;
+        private final ObservableList<String> warnings;
 
         private ElementEvent(Element element, int time, State state) {
-            this(element, time, state, Collections.emptyList());
+            this(element, time, state, FXCollections.emptyObservableList());
         }
 
-        private ElementEvent(Element element, int time, State state, List<String> warnings) {
+        private ElementEvent(Element element, int time, State state,
+            ObservableList<String> warnings) {
             this.element = element;
             this.time = time;
             this.state = state;
@@ -537,7 +540,7 @@ public final class Element implements GraphObject<Shape> {
 
         @Nonnull
         @Override
-        public List<String> getWarnings() {
+        public ObservableList<String> getWarnings() {
             return warnings;
         }
 

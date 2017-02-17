@@ -18,18 +18,20 @@ final class InterpolatableState implements Train.State {
     private final int distance;
     @Nullable
     private final TrainPosition position;
-    private final int speed;
+    private final double speed;
     private final boolean terminated;
     private final boolean initialized;
 
-    private InterpolatableState(Train train,
+    private InterpolatableState(
+        Train train,
         int index,
         boolean terminated,
         boolean initialized,
         int time,
         int distance,
         @Nullable TrainPosition position,
-        int speed) {
+        double speed
+    ) {
         this.train = train;
         this.index = index;
         this.terminated = terminated;
@@ -47,7 +49,7 @@ final class InterpolatableState implements Train.State {
         private final Train train;
 
         private int time = Integer.MIN_VALUE;
-        private int speed = -1;
+        private double speed = -1;
         private boolean terminated = false;
         private boolean initialized = true;
         private int index = -1;
@@ -87,7 +89,7 @@ final class InterpolatableState implements Train.State {
          * @return this Builder
          * @throws IllegalArgumentException if speed is negative
          */
-        Builder speed(int speed) {
+        Builder speed(double speed) {
             if (speed < 0) {
                 throw new IllegalArgumentException(String.format("speed (%d) is negative", speed));
             }
@@ -167,7 +169,7 @@ final class InterpolatableState implements Train.State {
          * <h3>The following methods are required to be called before calling this one:</h3>
          * <ul>
          * <li>{@link #time(int)}</li>
-         * <li>{@link #speed(int)}</li>
+         * <li>{@link #speed(double)}</li>
          * <li>{@link #index(int)}</li>
          * <li>{@link #distance(int)}</li>
          * <li>{@link #position(TrainPosition)}</li>
@@ -235,13 +237,7 @@ final class InterpolatableState implements Train.State {
         int relativeTargetTime = targetTime - getTime();
         int relativeOtherTime = other.getTime() - getTime();
 
-        int interpolatedSpeed = getSpeed();
-        // interpolate speed
-        if (!other.isTerminated() && getSpeed() != other.getSpeed()) {
-            int speedDiff = other.getSpeed() - getSpeed();
-            interpolatedSpeed += (int) (((double) speedDiff) / relativeOtherTime
-                * relativeTargetTime);
-        }
+        double interpolatedSpeed = other.getSpeed();
 
         int interpolatedDistance = getTotalDistance();
         TrainPosition interpolatedPosition = getPosition();
@@ -293,7 +289,7 @@ final class InterpolatableState implements Train.State {
     }
 
     @Override
-    public int getSpeed() {
+    public double getSpeed() {
         return speed;
     }
 
@@ -332,10 +328,12 @@ final class InterpolatableState implements Train.State {
 
     @Override
     public int hashCode() {
-        int result = train.hashCode();
-        result = 31 * result + time;
-        result = 31 * result + getSpeed();
-        result = 31 * result + getPosition().hashCode();
+        int result;
+        long temp;
+        result = time;
+        result = 31 * result + (position != null ? position.hashCode() : 0);
+        temp = Double.doubleToLongBits(speed);
+        result = 31 * result + (int) (temp ^ (temp >>> 32));
         return result;
     }
 }

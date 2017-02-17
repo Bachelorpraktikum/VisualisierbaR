@@ -470,7 +470,7 @@ public class Train implements GraphObject<Shape> {
 
         boolean isInitialized();
 
-        int getSpeed();
+        double getSpeed();
 
         /**
          * Gets the position of the train.

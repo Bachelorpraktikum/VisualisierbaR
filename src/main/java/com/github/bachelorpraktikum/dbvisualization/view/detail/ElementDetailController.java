@@ -39,9 +39,9 @@ public class ElementDetailController {
     @FXML
     private Label coordinateValue;
     @FXML
-    private LineChart<Double, Integer> vtChart;
+    private LineChart<Double, Double> vtChart;
     @FXML
-    private LineChart<Double, Integer> vdChart;
+    private LineChart<Double, Double> vdChart;
     @FXML
     private LineChart<Double, Double> dtChart;
     @FXML
@@ -83,7 +83,6 @@ public class ElementDetailController {
 
         if (detail.isTrain()) {
             TrainDetail trainDetail = (TrainDetail) detail;
-
             Binding<String> backCoordBinding = Bindings.createStringBinding(() ->
                     detail.getCoordinatesString(trainDetail.getBackCoordinate()),
                 detail.timeProperty()
@@ -97,7 +96,7 @@ public class ElementDetailController {
             lengthValue.textProperty().setValue(String.format("%dm", trainDetail.getLength()));
 
             Binding<String> speedBinding = Bindings.createStringBinding(() ->
-                    String.format("%dm/s", trainDetail.getSpeed()),
+                    String.format("%fm/s", trainDetail.getSpeed()),
                 trainDetail.timeProperty()
             );
             bindings.add(speedBinding);
@@ -145,14 +144,15 @@ public class ElementDetailController {
         Function<State, Double> distanceFunction = s -> s.getTotalDistance() / 1000.0;
         Function<State, Double> timeFunction = s -> s.getTime() / 1000.0;
 
-        updateChart(vtChart, timeFunction, State::getSpeed, time);
-        updateChart(vdChart, distanceFunction, State::getSpeed, time);
-        updateChart(dtChart, timeFunction, distanceFunction, time);
+        updateChart(vtChart, timeFunction, State::getSpeed, true, time);
+        updateChart(vdChart, distanceFunction, State::getSpeed, true, time);
+        updateChart(dtChart, timeFunction, distanceFunction, false, time);
     }
 
     private <X, Y> void updateChart(LineChart<X, Y> chart,
         Function<State, X> xFunction,
         Function<State, Y> yFunction,
+        boolean ySpeed,
         int time) {
         Train train = (Train) detail.getElement();
 
@@ -166,7 +166,13 @@ public class ElementDetailController {
             if (event.getTime() < 0) {
                 continue;
             }
-            state = train.getState(event.getTime(), state);
+            State newState = train.getState(event.getTime(), state);
+            if (ySpeed) {
+                X x = xFunction.apply(newState);
+                Y y = yFunction.apply(state);
+                data.add(new Data<>(x, y));
+            }
+            state = newState;
             data.add(new Data<>(xFunction.apply(state), yFunction.apply(state)));
         }
         state = train.getState(time, state);

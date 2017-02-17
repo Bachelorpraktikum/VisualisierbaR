@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.WeakHashMap;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Predicate;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -325,16 +326,19 @@ public class MainController {
         Callback<ListView<Event>, ListCell<Event>> textFactory = TextFieldListCell
             .forListView(stringConverter);
 
+        AtomicReference<Binding<Paint>> paintBinding = new AtomicReference<>();
         Callback<ListView<Event>, ListCell<Event>> listCellFactory = cell -> {
             ListCell<Event> result = textFactory.call(cell);
             Paint defaultTextFill = result.getTextFill();
             result.itemProperty().addListener(((observable, oldValue, newValue) -> {
                 if (newValue != null) {
-                    if (newValue.getWarnings().isEmpty()) {
-                        result.setTextFill(defaultTextFill);
-                    } else {
-                        result.setTextFill(Color.rgb(255, 0, 0));
-                    }
+                    Binding<Paint> warningBinding = Bindings.createObjectBinding(
+                        () -> newValue.getWarnings().isEmpty() ?
+                            defaultTextFill : Color.rgb(255, 0, 0),
+                        newValue.getWarnings()
+                    );
+                    paintBinding.set(warningBinding);
+                    result.textFillProperty().bind(warningBinding);
                 }
             }));
 
