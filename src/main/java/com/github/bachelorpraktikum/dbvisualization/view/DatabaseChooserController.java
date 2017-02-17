@@ -21,22 +21,23 @@ public class DatabaseChooserController implements SourceChooser {
     @FXML
     public Label uriError;
 
-    private ReadOnlyObjectWrapper<URI> databaseURIProperty;
+    private ReadOnlyObjectWrapper<URI> databaseUriProperty;
 
     @FXML
     public void initialize() {
-        databaseURIProperty = new ReadOnlyObjectWrapper<>();
+        databaseUriProperty = new ReadOnlyObjectWrapper<>();
 
         uriField.textProperty().addListener((o, oldValue, newValue) -> {
             if (newValue == null || newValue.trim().isEmpty()) {
-                databaseURIProperty.set(null);
+                databaseUriProperty.set(null);
                 return;
             }
             URI uri = null;
             try {
                 uri = new URI(newValue);
-                databaseURIProperty.set(uri);
+                databaseUriProperty.set(uri);
             } catch (URISyntaxException ignored) {
+                ignored.printStackTrace();
             } finally {
                 // Display the error message if the URI hasn't been set
                 uriError.setVisible(uri == null);
@@ -44,36 +45,24 @@ public class DatabaseChooserController implements SourceChooser {
         });
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Nullable
     @Override
-    public URI getResourceURI() {
-        return databaseURIProperty.getValue();
+    public URI getResourceUri() {
+        return databaseUriProperty.getValue();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Nonnull
     @Override
-    public ReadOnlyObjectProperty<URI> resourceURIProperty() {
-        return databaseURIProperty.getReadOnlyProperty();
+    public ReadOnlyObjectProperty<URI> resourceUriProperty() {
+        return databaseUriProperty.getReadOnlyProperty();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Nonnull
     @Override
     public String getRootPaneId() {
         return rootPane.getId();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Nonnull
     @Override
     public DataSource.Type getResourceType() {
@@ -81,7 +70,7 @@ public class DatabaseChooserController implements SourceChooser {
     }
 
     @Override
-    public void setInitialURI(URI initialURI) {
-        uriField.setText(initialURI.getPath());
+    public void setInitialUri(URI initialUri) {
+        uriField.setText(initialUri.getPath());
     }
 }

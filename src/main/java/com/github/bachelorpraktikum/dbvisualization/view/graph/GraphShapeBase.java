@@ -28,7 +28,7 @@ public abstract class GraphShapeBase<R, S extends Node> implements GraphShape<R>
         return shape;
     }
 
-    protected void initializedShape(S s) {
+    protected void initializedShape(S shape) {
     }
 
     @Override

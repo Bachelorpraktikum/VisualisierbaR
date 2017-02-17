@@ -83,14 +83,36 @@ final class CompositeElement extends ElementBase<Group> {
 
     private void resizeNode(javafx.scene.Node node, double maxWidth) {
         Bounds bounds = node.getLayoutBounds();
-        double f = maxWidth / bounds.getWidth();
-        node.setScaleX(node.getScaleX() * f);
-        node.setScaleY(node.getScaleY() * f);
+        double factor = maxWidth / bounds.getWidth();
+        node.setScaleX(node.getScaleX() * factor);
+        node.setScaleY(node.getScaleY() * factor);
     }
 
     @Override
     public Shape getShape(Element represented) {
         return shapes.get(represented);
+    }
+
+    @Nonnull
+    @Override
+    protected Group createShape() {
+        Group group = new Group(shapes.values().stream()
+            .collect(Collectors.toList())
+        );
+        Bounds bounds = group.getLayoutBounds();
+        double endY = bounds.getHeight() + FOOT_HEIGHT * getCalibrationBase();
+        Line line = new Line(0, 0, 0, endY);
+        line.setStrokeWidth(0.16 * getCalibrationBase());
+        group.getChildren().add(line);
+        line.toBack();
+
+        bounds = group.getLayoutBounds();
+        double x = bounds.getWidth() / 2;
+        Line bottomLine = new Line(-x, endY, x, endY);
+        bottomLine.setStrokeWidth(0.16 * getCalibrationBase());
+        group.getChildren().add(bottomLine);
+        bottomLine.toBack();
+        return group;
     }
 
     private Shape createShape(Element.Type type) {
@@ -137,26 +159,5 @@ final class CompositeElement extends ElementBase<Group> {
             e.printStackTrace();
             throw new IllegalArgumentException(e);
         }
-    }
-
-    @Nonnull
-    @Override
-    protected Group createShape() {
-        Group group = new Group(shapes.values().stream()
-            .collect(Collectors.toList()));
-        Bounds bounds = group.getLayoutBounds();
-        double endY = bounds.getHeight() + FOOT_HEIGHT * getCalibrationBase();
-        Line line = new Line(0, 0, 0, endY);
-        line.setStrokeWidth(0.16 * getCalibrationBase());
-        group.getChildren().add(line);
-        line.toBack();
-
-        bounds = group.getLayoutBounds();
-        double x = bounds.getWidth() / 2;
-        Line bottomLine = new Line(-x, endY, x, endY);
-        bottomLine.setStrokeWidth(0.16 * getCalibrationBase());
-        group.getChildren().add(bottomLine);
-        bottomLine.toBack();
-        return group;
     }
 }

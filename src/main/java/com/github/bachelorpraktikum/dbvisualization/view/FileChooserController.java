@@ -29,11 +29,11 @@ public class FileChooserController implements SourceChooser {
     private Button explorerButton;
     private FileChooser fileChooser;
 
-    private ReadOnlyObjectWrapper<URI> fileURIProperty;
+    private ReadOnlyObjectWrapper<URI> fileUriProperty;
 
     @FXML
     private void initialize() {
-        fileURIProperty = new ReadOnlyObjectWrapper<>();
+        fileUriProperty = new ReadOnlyObjectWrapper<>();
         fileChooser = new FileChooser();
         String initialDirectory = getInitialDirectory();
         setInitialDirectory(initialDirectory);
@@ -45,13 +45,13 @@ public class FileChooserController implements SourceChooser {
             }
         });
 
-        pathField.textProperty().addListener((o, oldValue, newValue) -> {
+        pathField.textProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue == null || newValue.trim().isEmpty()) {
-                fileURIProperty.set(null);
+                fileUriProperty.set(null);
                 return;
             }
             URI uri = new File(newValue).getAbsoluteFile().toURI();
-            fileURIProperty.set(uri);
+            fileUriProperty.set(uri);
         });
 
         pathField.addEventHandler(KeyEvent.KEY_PRESSED, event -> {
@@ -89,36 +89,24 @@ public class FileChooserController implements SourceChooser {
         fileChooser.setInitialDirectory(new File(initialDirectory));
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Nullable
     @Override
-    public URI getResourceURI() {
-        return fileURIProperty.getValue();
+    public URI getResourceUri() {
+        return fileUriProperty.getValue();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Nonnull
     @Override
-    public ReadOnlyObjectProperty<URI> resourceURIProperty() {
-        return fileURIProperty.getReadOnlyProperty();
+    public ReadOnlyObjectProperty<URI> resourceUriProperty() {
+        return fileUriProperty.getReadOnlyProperty();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Nonnull
     @Override
     public String getRootPaneId() {
         return rootPane.getId();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Nonnull
     @Override
     public DataSource.Type getResourceType() {
@@ -126,10 +114,10 @@ public class FileChooserController implements SourceChooser {
     }
 
     @Override
-    public void setInitialURI(URI initialURI) {
-        setInitialDirectory(initialURI.getPath());
+    public void setInitialUri(URI initialUri) {
+        setInitialDirectory(initialUri.getPath());
 
-        ConfigFile.getInstance().put(getLogFileKey(), initialURI.getPath());
+        ConfigFile.getInstance().put(getLogFileKey(), initialUri.getPath());
     }
 
     /**

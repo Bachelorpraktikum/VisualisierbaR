@@ -12,15 +12,15 @@ import javax.annotation.Nullable;
 
 public abstract class ElementDetailBase<E> {
 
-    private final E e;
+    private final E element;
     private int time;
 
-    ElementDetailBase(E e) {
-        this.e = e;
+    ElementDetailBase(E element) {
+        this.element = element;
     }
 
     E getElement() {
-        return e;
+        return element;
     }
 
     abstract String getName();
@@ -64,8 +64,8 @@ public abstract class ElementDetailBase<E> {
             return shape;
         } catch (IOException | IllegalStateException e) {
             return new Rectangle(20, 20);
-            // e.printStackTrace();
-            // throw new IllegalStateException(e);
+            // element.printStackTrace();
+            // throw new IllegalStateException(element);
         }
     }
 }

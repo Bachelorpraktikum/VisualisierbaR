@@ -14,12 +14,12 @@ import javax.annotation.ParametersAreNonnullByDefault;
 public final class GraphObject<T> {
 
     private static final Object TRAINS = new Object();
-    private final T t;
+    private final T object;
     private final Shape image;
     private final String name;
 
-    private GraphObject(T t, Shape image, String name) {
-        this.t = t;
+    private GraphObject(T object, Shape image, String name) {
+        this.object = object;
         this.image = image;
         this.name = name;
     }
@@ -77,7 +77,7 @@ public final class GraphObject<T> {
     }
 
     public T getWrapped() {
-        return t;
+        return object;
     }
 
     public Shape getImage() {
@@ -89,21 +89,21 @@ public final class GraphObject<T> {
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) {
+    public boolean equals(Object other) {
+        if (this == other) {
             return true;
         }
-        if (o == null || getClass() != o.getClass()) {
+        if (other == null || getClass() != other.getClass()) {
             return false;
         }
 
-        GraphObject<?> that = (GraphObject<?>) o;
+        GraphObject<?> that = (GraphObject<?>) other;
 
-        return t.equals(that.t);
+        return object.equals(that.object);
     }
 
     @Override
     public int hashCode() {
-        return t.hashCode();
+        return object.hashCode();
     }
 }

@@ -59,7 +59,7 @@ public class SourceController implements SourceChooser {
         );
 
         // Enable the "Open" button if path is set
-        resourceURIProperty().addListener((observable, oldValue, newValue) ->
+        resourceUriProperty().addListener((observable, oldValue, newValue) ->
             openSource.setDisable(newValue == null || newValue.toString().isEmpty())
         );
 
@@ -69,7 +69,7 @@ public class SourceController implements SourceChooser {
     }
 
     /**
-     * Adds an EventHandler to the button which fires the button on pressing enter
+     * Adds an EventHandler to the button which fires the button on pressing enter.
      *
      * @param button Button to add eventHandler to
      */
@@ -98,11 +98,11 @@ public class SourceController implements SourceChooser {
         return null;
     }
 
-    public void setInitialDirectories(Map<DataSource.Type, URI> typeURIMapping) {
-        for (Map.Entry<DataSource.Type, URI> entry : typeURIMapping.entrySet()) {
+    public void setInitialDirectories(Map<DataSource.Type, URI> typeUriMapping) {
+        for (Map.Entry<DataSource.Type, URI> entry : typeUriMapping.entrySet()) {
             SourceChooser controller = getControllerByType(entry.getKey());
             if (controller != null) {
-                controller.setInitialURI(entry.getValue());
+                controller.setInitialUri(entry.getValue());
             }
         }
     }
@@ -117,18 +117,12 @@ public class SourceController implements SourceChooser {
         return null;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Nonnull
     @Override
     public String getRootPaneId() {
         return tabPane.getId();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Nonnull
     @Override
     public DataSource.Type getResourceType() {
@@ -136,26 +130,20 @@ public class SourceController implements SourceChooser {
     }
 
     @Override
-    public void setInitialURI(URI initialURI) {
+    public void setInitialUri(URI initialUri) {
 
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     @Nonnull
-    public URI getResourceURI() {
-        return resourceURIProperty().getValue();
+    public URI getResourceUri() {
+        return resourceUriProperty().getValue();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Nonnull
     @Override
-    public ReadOnlyProperty<URI> resourceURIProperty() {
-        return activeController.resourceURIProperty();
+    public ReadOnlyProperty<URI> resourceUriProperty() {
+        return activeController.resourceUriProperty();
     }
 
     /**
@@ -186,10 +174,10 @@ public class SourceController implements SourceChooser {
         }
         MainController controller = mainLoader.getController();
         controller.setStage(stage);
-        controller.setDataSource(new DataSource(getResourceType(), getResourceURI()));
+        controller.setDataSource(new DataSource(getResourceType(), getResourceUri()));
 
         String initialDirKey = String.format(geInitialDirKey(), getResourceType().toString());
-        String parentFolder = new File(getResourceURI()).getParent();
+        String parentFolder = new File(getResourceUri()).getParent();
         ConfigFile.getInstance().put(initialDirKey, parentFolder);
     }
 

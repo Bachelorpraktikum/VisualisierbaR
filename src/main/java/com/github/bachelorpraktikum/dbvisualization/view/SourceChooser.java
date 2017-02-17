@@ -24,7 +24,7 @@ interface SourceChooser {
      * @return URL for the resource
      */
     @Nullable
-    URI getResourceURI();
+    URI getResourceUri();
 
     /**
      * Returns the property for the resource url.
@@ -32,7 +32,7 @@ interface SourceChooser {
      * @return Property for the resource url
      */
     @Nonnull
-    ReadOnlyProperty<URI> resourceURIProperty();
+    ReadOnlyProperty<URI> resourceUriProperty();
 
     /**
      * Returns the id of the root pane.
@@ -52,7 +52,9 @@ interface SourceChooser {
     DataSource.Type getResourceType();
 
     /**
-     * Sets the initial uri.
+     * Sets the initial URI.
+     *
+     * @param initialUri the URI
      */
-    void setInitialURI(URI initialURI);
+    void setInitialUri(URI initialUri);
 }

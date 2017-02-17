@@ -32,10 +32,10 @@ final class WeichenpunktElement extends ElementBase<Polygon> {
     protected void relocate(Polygon shape) {
         CoordinatesAdapter adapter = getCoordinatesAdapter();
         Point2D[] others = new Point2D[2];
-        int i = 0;
+        int index = 0;
         for (Element element : aSwitch.getElements()) {
             if (!element.equals(getMainElement())) {
-                others[i++] = adapter.apply(element.getNode());
+                others[index++] = adapter.apply(element.getNode());
             }
         }
 
@@ -48,8 +48,8 @@ final class WeichenpunktElement extends ElementBase<Polygon> {
         Point2D fin1 = start.add(vec1.normalize().multiply(0.3 * getCalibrationBase()));
         Point2D fin2 = start.add(vec2.normalize().multiply(0.3 * getCalibrationBase()));
 
-        ObservableList<Double> p = shape.getPoints();
-        p.addAll(start.getX(), start.getY(),
+        ObservableList<Double> points = shape.getPoints();
+        points.addAll(start.getX(), start.getY(),
             fin1.getX(), fin1.getY(),
             fin2.getX(), fin2.getY());
     }

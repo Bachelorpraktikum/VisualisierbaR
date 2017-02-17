@@ -55,7 +55,7 @@
         <Insets bottom="3" left="10" right="10" top="3"/>
       </VBox.margin>
     </AnchorPane>
-    <LineChart fx:id="vt_chart" createSymbols="false"
+    <LineChart fx:id="vtChart" createSymbols="false"
       legendVisible="false" prefHeight="0.0" prefWidth="0.0" title="%title_vt">
       <xAxis>
         <NumberAxis side="BOTTOM" label="s"/>
@@ -64,7 +64,7 @@
         <NumberAxis side="LEFT" label="m/s"/>
       </yAxis>
     </LineChart>
-    <LineChart fx:id="vd_chart" createSymbols="false"
+    <LineChart fx:id="vdChart" createSymbols="false"
       legendVisible="false" prefHeight="0.0" prefWidth="0.0" title="%title_vd">
       <xAxis>
         <NumberAxis side="BOTTOM" label="km"/>
@@ -73,7 +73,7 @@
         <NumberAxis side="LEFT" label="m/s"/>
       </yAxis>
     </LineChart>
-    <LineChart fx:id="dt_chart" createSymbols="false"
+    <LineChart fx:id="dtChart" createSymbols="false"
       legendVisible="false" prefHeight="0.0" prefWidth="0.0" title="%title_dt">
       <xAxis>
         <NumberAxis side="BOTTOM" label="s"/>

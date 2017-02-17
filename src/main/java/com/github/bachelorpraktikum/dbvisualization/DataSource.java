@@ -26,7 +26,7 @@ public final class DataSource {
          */
         LOG_FILE,
         /**
-         * A database which describes a Graph without events
+         * A database which describes a Graph without events.
          */
         DATABASE
     }

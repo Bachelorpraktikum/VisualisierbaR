@@ -29,8 +29,9 @@ abstract class ElementBase<T extends Node> extends GraphShapeBase<Element, T> {
         this.node = node;
         listeners = new ArrayList<>(elements.size());
         for (Element element : elements) {
-            ChangeListener<Element.State> listener = (observable, oldValue, newValue) -> displayState(
-                element);
+            ChangeListener<Element.State> listener = (observable, oldValue, newValue) -> {
+                displayState(element);
+            };
             listeners.add(listener);
             element.stateProperty().addListener(new WeakChangeListener<>(listener));
         }
@@ -82,10 +83,10 @@ abstract class ElementBase<T extends Node> extends GraphShapeBase<Element, T> {
     }
 
     @Override
-    protected void initializedShape(T t) {
+    protected void initializedShape(T node) {
         for (Element element : elements) {
-            Shape shape = getShape(element);
-            TooltipUtil.install(shape, new Tooltip(element.getName()));
+            Shape elementShape = getShape(element);
+            TooltipUtil.install(elementShape, new Tooltip(element.getName()));
             displayState(element);
         }
     }
@@ -94,16 +95,16 @@ abstract class ElementBase<T extends Node> extends GraphShapeBase<Element, T> {
         getShape(element).setFill(element.getState().getColor());
     }
 
-    protected final void rotateAccordingToOffset(T t) {
-        rotateAccordingToOffset(t, getOffset());
+    protected final void rotateAccordingToOffset(T node) {
+        rotateAccordingToOffset(node, getOffset());
     }
 
-    protected final void rotateAccordingToOffset(T t, Point2D offset) {
+    protected final void rotateAccordingToOffset(T node, Point2D offset) {
         double angle = new Point2D(0, 1).angle(offset);
         if (offset.getX() > 0) {
             angle = -angle;
         }
         angle += 180;
-        t.setRotate(angle);
+        node.setRotate(angle);
     }
 }
