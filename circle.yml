@@ -1,8 +1,7 @@
 
 dependencies:
   override:
-      - mvn --fail-never dependency:go-offline || true
-      - mvn --fail-never dependency:resolve-plugins || true
+      - mvn --fail-never dependency:go-offline dependency:resolve-plugins || true
 
 test:
   post:
