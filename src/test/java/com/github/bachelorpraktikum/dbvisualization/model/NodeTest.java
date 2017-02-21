@@ -91,7 +91,7 @@ public class NodeTest {
     @Test
     public void testAddElement() {
         Node node = Node.in(context).create("node", new Coordinates(0, 0));
-        Element element = Element.in(context).create("element", Element.Type.HauptSignalImpl, node, Element.State.NOSIG);
+        Element element = Element.in(context).create("element", Element.Type.HauptSignal, node, Element.State.NOSIG);
 
         Node testNode = Node.in(context).create("testNode", new Coordinates(10, 0));
         testNode.addElement(element);

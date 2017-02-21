@@ -52,19 +52,19 @@ public final class Graph {
         for (Edge edge : Edge.in(context).getAll()) {
             GraphShape<Edge> shape = new Rail(edge, coordinatesAdapter);
             edges.put(edge, shape);
-            group.getChildren().add(shape.getShape());
+            group.getChildren().add(shape.getFullNode());
         }
 
         for (Node node : Node.in(context).getAll()) {
             GraphShape<Node> shape = new Junction(node, coordinatesAdapter);
             nodes.put(node, shape);
-            group.getChildren().add(shape.getShape());
+            group.getChildren().add(shape.getFullNode());
 
             for (GraphShape<Element> elementShape : Elements.create(node, coordinatesAdapter)) {
                 for (Element element : elementShape.getRepresentedObjects()) {
                     elements.put(element, elementShape);
                 }
-                group.getChildren().add(elementShape.getShape());
+                group.getChildren().add(elementShape.getFullNode());
             }
         }
     }

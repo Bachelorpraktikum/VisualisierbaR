@@ -5,22 +5,27 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.WeakHashMap;
+import javafx.beans.property.Property;
+import javafx.beans.property.SimpleObjectProperty;
+import javafx.scene.shape.Polygon;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 
 /**
  * Represents a switch consisting of exactly 3 {@link Element elements} of type {@link
- * Element.Type#WeichenPunktImpl}.
+ * Element.Type#WeichenPunkt}.
  */
 @ParametersAreNonnullByDefault
-public final class Switch {
+public final class Switch implements Shapeable<Polygon> {
 
     @Nonnull
     private final List<Element> elements;
+    private final Property<Shapeable.State> stateProperty;
 
     private Switch() {
         elements = new ArrayList<>(3);
+        stateProperty = new SimpleObjectProperty<>();
     }
 
     private void addElement(Element element) {
@@ -75,6 +80,21 @@ public final class Switch {
     @Nonnull
     static Factory in(Context context) {
         return Factory.getInstance(context);
+    }
+
+    @Override
+    public String getName() {
+        return toString();
+    }
+
+    @Override
+    public Polygon createShape() {
+        return new Polygon();
+    }
+
+    @Override
+    public Property<State> stateProperty() {
+        return stateProperty;
     }
 
     static final class Factory {

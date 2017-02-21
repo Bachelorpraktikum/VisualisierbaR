@@ -3,7 +3,10 @@ package com.github.bachelorpraktikum.dbvisualization.model.train;
 import com.github.bachelorpraktikum.dbvisualization.model.Context;
 import com.github.bachelorpraktikum.dbvisualization.model.Edge;
 import com.github.bachelorpraktikum.dbvisualization.model.Event;
+import com.github.bachelorpraktikum.dbvisualization.model.GraphObject;
 import com.github.bachelorpraktikum.dbvisualization.model.Node;
+import com.github.bachelorpraktikum.dbvisualization.model.Shapeable;
+import java.net.URL;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -15,9 +18,13 @@ import java.util.Objects;
 import java.util.WeakHashMap;
 import java.util.function.Function;
 import java.util.logging.Logger;
+import javafx.beans.property.Property;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Point2D;
+import javafx.scene.shape.Path;
+import javafx.scene.shape.Shape;
 import javax.annotation.Nonnull;
 import javax.annotation.ParametersAreNonnullByDefault;
 import javax.annotation.concurrent.Immutable;
@@ -31,7 +38,7 @@ import javax.annotation.concurrent.Immutable;
  * immutable.</p>
  */
 @ParametersAreNonnullByDefault
-public class Train {
+public class Train implements GraphObject<Shape>, Shapeable {
 
     private static final Logger log = Logger.getLogger(Train.class.getName());
 
@@ -40,6 +47,7 @@ public class Train {
     @Nonnull
     private final String readableName;
     private final int length;
+    private final Property<Shapeable.State> stateProperty;
 
     @Nonnull
     private final ObservableList<TrainEvent> events;
@@ -62,6 +70,25 @@ public class Train {
 
         events = FXCollections.observableArrayList();
         events.add(new TrainEvent.Start(this));
+        stateProperty = new SimpleObjectProperty<>(Shapeable.State.AUTO);
+    }
+
+    @Override
+    public Path createShape() {
+        return new Path();
+    }
+
+    @Override
+    public Shape createIconShape() {
+        URL url = Train.class.getResource("../symbols/train.fxml");
+        Shape shape = Shapeable.createShape(url);
+        shape.setRotate(180);
+        return shape;
+    }
+
+    @Override
+    public Property<Shapeable.State> stateProperty() {
+        return stateProperty;
     }
 
     /**
@@ -139,14 +166,6 @@ public class Train {
             return train;
         }
 
-        @Nonnull
-        public Train getByReadable(String name) {
-            return trains.values().stream()
-                .filter(t -> t.getReadableName().equals(name))
-                .findAny()
-                .orElseThrow(() -> new IllegalArgumentException("Unknown train: " + name));
-        }
-
         /**
          * Gets all trains in this {@link Context}.
          *
@@ -170,24 +189,21 @@ public class Train {
         return Factory.getInstance(context);
     }
 
-    /**
-     * Gets the unique name of this {@link Train}.
-     *
-     * @return the name
-     */
+    @Override
     @Nonnull
     public String getName() {
         return name;
     }
 
-    /**
-     * Gets the human readable name of this {@link Train}.
-     *
-     * @return the human readable name
-     */
+    @Override
     @Nonnull
     public String getReadableName() {
         return readableName;
+    }
+
+    @Override
+    public Shapeable getShapeable() {
+        return this;
     }
 
     /**

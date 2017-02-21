@@ -41,4 +41,9 @@ final class Junction extends SingleGraphShapeBase<Node, Circle> {
     public Circle createShape() {
         return new Circle();
     }
+
+    @Override
+    protected javafx.scene.Node createHighlight(Circle circle) {
+        return createCircleHighlight(circle);
+    }
 }

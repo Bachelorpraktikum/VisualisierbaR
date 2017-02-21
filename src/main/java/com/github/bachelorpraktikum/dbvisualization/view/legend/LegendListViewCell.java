@@ -1,5 +1,7 @@
 package com.github.bachelorpraktikum.dbvisualization.view.legend;
 
+import com.github.bachelorpraktikum.dbvisualization.model.Shapeable;
+import com.github.bachelorpraktikum.dbvisualization.view.ContextHolder;
 import java.io.IOException;
 import javafx.beans.binding.Binding;
 import javafx.beans.binding.Bindings;
@@ -15,7 +17,7 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.Shape;
 
-public class LegendListViewCell extends ListCell<LegendItem> {
+public class LegendListViewCell extends ListCell<Shapeable> {
 
     @FXML
     private Label eleName;
@@ -26,9 +28,8 @@ public class LegendListViewCell extends ListCell<LegendItem> {
     @FXML
     private AnchorPane cell;
 
-    private Binding<LegendItem.State> binding;
 
-    protected void updateItem(LegendItem element, boolean empty) {
+    protected void updateItem(Shapeable element, boolean empty) {
         super.updateItem(element, empty);
         if (empty) {
             setText(null);
@@ -45,8 +46,11 @@ public class LegendListViewCell extends ListCell<LegendItem> {
             }
 
             String name = element.getName();
-            Shape shape = element.getImage();
+            Shape shape = element.createIconShape();
 
+            if(shape == null) {
+                System.out.println(element.getClass().getName());
+            }
             resizeShape(shape, 20);
 
             eleName.setText(name);
@@ -56,15 +60,16 @@ public class LegendListViewCell extends ListCell<LegendItem> {
 
             setGraphic(cell);
 
-            binding = Bindings.createObjectBinding(() -> {
+            Binding<Shapeable.State> binding = Bindings.createObjectBinding(() -> {
                 if (checkbox.isIndeterminate()) {
-                    return LegendItem.State.AUTO;
+                    return Shapeable.State.AUTO;
                 } else if (checkbox.isSelected()) {
-                    return LegendItem.State.ENABLED;
+                    return Shapeable.State.ENABLED;
                 } else {
-                    return LegendItem.State.DISABLED;
+                    return Shapeable.State.DISABLED;
                 }
             }, checkbox.selectedProperty(), checkbox.indeterminateProperty());
+            ContextHolder.getInstance().getContext().addObject(binding);
             element.stateProperty().bind(binding);
         }
     }

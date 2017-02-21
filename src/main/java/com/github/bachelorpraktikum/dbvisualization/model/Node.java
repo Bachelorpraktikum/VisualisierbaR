@@ -10,6 +10,9 @@ import java.util.Set;
 import java.util.WeakHashMap;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
+import javafx.beans.property.Property;
+import javafx.beans.property.SimpleObjectProperty;
+import javafx.scene.shape.Circle;
 import javax.annotation.Nonnull;
 import javax.annotation.ParametersAreNonnullByDefault;
 
@@ -18,7 +21,7 @@ import javax.annotation.ParametersAreNonnullByDefault;
  * There is only one instance of Node per name per {@link Context}.
  */
 @ParametersAreNonnullByDefault
-public final class Node {
+public final class Node implements GraphObject<Circle>, Shapeable {
 
     private static final Logger log = Logger.getLogger(Node.class.getName());
 
@@ -30,12 +33,20 @@ public final class Node {
     private final Set<Edge> edges;
     @Nonnull
     private final Set<Element> elements;
+    @Nonnull
+    private final Property<State> stateProperty;
 
     private Node(String name, Coordinates coordinates) {
         this.name = Objects.requireNonNull(name);
         this.coordinates = Objects.requireNonNull(coordinates);
         this.edges = new HashSet<>();
         this.elements = new HashSet<>();
+        this.stateProperty = new SimpleObjectProperty<>();
+    }
+
+    @Override
+    public Circle createShape() {
+        return new Circle(1);
     }
 
     /**
@@ -134,14 +145,15 @@ public final class Node {
         edges.add(Objects.requireNonNull(edge));
     }
 
-    /**
-     * Gets the unique name of this node in its context.
-     *
-     * @return the name
-     */
+    @Override
     @Nonnull
     public String getName() {
         return name;
+    }
+
+    @Override
+    public Shapeable getShapeable() {
+        return this;
     }
 
     /**
@@ -193,6 +205,11 @@ public final class Node {
 
     void addElement(Element element) {
         elements.add(Objects.requireNonNull(element));
+    }
+
+    @Override
+    public Property<State> stateProperty() {
+        return stateProperty;
     }
 
     @Override

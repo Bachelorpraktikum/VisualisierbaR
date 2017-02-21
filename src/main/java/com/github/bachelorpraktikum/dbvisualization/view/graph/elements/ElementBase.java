@@ -107,4 +107,9 @@ abstract class ElementBase<T extends Node> extends GraphShapeBase<Element, T> {
         angle += 180;
         node.setRotate(angle);
     }
+
+    @Override
+    protected Node createHighlight(T node) {
+        return createCircleHighlight(node);
+    }
 }

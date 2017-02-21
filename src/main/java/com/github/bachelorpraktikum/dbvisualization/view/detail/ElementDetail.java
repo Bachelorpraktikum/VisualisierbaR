@@ -4,13 +4,14 @@ import com.github.bachelorpraktikum.dbvisualization.model.Coordinates;
 import com.github.bachelorpraktikum.dbvisualization.model.Element;
 import java.net.URL;
 import java.util.List;
+import javafx.beans.property.IntegerProperty;
 import javafx.geometry.Point2D;
 import javax.annotation.Nullable;
 
 public class ElementDetail extends ElementDetailBase<Element> {
 
-    public ElementDetail(Element element) {
-        super(element);
+    public ElementDetail(Element element, IntegerProperty time) {
+        super(element, time);
     }
 
     @Override
@@ -21,12 +22,6 @@ public class ElementDetail extends ElementDetailBase<Element> {
         } catch (IndexOutOfBoundsException ignored) {
             return getElement().getName();
         }
-    }
-
-    @Override
-    @Nullable
-    List<URL> getImageUrls() {
-        return getElement().getType().getImageUrls();
     }
 
     @Override

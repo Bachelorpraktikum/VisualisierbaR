@@ -117,47 +117,19 @@ final class CompositeElement extends ElementBase<Group> {
 
     private Shape createShape(Element.Type type) {
         double maxWidth = MAX_SHAPE_WIDTH;
-        Shape shape = null;
+        Shape shape = type.createShape();
         switch (type) {
-            case VorSignalImpl:
-            case HauptSignalImpl:
-                shape = createPathShape(type);
-                break;
-            case GeschwindigkeitsAnzeigerImpl:
-                shape = new Polygon(0, 2, 1, 0, 2, 2);
+            case GeschwindigkeitsAnzeiger:
                 maxWidth *= GESCHWINDIGKEITS_ANZEIGER_WIDTH_FACTOR;
                 break;
             case GeschwindigkeitsVoranzeiger:
-                shape = new Polygon(0, 0, 1, 2, 2, 0);
                 maxWidth *= GESCHWINDIGKEITS_ANZEIGER_WIDTH_FACTOR;
                 break;
-            case UnknownElement:
             default:
-                shape = new Rectangle(2, 2);
                 break;
         }
         resizeNode(shape, getCalibrationBase() * maxWidth);
         return shape;
     }
 
-    private Shape createPathShape(Element.Type type) {
-        try {
-            Shape shape = null;
-
-            for (URL url : type.getImageUrls()) {
-                FXMLLoader loader = new FXMLLoader(url);
-                if (shape == null) {
-                    shape = loader.load();
-                } else {
-                    shape = Shape.union(shape, loader.load());
-                }
-            }
-
-            shape.setRotate(90);
-            return shape;
-        } catch (IOException e) {
-            e.printStackTrace();
-            throw new IllegalArgumentException(e);
-        }
-    }
 }

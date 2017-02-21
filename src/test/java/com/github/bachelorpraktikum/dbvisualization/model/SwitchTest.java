@@ -27,11 +27,11 @@ public class SwitchTest {
         Node node2 = Node.in(context).create("n2", new Coordinates(1, 0));
         Node node3 = Node.in(context).create("n3", new Coordinates(2, 0));
 
-        Element element1 = Element.in(context).create("e1", Element.Type.WeichenPunktImpl, node1, Element.State.NOSIG);
-        Element element2 = Element.in(context).create("e2", Element.Type.WeichenPunktImpl, node2, Element.State.FAHRT);
-        Element element3 = Element.in(context).create("e3", Element.Type.WeichenPunktImpl, node3, Element.State.STOP);
+        Element element1 = Element.in(context).create("e1", Element.Type.WeichenPunkt, node1, Element.State.NOSIG);
+        Element element2 = Element.in(context).create("e2", Element.Type.WeichenPunkt, node2, Element.State.FAHRT);
+        Element element3 = Element.in(context).create("e3", Element.Type.WeichenPunkt, node3, Element.State.STOP);
 
-        return element1.getSwitch().get();
+        return element1.getSwitch();
     }
 
     @Test
@@ -40,17 +40,13 @@ public class SwitchTest {
         Node node2 = Node.in(context).create("n2", new Coordinates(1, 0));
         Node node3 = Node.in(context).create("n3", new Coordinates(2, 0));
 
-        Element element1 = Element.in(context).create("e1", Element.Type.WeichenPunktImpl, node1, Element.State.NOSIG);
-        Element element2 = Element.in(context).create("e2", Element.Type.WeichenPunktImpl, node2, Element.State.FAHRT);
-        Element element3 = Element.in(context).create("e3", Element.Type.WeichenPunktImpl, node3, Element.State.STOP);
+        Element element1 = Element.in(context).create("e1", Element.Type.WeichenPunkt, node1, Element.State.NOSIG);
+        Element element2 = Element.in(context).create("e2", Element.Type.WeichenPunkt, node2, Element.State.FAHRT);
+        Element element3 = Element.in(context).create("e3", Element.Type.WeichenPunkt, node3, Element.State.STOP);
 
-        assertTrue(element1.getSwitch().isPresent());
-        assertTrue(element2.getSwitch().isPresent());
-        assertTrue(element3.getSwitch().isPresent());
-
-        Switch switch1 = element1.getSwitch().get();
-        Switch switch2 = element2.getSwitch().get();
-        Switch switch3 = element3.getSwitch().get();
+        Switch switch1 = element1.getSwitch();
+        Switch switch2 = element2.getSwitch();
+        Switch switch3 = element3.getSwitch();
 
         assertEquals(switch1, switch1);
         assertEquals(switch1, switch2);
@@ -66,7 +62,7 @@ public class SwitchTest {
         Switch testSwitch = createSwitch();
 
         Node node1 = Node.in(context).create("n", new Coordinates(10, 0));
-        Element element1 = Element.in(context).create("e", Element.Type.WeichenPunktImpl, node1, Element.State.NOSIG);
+        Element element1 = Element.in(context).create("e", Element.Type.WeichenPunkt, node1, Element.State.NOSIG);
 
         assertEquals(3, testSwitch.getElements().size());
     }
@@ -76,10 +72,10 @@ public class SwitchTest {
         Node node1 = Node.in(context).create("n1", new Coordinates(0, 0));
         Node node2 = Node.in(context).create("n2", new Coordinates(1, 0));
 
-        Element element1 = Element.in(context).create("e1", Element.Type.WeichenPunktImpl, node1, Element.State.NOSIG);
-        Element element2 = Element.in(context).create("e2", Element.Type.WeichenPunktImpl, node2, Element.State.FAHRT);
+        Element element1 = Element.in(context).create("e1", Element.Type.WeichenPunkt, node1, Element.State.NOSIG);
+        Element element2 = Element.in(context).create("e2", Element.Type.WeichenPunkt, node2, Element.State.FAHRT);
 
-        Switch switch1 = element1.getSwitch().get();
+        Switch switch1 = element1.getSwitch();
 
         expected.expect(IllegalStateException.class);
         switch1.getElements();

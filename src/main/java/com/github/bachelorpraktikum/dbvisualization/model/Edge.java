@@ -7,6 +7,10 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.WeakHashMap;
 import java.util.logging.Logger;
+import javafx.beans.property.Property;
+import javafx.beans.property.SimpleObjectProperty;
+import javafx.scene.shape.Line;
+import javafx.scene.shape.Shape;
 import javax.annotation.Nonnull;
 import javax.annotation.ParametersAreNonnullByDefault;
 import javax.annotation.concurrent.Immutable;
@@ -17,7 +21,7 @@ import javax.annotation.concurrent.Immutable;
  */
 @Immutable
 @ParametersAreNonnullByDefault
-public final class Edge {
+public final class Edge implements GraphObject<Line>, Shapeable {
 
     private static final Logger log = Logger.getLogger(Edge.class.getName());
 
@@ -28,15 +32,18 @@ public final class Edge {
     private final Node node1;
     @Nonnull
     private final Node node2;
+    private final Property<State> stateProperty;
 
     private Edge(String name, int length, Node node1, Node node2) {
         this.name = Objects.requireNonNull(name);
         this.length = length;
+
         this.node1 = Objects.requireNonNull(node1);
         this.node2 = Objects.requireNonNull(node2);
-
         node1.addEdge(this);
         node2.addEdge(this);
+
+        this.stateProperty = new SimpleObjectProperty<>();
     }
 
     /**
@@ -188,14 +195,25 @@ public final class Edge {
         }
     }
 
-    /**
-     * Gets the unique name of this {@link Edge}.
-     *
-     * @return the name
-     */
+    @Override
     @Nonnull
     public String getName() {
         return name;
+    }
+
+    @Override
+    public Shape createShape() {
+        return new Line();
+    }
+
+    @Override
+    public Property<State> stateProperty() {
+        return stateProperty;
+    }
+
+    @Override
+    public Shapeable getShapeable() {
+        return this;
     }
 
     @Override

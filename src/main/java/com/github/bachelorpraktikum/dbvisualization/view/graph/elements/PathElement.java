@@ -44,35 +44,9 @@ class PathElement extends SingleElementBase<Shape> {
         shape.setScaleY(scale);
     }
 
-    protected List<URL> getImageUrls() {
-        return getElement().getType().getImageUrls();
-    }
-
     @Nonnull
     @Override
     protected Shape createShape() {
-        try {
-            Shape shape = null;
-
-            for (URL url : getImageUrls()) {
-                FXMLLoader loader = new FXMLLoader(url);
-                if (shape == null) {
-                    shape = loader.load();
-                } else {
-                    shape = Shape.union(shape, loader.load());
-                }
-            }
-
-            /*
-            System.out.println(shape.getLayoutBounds());
-            System.out.println(shape.getBoundsInLocal());
-            System.out.println(shape.getBoundsInParent());
-*/
-
-            return shape;
-        } catch (IOException e) {
-            e.printStackTrace();
-            throw new IllegalStateException(e);
-        }
+        return getElement().getType().createShape();
     }
 }

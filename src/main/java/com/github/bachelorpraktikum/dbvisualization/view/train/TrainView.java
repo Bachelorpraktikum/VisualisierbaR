@@ -5,6 +5,7 @@ import com.github.bachelorpraktikum.dbvisualization.model.Context;
 import com.github.bachelorpraktikum.dbvisualization.model.Node;
 import com.github.bachelorpraktikum.dbvisualization.model.train.Train;
 import com.github.bachelorpraktikum.dbvisualization.view.ContextHolder;
+import com.github.bachelorpraktikum.dbvisualization.view.Highlightable;
 import com.github.bachelorpraktikum.dbvisualization.view.TooltipUtil;
 import com.github.bachelorpraktikum.dbvisualization.view.graph.Graph;
 import java.util.Iterator;
@@ -13,8 +14,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.WeakHashMap;
 import java.util.function.Function;
+import javafx.beans.binding.Bindings;
+import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.value.ObservableBooleanValue;
 import javafx.event.EventHandler;
 import javafx.geometry.Bounds;
 import javafx.geometry.Point2D;
@@ -29,7 +34,7 @@ import javafx.scene.shape.PathElement;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.StrokeLineCap;
 
-public final class TrainView {
+public final class TrainView implements Highlightable {
 
     private static final double TRAIN_WIDTH = 0.4;
     private static final double HIGHLIGHT_FACTOR = 0.6;
@@ -42,7 +47,7 @@ public final class TrainView {
     private final Paint color;
     private final Path path;
     private final Rectangle highlightRectangle;
-    private boolean isHighlighted = false;
+    private BooleanProperty highlightedProperty;
 
     private static final Paint[] COLORS = ConfigFile.getInstance().getTrainColors();
 
@@ -52,11 +57,13 @@ public final class TrainView {
         this.calibrationBase = graph.getCoordinatesAdapter().getCalibrationBase();
         this.timeProperty = new SimpleIntegerProperty(0);
         this.color = generateColor();
+        this.highlightedProperty = new SimpleBooleanProperty(false);
 
         this.highlightRectangle = new Rectangle();
         highlightRectangle.setFill(Color.TRANSPARENT);
         highlightRectangle.setStroke(Color.BLUE);
         highlightRectangle.setStrokeWidth(0.05 * calibrationBase);
+        highlightRectangle.visibleProperty().bind(highlightedProperty());
         graph.getGroup().getChildren().add(highlightRectangle);
 
         this.path = new Path();
@@ -66,8 +73,17 @@ public final class TrainView {
         graph.getGroup().getChildren().add(path);
         path.toBack();
 
-        timeProperty
-            .addListener(((observable, oldValue, newValue) -> updateTrain(newValue.intValue())));
+        Context context = ContextHolder.getInstance().getContext();
+        ObservableBooleanValue visibleBinding = Bindings.createBooleanBinding(() ->
+                train.isVisible(path.getBoundsInParent()),
+            train.stateProperty()
+        );
+        context.addObject(visibleBinding);
+        path.visibleProperty().bind(visibleBinding);
+
+        timeProperty.addListener((observable, oldValue, newValue) ->
+            updateTrain(newValue.intValue())
+        );
         updateTrain(0);
 
         TooltipUtil.install(path, new Tooltip(train.getReadableName() + " " + train.getLength()));
@@ -112,8 +128,7 @@ public final class TrainView {
             path.setStroke(color);
         }
 
-        highlightRectangle.setVisible(isHighlighted());
-        if (isHighlighted()) {
+        if (highlightedProperty().get()) {
             Bounds pathBounds = path.getBoundsInParent();
             double width = pathBounds.getWidth() * HIGHLIGHT_FACTOR;
             double height = pathBounds.getHeight() * HIGHLIGHT_FACTOR;
@@ -142,11 +157,8 @@ public final class TrainView {
         return COLORS[count];
     }
 
-    public boolean isHighlighted() {
-        return isHighlighted;
-    }
-
-    public void setHighlighted(boolean highlighted) {
-        isHighlighted = highlighted;
+    @Override
+    public BooleanProperty highlightedProperty() {
+        return highlightedProperty;
     }
 }

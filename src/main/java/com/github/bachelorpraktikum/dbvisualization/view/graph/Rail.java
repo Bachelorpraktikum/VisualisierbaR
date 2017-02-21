@@ -4,6 +4,8 @@ import com.github.bachelorpraktikum.dbvisualization.model.Edge;
 import com.github.bachelorpraktikum.dbvisualization.view.TooltipUtil;
 import com.github.bachelorpraktikum.dbvisualization.view.graph.adapter.CoordinatesAdapter;
 import javafx.geometry.Point2D;
+import javafx.scene.Group;
+import javafx.scene.Node;
 import javafx.scene.control.Tooltip;
 import javafx.scene.shape.Line;
 import javax.annotation.Nonnull;
@@ -40,7 +42,11 @@ final class Rail extends SingleGraphShapeBase<Edge, Line> {
 
     @Nonnull
     @Override
-    public Line createShape() {
-        return new Line();
+    public Line createShape() {return new Line();
+    }
+
+    @Override
+    protected Node createHighlight(Line node) {
+        return createRectangleHighlight(node);
     }
 }

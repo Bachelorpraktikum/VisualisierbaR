@@ -6,6 +6,8 @@ import com.github.bachelorpraktikum.dbvisualization.model.Switch;
 import com.github.bachelorpraktikum.dbvisualization.view.graph.adapter.CoordinatesAdapter;
 import javafx.collections.ObservableList;
 import javafx.geometry.Point2D;
+import javafx.scene.Group;
+import javafx.scene.shape.Circle;
 import javafx.scene.shape.Polygon;
 import javafx.scene.shape.Shape;
 import javax.annotation.Nonnull;
@@ -61,6 +63,21 @@ final class WeichenpunktElement extends ElementBase<Polygon> {
 
     @Override
     protected void resize(Polygon shape) {
+    }
+
+    @Override
+    protected javafx.scene.Node createHighlight(Polygon polygon) {
+        Group highlight = new Group();
+        for(Element element : getRepresentedObjects()) {
+            Node node = element.getNode();
+            Point2D nodePos = getCoordinatesAdapter().apply(node);
+            Circle nodeCircle = new Circle(0.1 * getCalibrationBase());
+            nodeCircle.setCenterX(nodePos.getX());
+            nodeCircle.setCenterY(nodePos.getY());
+
+            highlight.getChildren().add(createCircleHighlight(nodeCircle));
+        }
+        return highlight;
     }
 
     @Nonnull

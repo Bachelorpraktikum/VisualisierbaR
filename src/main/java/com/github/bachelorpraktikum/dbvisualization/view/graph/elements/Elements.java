@@ -27,15 +27,15 @@ public final class Elements {
 
         for (Element element : node.getElements()) {
             switch (element.getType()) {
-                case MagnetImpl:
+                case Magnet:
                     shapes.add(new MagnetElement(element, node, adapter));
                     break;
-                case SichtbarkeitsPunktImpl:
-                case GefahrenPunktImpl:
+                case SichtbarkeitsPunkt:
+                case GefahrenPunkt:
                     shapes.add(new RotatedDefaultOffsetElement(element, node, adapter, count++));
                     break;
-                case WeichenPunktImpl:
-                    Switch aSwitch = element.getSwitch().get();
+                case WeichenPunkt:
+                    Switch aSwitch = element.getSwitch();
                     if (!switches.containsKey(aSwitch)) {
                         GraphShape<Element> switchShape = new WeichenpunktElement(aSwitch, node,
                             adapter);
@@ -43,13 +43,13 @@ public final class Elements {
                         shapes.add(switchShape);
                     }
                     break;
-                case SwWechselImpl:
+                case SwWechsel:
                     shapes.add(new StellwerkWechselElement(element, node, adapter));
                     break;
                 case GeschwindigkeitsVoranzeiger:
-                case VorSignalImpl:
-                case HauptSignalImpl:
-                case GeschwindigkeitsAnzeigerImpl:
+                case VorSignal:
+                case HauptSignal:
+                case GeschwindigkeitsAnzeiger:
                     compositeElements.add(element);
                     break;
                 default:

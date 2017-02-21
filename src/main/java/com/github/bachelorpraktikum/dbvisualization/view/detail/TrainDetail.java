@@ -5,26 +5,20 @@ import com.github.bachelorpraktikum.dbvisualization.model.train.Train.State;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.ReadOnlyProperty;
 import javafx.geometry.Point2D;
 import javax.annotation.Nullable;
 
 public class TrainDetail extends ElementDetailBase<Train> {
 
-    public TrainDetail(Train train) {
-        super(train);
+    public TrainDetail(Train train, IntegerProperty time) {
+        super(train, time);
     }
 
     @Override
     String getName() {
         return getElement().getReadableName();
-    }
-
-    @Override
-    List<URL> getImageUrls() {
-        List<URL> urls = new ArrayList<URL>();
-        urls.add(Train.class.getResource(String.format("../symbols/%s.fxml", "train")));
-
-        return urls;
     }
 
     @Nullable
@@ -45,7 +39,7 @@ public class TrainDetail extends ElementDetailBase<Train> {
     }
 
     Train.State getState() {
-        return getElement().getState(getTime());
+        return getElement().getState(timeProperty().get());
     }
 
     int getSpeed() {

@@ -1,22 +1,25 @@
 package com.github.bachelorpraktikum.dbvisualization.view.detail;
 
-import java.io.IOException;
+import com.github.bachelorpraktikum.dbvisualization.model.Element;
+import com.github.bachelorpraktikum.dbvisualization.model.GraphObject;
+import com.github.bachelorpraktikum.dbvisualization.model.train.Train;
 import java.net.URL;
 import java.util.List;
 import java.util.ResourceBundle;
-import javafx.fxml.FXMLLoader;
+import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.ReadOnlyIntegerProperty;
 import javafx.geometry.Point2D;
-import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.Shape;
 import javax.annotation.Nullable;
 
-public abstract class ElementDetailBase<E> {
+public abstract class ElementDetailBase<E extends GraphObject<?>> {
 
     private final E element;
-    private int time;
+    private final IntegerProperty time;
 
-    ElementDetailBase(E element) {
+    ElementDetailBase(E element, IntegerProperty time) {
         this.element = element;
+        this.time = time;
     }
 
     E getElement() {
@@ -24,8 +27,6 @@ public abstract class ElementDetailBase<E> {
     }
 
     abstract String getName();
-
-    abstract List<URL> getImageUrls();
 
     @Nullable
     abstract Point2D getCoordinates();
@@ -40,32 +41,23 @@ public abstract class ElementDetailBase<E> {
 
     abstract boolean isTrain();
 
-    void setTime(int time) {
-        this.time = time;
-    }
-
-    int getTime() {
+    ReadOnlyIntegerProperty timeProperty() {
         return time;
     }
 
     protected Shape getShape() {
-        try {
-            Shape shape = null;
+        return getElement().getShapeable().createIconShape();
+    }
 
-            for (URL url : getImageUrls()) {
-                FXMLLoader loader = new FXMLLoader(url);
-                if (shape == null) {
-                    shape = loader.load();
-                } else {
-                    shape = Shape.union(shape, loader.load());
-                }
-            }
-
-            return shape;
-        } catch (IOException | IllegalStateException e) {
-            return new Rectangle(20, 20);
-            // element.printStackTrace();
-            // throw new IllegalStateException(element);
+    public static ElementDetailBase create(GraphObject object, IntegerProperty timeProperty) {
+        if (object instanceof Train) {
+            Train train = (Train) object;
+            return new TrainDetail(train, timeProperty);
+        } else if (object instanceof Element) {
+            Element element = (Element) object;
+            return new ElementDetail(element, timeProperty);
+        } else {
+            throw new IllegalArgumentException();
         }
     }
 }
