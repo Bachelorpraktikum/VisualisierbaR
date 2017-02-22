@@ -47,7 +47,7 @@ public class Train implements GraphObject<Shape>, Shapeable {
     @Nonnull
     private final String readableName;
     private final int length;
-    private final Property<Shapeable.State> stateProperty;
+    private final Property<VisibleState> stateProperty;
 
     @Nonnull
     private final ObservableList<TrainEvent> events;
@@ -70,7 +70,7 @@ public class Train implements GraphObject<Shape>, Shapeable {
 
         events = FXCollections.observableArrayList();
         events.add(new TrainEvent.Start(this));
-        stateProperty = new SimpleObjectProperty<>(Shapeable.State.AUTO);
+        stateProperty = new SimpleObjectProperty<>(VisibleState.AUTO);
     }
 
     @Override
@@ -87,7 +87,7 @@ public class Train implements GraphObject<Shape>, Shapeable {
     }
 
     @Override
-    public Property<Shapeable.State> stateProperty() {
+    public Property<VisibleState> visibleStateProperty() {
         return stateProperty;
     }
 

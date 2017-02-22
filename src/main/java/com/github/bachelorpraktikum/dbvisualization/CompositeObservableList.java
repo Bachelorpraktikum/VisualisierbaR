@@ -29,6 +29,8 @@ public final class CompositeObservableList<T> extends ObservableListBase<T> {
      * Creates a composite list based on a single list.
      * Convenience method for {@link #CompositeObservableList(ObservableList, ObservableList) new
      * CompositeObservableList(list, Collections.emptyList())}.
+     *
+     * @param list the list to wrap
      */
     public CompositeObservableList(ObservableList<? extends T> list) {
         this(list, FXCollections.emptyObservableList());

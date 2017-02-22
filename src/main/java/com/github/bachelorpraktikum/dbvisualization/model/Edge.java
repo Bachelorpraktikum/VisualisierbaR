@@ -32,7 +32,7 @@ public final class Edge implements GraphObject<Line>, Shapeable {
     private final Node node1;
     @Nonnull
     private final Node node2;
-    private final Property<State> stateProperty;
+    private final Property<VisibleState> stateProperty;
 
     private Edge(String name, int length, Node node1, Node node2) {
         this.name = Objects.requireNonNull(name);
@@ -207,7 +207,7 @@ public final class Edge implements GraphObject<Line>, Shapeable {
     }
 
     @Override
-    public Property<State> stateProperty() {
+    public Property<VisibleState> visibleStateProperty() {
         return stateProperty;
     }
 

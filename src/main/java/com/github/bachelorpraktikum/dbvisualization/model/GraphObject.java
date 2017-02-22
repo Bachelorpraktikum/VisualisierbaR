@@ -14,7 +14,7 @@ public interface GraphObject<S extends Shape> {
     String getName();
 
     /**
-     * Gets a human readable name for this object.<br/>
+     * Gets a human readable name for this object.<br>
      * The default implementation calls {@link #getName()}.
      *
      * @return the readable name
@@ -24,5 +24,10 @@ public interface GraphObject<S extends Shape> {
         return getName();
     }
 
+    /**
+     * Gets the {@link Shapeable} instance for this GraphObject.
+     * @return a Shapeable
+     */
+    @Nonnull
     Shapeable<S> getShapeable();
 }

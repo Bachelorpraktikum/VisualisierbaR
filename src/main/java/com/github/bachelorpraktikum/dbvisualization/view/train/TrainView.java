@@ -76,7 +76,7 @@ public final class TrainView implements Highlightable {
         Context context = ContextHolder.getInstance().getContext();
         ObservableBooleanValue visibleBinding = Bindings.createBooleanBinding(() ->
                 train.isVisible(path.getBoundsInParent()),
-            train.stateProperty()
+            train.visibleStateProperty()
         );
         context.addObject(visibleBinding);
         path.visibleProperty().bind(visibleBinding);

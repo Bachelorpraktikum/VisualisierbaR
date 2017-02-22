@@ -21,7 +21,7 @@ public final class Switch implements Shapeable<Polygon> {
 
     @Nonnull
     private final List<Element> elements;
-    private final Property<Shapeable.State> stateProperty;
+    private final Property<VisibleState> stateProperty;
 
     private Switch() {
         elements = new ArrayList<>(3);
@@ -93,7 +93,7 @@ public final class Switch implements Shapeable<Polygon> {
     }
 
     @Override
-    public Property<State> stateProperty() {
+    public Property<VisibleState> visibleStateProperty() {
         return stateProperty;
     }
 

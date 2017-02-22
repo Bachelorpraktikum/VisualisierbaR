@@ -107,12 +107,12 @@ public final class Element implements GraphObject<Shape> {
         UnknownElement("", Rectangle::new);
 
         private final String logName;
-        private final Property<State> stateProperty;
+        private final Property<VisibleState> stateProperty;
         private final Supplier<Shape> shapeSupplier;
 
         Type(String logName, String... imageNames) {
             this.logName = logName;
-            this.stateProperty = new SimpleObjectProperty<>(State.AUTO);
+            this.stateProperty = new SimpleObjectProperty<>(VisibleState.AUTO);
             List<URL> imageUrls = new ArrayList<>(imageNames.length);
 
             for (String imageName : imageNames) {
@@ -125,7 +125,7 @@ public final class Element implements GraphObject<Shape> {
 
         Type(String logName, Supplier<Shape> shapeSupplier) {
             this.logName = logName;
-            this.stateProperty = new SimpleObjectProperty<>(State.AUTO);
+            this.stateProperty = new SimpleObjectProperty<>(VisibleState.AUTO);
             this.shapeSupplier = shapeSupplier;
         }
 
@@ -156,7 +156,7 @@ public final class Element implements GraphObject<Shape> {
         }
 
         @Override
-        public Property<State> stateProperty() {
+        public Property<VisibleState> visibleStateProperty() {
             return stateProperty;
         }
 

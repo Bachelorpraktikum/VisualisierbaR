@@ -1,6 +1,7 @@
 package com.github.bachelorpraktikum.dbvisualization.view.legend;
 
 import com.github.bachelorpraktikum.dbvisualization.model.Shapeable;
+import com.github.bachelorpraktikum.dbvisualization.model.Shapeable.VisibleState;
 import com.github.bachelorpraktikum.dbvisualization.view.ContextHolder;
 import java.io.IOException;
 import javafx.beans.binding.Binding;
@@ -60,17 +61,17 @@ public class LegendListViewCell extends ListCell<Shapeable> {
 
             setGraphic(cell);
 
-            Binding<Shapeable.State> binding = Bindings.createObjectBinding(() -> {
+            Binding<VisibleState> binding = Bindings.createObjectBinding(() -> {
                 if (checkbox.isIndeterminate()) {
-                    return Shapeable.State.AUTO;
+                    return VisibleState.AUTO;
                 } else if (checkbox.isSelected()) {
-                    return Shapeable.State.ENABLED;
+                    return VisibleState.ENABLED;
                 } else {
-                    return Shapeable.State.DISABLED;
+                    return VisibleState.DISABLED;
                 }
             }, checkbox.selectedProperty(), checkbox.indeterminateProperty());
             ContextHolder.getInstance().getContext().addObject(binding);
-            element.stateProperty().bind(binding);
+            element.visibleStateProperty().bind(binding);
         }
     }
 

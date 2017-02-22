@@ -34,7 +34,7 @@ public final class Node implements GraphObject<Circle>, Shapeable {
     @Nonnull
     private final Set<Element> elements;
     @Nonnull
-    private final Property<State> stateProperty;
+    private final Property<VisibleState> stateProperty;
 
     private Node(String name, Coordinates coordinates) {
         this.name = Objects.requireNonNull(name);
@@ -208,7 +208,7 @@ public final class Node implements GraphObject<Circle>, Shapeable {
     }
 
     @Override
-    public Property<State> stateProperty() {
+    public Property<VisibleState> visibleStateProperty() {
         return stateProperty;
     }
 

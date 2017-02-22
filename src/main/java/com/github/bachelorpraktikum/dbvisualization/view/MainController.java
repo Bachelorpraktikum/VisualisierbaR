@@ -625,7 +625,7 @@ public class MainController {
                 Shape elementShape = entry.getValue().getShape(element);
                 Binding<Boolean> binding = Bindings.createBooleanBinding(() ->
                         element.getType().isVisible(elementShape.getBoundsInParent()),
-                    element.getType().stateProperty()
+                    element.getType().visibleStateProperty()
                 );
                 context.addObject(binding);
                 entry.getValue().getShape(element).visibleProperty().bind(binding);
