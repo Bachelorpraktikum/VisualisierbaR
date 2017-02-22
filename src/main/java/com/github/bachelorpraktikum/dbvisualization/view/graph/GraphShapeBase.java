@@ -57,7 +57,7 @@ public abstract class GraphShapeBase<R, S extends Node> implements GraphShape<R>
 
     @Override
     public Node getFullNode() {
-        if(full == null) {
+        if (full == null) {
             full = new Group();
             full.getChildren().addAll(getShape(), highlight);
         }
@@ -91,20 +91,20 @@ public abstract class GraphShapeBase<R, S extends Node> implements GraphShape<R>
     protected abstract Node createHighlight(S node);
 
     protected Node createCircleHighlight(Node node) {
-        Circle c = new Circle();
+        Circle circle = new Circle();
         Bounds nodeBounds = node.getBoundsInParent();
-        c.setCenterY(nodeBounds.getMinY() + nodeBounds.getHeight() / 2);
-        c.setCenterX(nodeBounds.getMinX() + nodeBounds.getWidth() / 2);
-        c.setRadius(
+        circle.setCenterY(nodeBounds.getMinY() + nodeBounds.getHeight() / 2);
+        circle.setCenterX(nodeBounds.getMinX() + nodeBounds.getWidth() / 2);
+        circle.setRadius(
             Math.max(nodeBounds.getWidth(), nodeBounds.getHeight()) * HIGHLIGHT_FACTOR
         );
 
-        c.setFill(Color.TRANSPARENT);
-        c.setStroke(Color.BLUE);
-        c.setStrokeWidth(
+        circle.setFill(Color.TRANSPARENT);
+        circle.setStroke(Color.BLUE);
+        circle.setStrokeWidth(
             HIGHLIGHT_STROKE_WIDTH * getCalibrationBase()
         );
-        return c;
+        return circle;
     }
 
     protected Node createRectangleHighlight(Node node) {

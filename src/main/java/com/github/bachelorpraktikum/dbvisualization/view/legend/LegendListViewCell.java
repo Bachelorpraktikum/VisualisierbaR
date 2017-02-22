@@ -49,7 +49,7 @@ public class LegendListViewCell extends ListCell<Shapeable> {
             String name = element.getName();
             Shape shape = element.createIconShape();
 
-            if(shape == null) {
+            if (shape == null) {
                 System.out.println(element.getClass().getName());
             }
             resizeShape(shape, 20);

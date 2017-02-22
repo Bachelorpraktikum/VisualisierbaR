@@ -131,7 +131,7 @@ public class MainController {
 
     private Stage stage;
 
-    private double SCALE_DELTA = 1.1;
+    private static final double SCALE_DELTA = 1.1;
 
     private double mousePressedX = -1;
     private double mousePressedY = -1;
@@ -225,12 +225,12 @@ public class MainController {
                     event.getScreenX() - (bounds.getWidth() / 2 + bounds.getMinX());
                 double translateY =
                     event.getScreenY() - (bounds.getHeight() / 2 + bounds.getMinY());
-                double f = (scaleFactor / oldScale) - 1;
+                double factor = (scaleFactor / oldScale) - 1;
 
                 group.setScaleX(scaleFactor);
                 group.setScaleY(scaleFactor);
-                group.setTranslateX(group.getTranslateX() - f * translateX);
-                group.setTranslateY(group.getTranslateY() - f * translateY);
+                group.setTranslateX(group.getTranslateX() - factor * translateX);
+                group.setTranslateY(group.getTranslateY() - factor * translateY);
             }
         });
         centerPane.setOnMouseReleased(event -> {
@@ -344,14 +344,14 @@ public class MainController {
         };
 
         logList.setCellFactory(listCellFactory);
-        logList.getSelectionModel().selectedItemProperty()
-            .addListener((observable, oldValue, newValue) -> {
-                    if (!autoChange) {
-                        simulationTime.set(newValue.getTime());
-                    }
-                    Element.in(ContextHolder.getInstance().getContext()).setTime(newValue.getTime());
+        logList.getSelectionModel().selectedItemProperty().addListener(
+            (observable, oldValue, newValue) -> {
+                if (!autoChange) {
+                    simulationTime.set(newValue.getTime());
                 }
-            );
+                Element.in(ContextHolder.getInstance().getContext()).setTime(newValue.getTime());
+            }
+        );
     }
 
     private void initializeElementList() {
@@ -368,11 +368,12 @@ public class MainController {
         };
         Callback<ListView<GraphObject>, ListCell<GraphObject>> textFactory = TextFieldListCell
             .forListView(stringConverter);
-        Callback<ListView<GraphObject>, ListCell<GraphObject>> elementListCellFactory = (listView) -> {
-            ListCell<GraphObject> cell = textFactory.call(listView);
-            TooltipUtil.install(cell, () -> cell.getItem().getName());
-            return cell;
-        };
+        Callback<ListView<GraphObject>, ListCell<GraphObject>> elementListCellFactory =
+            (listView) -> {
+                ListCell<GraphObject> cell = textFactory.call(listView);
+                TooltipUtil.install(cell, () -> cell.getItem().getName());
+                return cell;
+            };
 
         elementList.setCellFactory(elementListCellFactory);
         elementList.getSelectionModel().selectedItemProperty()
@@ -483,7 +484,7 @@ public class MainController {
     }
 
     /**
-     * Adds an EventHandler to the button which fires the button on pressing enter
+     * Adds an EventHandler to the button which fires the button on pressing enter.
      *
      * @param button Button to add eventHandler to
      */
@@ -527,8 +528,8 @@ public class MainController {
         FilteredList<Train> trains = FXCollections.observableList(
             new ArrayList<>(Train.in(context).getAll())
         ).filtered(null);
-        ObservableValue<Predicate<Train>> trainBinding = Bindings.createObjectBinding(() ->
-                s -> trainFilter.isSelected(),
+        ObservableValue<Predicate<Train>> trainBinding = Bindings.createObjectBinding(
+            () -> s -> trainFilter.isSelected(),
             trainFilter.selectedProperty()
         );
         context.addObject(trainBinding);
@@ -537,8 +538,8 @@ public class MainController {
         FilteredList<Element> elements = FXCollections.observableList(
             new ArrayList<>(Element.in(context).getAll())
         ).filtered(null);
-        ObservableValue<Predicate<Element>> elementBinding = Bindings.createObjectBinding(() ->
-                s -> elementFilter.isSelected(),
+        ObservableValue<Predicate<Element>> elementBinding = Bindings.createObjectBinding(
+            () -> s -> elementFilter.isSelected(),
             elementFilter.selectedProperty());
         context.addObject(elementBinding);
         elements.predicateProperty().bind(elementBinding);
@@ -592,6 +593,7 @@ public class MainController {
                         System.out.println(e.getMessage());
                     }
                 }
+                return;
             default:
                 return;
         }

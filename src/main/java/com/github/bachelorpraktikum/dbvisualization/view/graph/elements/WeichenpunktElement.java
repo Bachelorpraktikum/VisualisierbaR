@@ -68,7 +68,7 @@ final class WeichenpunktElement extends ElementBase<Polygon> {
     @Override
     protected javafx.scene.Node createHighlight(Polygon polygon) {
         Group highlight = new Group();
-        for(Element element : getRepresentedObjects()) {
+        for (Element element : getRepresentedObjects()) {
             Node node = element.getNode();
             Point2D nodePos = getCoordinatesAdapter().apply(node);
             Circle nodeCircle = new Circle(0.1 * getCalibrationBase());
