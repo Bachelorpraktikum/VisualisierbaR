@@ -149,12 +149,65 @@ public class MainController {
         timePattern = Pattern.compile("(\\d+)(m?s?|h)?$");
         trains = new WeakHashMap<>();
         HBox.setHgrow(rightSpacer, Priority.ALWAYS);
+
+        // START OF TIME RELATED INIT
+
+        simulationTime = new SimpleIntegerProperty();
+        simulationTime.addListener((observable, oldValue, newValue) -> {
+            if (ContextHolder.getInstance().hasContext()) {
+                Context context = ContextHolder.getInstance().getContext();
+                timeText.setText(String.format("%dms", newValue.intValue()));
+                Element.in(context).setTime(newValue.intValue());
+            }
+        });
+
+        timeText.setOnAction(event -> {
+            String text = timeText.getText();
+            Matcher timeMatch = timePattern.matcher(text);
+            int newTime = 0;
+
+            if (timeMatch.find()) {
+                try {
+                    newTime = getMsFromString(text);
+                } catch (NumberFormatException e) {
+                    timeText.setText(simulationTime.get() + "ms");
+                    return;
+                }
+            }
+
+            simulationTime.set(newTime);
+            selectClosestLogEntry(newTime);
+        });
+        timeText.focusedProperty().addListener((observable, oldValue, newValue) -> {
+            if (!newValue) {
+                timeText.setText(simulationTime.get() + "ms");
+            }
+        });
+
         this.simulation = new Timeline(new KeyFrame(Duration.millis(50), event -> {
             int time = (int) (simulationTime.get() + (velocity.get() * 0.05));
             simulationTime.set(time);
             selectClosestLogEntry(time);
         }));
         simulation.setCycleCount(Animation.INDEFINITE);
+
+        eventTraversalTimeline = new Timeline(new KeyFrame(Duration.seconds(1), event -> {
+            Event nextEvent = selectNextEvent(getCurrentTime());
+            simulationTime.set(nextEvent.getTime());
+        }));
+        eventTraversal.selectedProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue) {
+                eventTraversalTimeline.play();
+            } else {
+                eventTraversalTimeline.stop();
+            }
+            timeText.setDisable(newValue);
+            playToggle.setDisable(newValue);
+        });
+        eventTraversalTimeline.setCycleCount(Timeline.INDEFINITE);
+
+        // END OF TIME RELATED INIT
+
         fireOnEnterPress(closeButton);
         fireOnEnterPress(logToggle);
         closeButton.setOnAction(event -> showSourceChooser());
@@ -183,30 +236,30 @@ public class MainController {
 
         initializeElementList();
         initializeLogList();
+        initializeCenterPane();
 
-        timeText.setOnAction(event -> {
-            String text = timeText.getText();
-            Matcher timeMatch = timePattern.matcher(text);
-            int newTime = 0;
-
-            if (timeMatch.find()) {
-                try {
-                    newTime = getMsFromString(text);
-                } catch (NumberFormatException e) {
-                    timeText.setText(simulationTime.get() + "ms");
-                    return;
-                }
-            }
-
-            simulationTime.set(newTime);
-            selectClosestLogEntry(newTime);
-        });
-        timeText.focusedProperty().addListener((observable, oldValue, newValue) -> {
-            if (!newValue) {
-                timeText.setText(simulationTime.get() + "ms");
+        velocity = new SimpleIntegerProperty(1000);
+        velocityText.textProperty().addListener((observable, oldValue, newValue) -> {
+            try {
+                int newVelocity = Integer.parseUnsignedInt(newValue);
+                velocity.set(newVelocity);
+            } catch (NumberFormatException e) {
+                velocityText.setText(oldValue);
             }
         });
 
+        playToggle.selectedProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue) {
+                simulation.playFromStart();
+            } else {
+                simulation.stop();
+            }
+            timeText.setDisable(newValue);
+            eventTraversal.setDisable(newValue);
+        });
+    }
+
+    private void initializeCenterPane() {
         ChangeListener<Number> boundsListener = (observable, oldValue, newValue) -> {
             if (ContextHolder.getInstance().hasContext()) {
                 fitGraphToCenter(getGraph());
@@ -254,50 +307,6 @@ public class MainController {
             centerPane.setTranslateY(centerPane.getTranslateY() + yOffset);
             event.consume();
         });
-
-        simulationTime = new SimpleIntegerProperty();
-        simulationTime.addListener((observable, oldValue, newValue) -> {
-            if (ContextHolder.getInstance().hasContext()) {
-                Context context = ContextHolder.getInstance().getContext();
-                timeText.setText(String.format("%dms", newValue.intValue()));
-                Element.in(context).setTime(newValue.intValue());
-            }
-        });
-
-        velocity = new SimpleIntegerProperty(1000);
-        velocityText.textProperty().addListener((observable, oldValue, newValue) -> {
-            try {
-                int newVelocity = Integer.parseUnsignedInt(newValue);
-                velocity.set(newVelocity);
-            } catch (NumberFormatException e) {
-                velocityText.setText(oldValue);
-            }
-        });
-
-        playToggle.selectedProperty().addListener((observable, oldValue, newValue) -> {
-            if (newValue) {
-                simulation.playFromStart();
-            } else {
-                simulation.stop();
-            }
-            timeText.setDisable(newValue);
-            eventTraversal.setDisable(newValue);
-        });
-
-        eventTraversalTimeline = new Timeline(new KeyFrame(Duration.seconds(1), event -> {
-            Event nextEvent = selectNextEvent(getCurrentTime());
-            simulationTime.set(nextEvent.getTime());
-        }));
-        eventTraversal.selectedProperty().addListener((observable, oldValue, newValue) -> {
-            if (newValue) {
-                eventTraversalTimeline.play();
-            } else {
-                eventTraversalTimeline.stop();
-            }
-            timeText.setDisable(newValue);
-            playToggle.setDisable(newValue);
-        });
-        eventTraversalTimeline.setCycleCount(Timeline.INDEFINITE);
     }
 
     private void initializeLogList() {
