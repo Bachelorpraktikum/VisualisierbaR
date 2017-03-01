@@ -26,6 +26,7 @@ import javafx.geometry.Point2D;
 import javafx.scene.shape.Path;
 import javafx.scene.shape.Shape;
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 import javax.annotation.concurrent.Immutable;
 
@@ -253,14 +254,13 @@ public class Train implements GraphObject<Shape> {
      * @return the state of the train at the given point in time.
      * @throws IllegalArgumentException if time is less than {@link Context#INIT_STATE_TIME}
      * @throws IllegalArgumentException if before is a state of a different train
-     * @throws NullPointerException if before is null
      * @throws IllegalStateException if this train has not been {@link EventFactory#init(int, Edge)
      * initialized}
      */
     @Nonnull
-    public State getState(int time, State before) {
+    public State getState(int time, @Nullable State before) {
         if (before == null) {
-            throw new NullPointerException("before state is null");
+            return getState(time);
         }
 
         if (!before.getTrain().equals(this)) {

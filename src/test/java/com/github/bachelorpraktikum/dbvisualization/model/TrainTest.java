@@ -326,8 +326,9 @@ public class TrainTest {
         Edge[] edges = createEdges(20);
         train.eventFactory().init(0, edges[0]);
 
-        expected.expect(NullPointerException.class);
-        train.getState(10, null);
+        Train.State state = train.getState(10, null);
+        Train.State expected = train.getState(10);
+        assertEquals(expected, state);
     }
 
     @Test

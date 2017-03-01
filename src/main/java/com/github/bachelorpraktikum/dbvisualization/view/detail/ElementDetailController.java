@@ -3,6 +3,7 @@ package com.github.bachelorpraktikum.dbvisualization.view.detail;
 import com.github.bachelorpraktikum.dbvisualization.model.Event;
 import com.github.bachelorpraktikum.dbvisualization.model.train.Train;
 import com.github.bachelorpraktikum.dbvisualization.model.train.Train.State;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -54,9 +55,21 @@ public class ElementDetailController {
 
     private List<Object> bindings;
 
+    private ObservableList<Data<Double, Double>> vtData;
+    private ObservableList<Data<Double, Double>> vdData;
+    private ObservableList<Data<Double, Double>> dtData;
+
     @FXML
     private void initialize() {
         bindings = new LinkedList<>();
+        vtData = FXCollections.observableList(new ArrayList<>(256));
+        vtChart.setData(FXCollections.singletonObservableList(new Series<>(vtData)));
+
+        vdData = FXCollections.observableList(new ArrayList<>(256));
+        vdChart.setData(FXCollections.singletonObservableList(new Series<>(vdData)));
+
+        dtData = FXCollections.observableList(new ArrayList<>(256));
+        dtChart.setData(FXCollections.singletonObservableList(new Series<>(dtData)));
     }
 
     public void setDetail(ElementDetailBase detail) {
@@ -103,7 +116,7 @@ public class ElementDetailController {
             speedValue.textProperty().bind(speedBinding);
 
             ChangeListener<Number> chartListener = ((observable, oldValue, newValue) ->
-                updateCharts(newValue.intValue())
+                updateCharts(newValue.intValue(), oldValue.intValue())
             );
             detail.timeProperty().addListener(chartListener);
         } else {
@@ -136,7 +149,7 @@ public class ElementDetailController {
         shape.setRotate(180);
     }
 
-    private void updateCharts(int time) {
+    private void updateCharts(int time, int previousTime) {
         if (!detail.isTrain()) {
             return;
         }
@@ -144,26 +157,35 @@ public class ElementDetailController {
         Function<State, Double> distanceFunction = s -> s.getTotalDistance() / 1000.0;
         Function<State, Double> timeFunction = s -> s.getTime() / 1000.0;
 
-        updateChart(vtChart, timeFunction, State::getSpeed, true, time);
-        updateChart(vdChart, distanceFunction, State::getSpeed, true, time);
-        updateChart(dtChart, timeFunction, distanceFunction, false, time);
+        updateChart(vtData, timeFunction, State::getSpeed, true, time, previousTime);
+        updateChart(vdData, distanceFunction, State::getSpeed, true, time, previousTime);
+        updateChart(dtData, timeFunction, distanceFunction, false, time, previousTime);
     }
 
-    private <X, Y> void updateChart(LineChart<X, Y> chart,
+    private <X, Y> void updateChart(ObservableList<Data<X, Y>> data,
         Function<State, X> xFunction,
         Function<State, Y> yFunction,
         boolean ySpeed,
-        int time) {
+        int time,
+        int previousTime) {
         Train train = (Train) detail.getElement();
 
-        ObservableList<Data<X, Y>> data = FXCollections.observableArrayList();
-        State state = train.getState(0);
-        data.add(new Data<>(xFunction.apply(state), yFunction.apply(state)));
+        State state = null;
+        if (previousTime > time) {
+            data.clear();
+            state = train.getState(0);
+            data.add(new Data<>(xFunction.apply(state), yFunction.apply(state)));
+        } else {
+            if (!data.isEmpty()) {
+                data.remove(data.size() - 1);
+            }
+        }
+
         for (Event event : train.getEvents()) {
             if (event.getTime() > time) {
                 break;
             }
-            if (event.getTime() < 0) {
+            if (event.getTime() < 0 || event.getTime() <= previousTime) {
                 continue;
             }
             State newState = train.getState(event.getTime(), state);
@@ -177,6 +199,5 @@ public class ElementDetailController {
         }
         state = train.getState(time, state);
         data.add(new Data<>(xFunction.apply(state), yFunction.apply(state)));
-        chart.setData(FXCollections.singletonObservableList(new Series<>(data)));
     }
 }
