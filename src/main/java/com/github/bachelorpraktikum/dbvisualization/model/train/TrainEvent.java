@@ -375,6 +375,9 @@ abstract class TrainEvent implements Event {
         double getSpeed() {
             TrainEvent before = getPreviousEvent();
             double diffSeconds = (getTime() - before.getTime()) / 1000.0;
+            if (diffSeconds == 0) {
+                return before.getSpeed();
+            }
             return getDistance() / diffSeconds;
         }
 
