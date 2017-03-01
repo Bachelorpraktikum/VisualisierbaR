@@ -1,12 +1,13 @@
 package com.github.bachelorpraktikum.dbvisualization.model.train;
 
+import com.github.bachelorpraktikum.dbvisualization.config.ConfigFile;
+import com.github.bachelorpraktikum.dbvisualization.config.ConfigKey;
 import com.github.bachelorpraktikum.dbvisualization.model.Context;
 import com.github.bachelorpraktikum.dbvisualization.model.Edge;
 import com.github.bachelorpraktikum.dbvisualization.model.Event;
 import com.github.bachelorpraktikum.dbvisualization.model.Node;
 import com.github.bachelorpraktikum.dbvisualization.model.train.InterpolatableState.Builder;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.logging.Logger;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -18,7 +19,34 @@ import javax.annotation.ParametersAreNonnullByDefault;
 abstract class TrainEvent implements Event {
 
     private static final Logger log = Logger.getLogger(TrainEvent.class.getName());
-    private static final double SPEED_COMPARE_DELTA = 0.5;
+    private static final double SPEED_COMPARE_DELTA_DEFAULT = 0.5;
+    private static final double SPEED_COMPARE_DELTA;
+
+    static {
+        String deltaString = ConfigFile.getInstance()
+            .getProperty(ConfigKey.speedCheckDelta.getKey());
+        if (deltaString == null) {
+            log.warning(String.format(
+                "Missing config entry %s, using default value %f",
+                ConfigKey.speedCheckDelta.getKey(),
+                SPEED_COMPARE_DELTA_DEFAULT
+            ));
+            SPEED_COMPARE_DELTA = SPEED_COMPARE_DELTA_DEFAULT;
+        } else {
+            double delta;
+            try {
+                delta = Double.parseDouble(deltaString);
+            } catch (NumberFormatException e) {
+                log.warning(String.format(
+                    "Could not parse %s in config file, using %f",
+                    ConfigKey.speedCheckDelta.getKey(),
+                    SPEED_COMPARE_DELTA_DEFAULT
+                ));
+                delta = SPEED_COMPARE_DELTA_DEFAULT;
+            }
+            SPEED_COMPARE_DELTA = delta;
+        }
+    }
 
     private final int index;
     @Nonnull

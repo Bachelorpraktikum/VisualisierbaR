@@ -3,7 +3,8 @@ package com.github.bachelorpraktikum.dbvisualization.config;
 public enum ConfigKey {
 
     initialDirectory("%s_initialDirectory"),
-    colors("trainColors");
+    colors("trainColors"),
+    speedCheckDelta("speedCheckDelta");
 
     private final String key;
 
