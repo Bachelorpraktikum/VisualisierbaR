@@ -38,7 +38,7 @@ import javax.annotation.concurrent.Immutable;
  * immutable.</p>
  */
 @ParametersAreNonnullByDefault
-public class Train implements GraphObject<Shape>, Shapeable {
+public class Train implements GraphObject<Shape> {
 
     private static final Logger log = Logger.getLogger(Train.class.getName());
 
@@ -199,11 +199,6 @@ public class Train implements GraphObject<Shape>, Shapeable {
     @Nonnull
     public String getReadableName() {
         return readableName;
-    }
-
-    @Override
-    public Shapeable getShapeable() {
-        return this;
     }
 
     /**

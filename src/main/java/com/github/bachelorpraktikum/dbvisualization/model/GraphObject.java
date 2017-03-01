@@ -3,7 +3,7 @@ package com.github.bachelorpraktikum.dbvisualization.model;
 import javafx.scene.shape.Shape;
 import javax.annotation.Nonnull;
 
-public interface GraphObject<S extends Shape> {
+public interface GraphObject<S extends Shape> extends Shapeable<S> {
 
     /**
      * Gets the unique name of this object.
@@ -23,11 +23,4 @@ public interface GraphObject<S extends Shape> {
     default String getReadableName() {
         return getName();
     }
-
-    /**
-     * Gets the {@link Shapeable} instance for this GraphObject.
-     * @return a Shapeable
-     */
-    @Nonnull
-    Shapeable<S> getShapeable();
 }

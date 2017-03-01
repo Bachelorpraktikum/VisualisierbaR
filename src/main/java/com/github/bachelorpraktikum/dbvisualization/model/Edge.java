@@ -21,7 +21,7 @@ import javax.annotation.concurrent.Immutable;
  */
 @Immutable
 @ParametersAreNonnullByDefault
-public final class Edge implements GraphObject<Line>, Shapeable {
+public final class Edge implements GraphObject<Line> {
 
     private static final Logger log = Logger.getLogger(Edge.class.getName());
 
@@ -202,18 +202,13 @@ public final class Edge implements GraphObject<Line>, Shapeable {
     }
 
     @Override
-    public Shape createShape() {
+    public Line createShape() {
         return new Line();
     }
 
     @Override
     public Property<VisibleState> visibleStateProperty() {
         return stateProperty;
-    }
-
-    @Override
-    public Shapeable getShapeable() {
-        return this;
     }
 
     @Override

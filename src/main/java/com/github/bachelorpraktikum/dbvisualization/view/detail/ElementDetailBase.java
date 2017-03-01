@@ -46,7 +46,7 @@ public abstract class ElementDetailBase<E extends GraphObject<?>> {
     }
 
     protected Shape getShape() {
-        return getElement().getShapeable().createIconShape();
+        return getElement().createIconShape();
     }
 
     public static ElementDetailBase create(GraphObject object, IntegerProperty timeProperty) {

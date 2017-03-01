@@ -417,8 +417,13 @@ public final class Element implements GraphObject<Shape> {
     }
 
     @Override
-    public Shapeable getShapeable() {
-        return getType();
+    public Shape createShape() {
+        return getType().createShape();
+    }
+
+    @Override
+    public Property<VisibleState> visibleStateProperty() {
+        return getType().visibleStateProperty();
     }
 
     /**

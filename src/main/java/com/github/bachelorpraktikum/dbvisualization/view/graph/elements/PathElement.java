@@ -47,6 +47,6 @@ class PathElement extends SingleElementBase<Shape> {
     @Nonnull
     @Override
     protected Shape createShape() {
-        return getElement().getType().createShape();
+        return getElement().createShape();
     }
 }

@@ -21,7 +21,7 @@ import javax.annotation.ParametersAreNonnullByDefault;
  * There is only one instance of Node per name per {@link Context}.
  */
 @ParametersAreNonnullByDefault
-public final class Node implements GraphObject<Circle>, Shapeable {
+public final class Node implements GraphObject<Circle> {
 
     private static final Logger log = Logger.getLogger(Node.class.getName());
 
@@ -149,11 +149,6 @@ public final class Node implements GraphObject<Circle>, Shapeable {
     @Nonnull
     public String getName() {
         return name;
-    }
-
-    @Override
-    public Shapeable getShapeable() {
-        return this;
     }
 
     /**
