@@ -128,15 +128,13 @@ public final class TrainView implements Highlightable {
             path.setStroke(color);
         }
 
-        if (highlightedProperty().get()) {
-            Bounds pathBounds = path.getBoundsInParent();
-            double width = pathBounds.getWidth() * HIGHLIGHT_FACTOR;
-            double height = pathBounds.getHeight() * HIGHLIGHT_FACTOR;
-            highlightRectangle.setX(pathBounds.getMinX() - (width - pathBounds.getWidth()) / 2);
-            highlightRectangle.setY(pathBounds.getMinY() - (height - pathBounds.getHeight()) / 2);
-            highlightRectangle.setWidth(width);
-            highlightRectangle.setHeight(height);
-        }
+        Bounds pathBounds = path.getBoundsInParent();
+        double width = pathBounds.getWidth() * HIGHLIGHT_FACTOR;
+        double height = pathBounds.getHeight() * HIGHLIGHT_FACTOR;
+        highlightRectangle.setX(pathBounds.getMinX() - (width - pathBounds.getWidth()) / 2);
+        highlightRectangle.setY(pathBounds.getMinY() - (height - pathBounds.getHeight()) / 2);
+        highlightRectangle.setWidth(width);
+        highlightRectangle.setHeight(height);
     }
 
     private static int incrementCounter() {
