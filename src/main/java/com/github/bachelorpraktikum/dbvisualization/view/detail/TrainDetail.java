@@ -2,11 +2,7 @@ package com.github.bachelorpraktikum.dbvisualization.view.detail;
 
 import com.github.bachelorpraktikum.dbvisualization.model.train.Train;
 import com.github.bachelorpraktikum.dbvisualization.model.train.Train.State;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
 import javafx.beans.property.IntegerProperty;
-import javafx.beans.property.ReadOnlyProperty;
 import javafx.geometry.Point2D;
 import javax.annotation.Nullable;
 

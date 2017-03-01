@@ -2,11 +2,8 @@ package com.github.bachelorpraktikum.dbvisualization.view.detail;
 
 import com.github.bachelorpraktikum.dbvisualization.model.Coordinates;
 import com.github.bachelorpraktikum.dbvisualization.model.Element;
-import java.net.URL;
-import java.util.List;
 import javafx.beans.property.IntegerProperty;
 import javafx.geometry.Point2D;
-import javax.annotation.Nullable;
 
 public class ElementDetail extends ElementDetailBase<Element> {
 
