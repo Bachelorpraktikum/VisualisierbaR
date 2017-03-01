@@ -2,9 +2,9 @@ package com.github.bachelorpraktikum.dbvisualization.view;
 
 import com.github.bachelorpraktikum.dbvisualization.DataSource;
 import com.github.bachelorpraktikum.dbvisualization.config.ConfigFile;
+import com.github.bachelorpraktikum.dbvisualization.config.ConfigKey;
 import java.io.File;
 import java.net.URI;
-import java.util.ResourceBundle;
 import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.fxml.FXML;
@@ -134,8 +134,7 @@ public class FileChooserController implements SourceChooser {
     }
 
     private String getLogFileKey() {
-        String logFileKey = ResourceBundle.getBundle("config_keys")
-            .getString("initialDirectoryKey");
+        String logFileKey = ConfigKey.initialDirectory.getKey();
         return String.format(logFileKey, getResourceType().toString());
     }
 }

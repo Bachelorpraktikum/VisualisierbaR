@@ -8,7 +8,6 @@ import java.io.OutputStream;
 import java.util.Arrays;
 import java.util.Objects;
 import java.util.Properties;
-import java.util.ResourceBundle;
 import java.util.logging.Logger;
 import javafx.scene.paint.Paint;
 
@@ -53,8 +52,9 @@ public class ConfigFile extends Properties {
         try (InputStream inputStream = new FileInputStream(filepath)) {
             load(inputStream);
         } catch (IOException io) {
-            log.severe(
-                String.format("Couldn't load %s due to error: %s.", filepath, io.getMessage()));
+            log.severe(String.format(
+                "Couldn't load %s due to error: %s.", filepath, io.getMessage()
+            ));
         }
     }
 
@@ -67,7 +67,7 @@ public class ConfigFile extends Properties {
         final Paint[] defaultColors = Arrays.stream(defaultColorString.split(";"))
             .map(Paint::valueOf)
             .toArray(Paint[]::new);
-        String colorsKey = ResourceBundle.getBundle("config_keys").getString("colorsKey");
+        String colorsKey = ConfigKey.colors.getKey();
 
         String colorValue = String.valueOf(getOrDefault(colorsKey, defaultColorString));
         if (colorValue.isEmpty()) {

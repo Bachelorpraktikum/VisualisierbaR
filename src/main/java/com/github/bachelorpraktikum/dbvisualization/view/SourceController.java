@@ -2,6 +2,7 @@ package com.github.bachelorpraktikum.dbvisualization.view;
 
 import com.github.bachelorpraktikum.dbvisualization.DataSource;
 import com.github.bachelorpraktikum.dbvisualization.config.ConfigFile;
+import com.github.bachelorpraktikum.dbvisualization.config.ConfigKey;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
@@ -182,8 +183,7 @@ public class SourceController implements SourceChooser {
     }
 
     private String geInitialDirKey() {
-        String logFileKey = ResourceBundle.getBundle("config_keys")
-            .getString("initialDirectoryKey");
+        String logFileKey = ConfigKey.initialDirectory.getKey();
         return String.format(logFileKey, getResourceType().toString());
     }
 
