@@ -9,6 +9,7 @@ import com.github.bachelorpraktikum.dbvisualization.model.Context;
 import com.github.bachelorpraktikum.dbvisualization.model.Element;
 import com.github.bachelorpraktikum.dbvisualization.model.Event;
 import com.github.bachelorpraktikum.dbvisualization.model.GraphObject;
+import com.github.bachelorpraktikum.dbvisualization.model.Messages;
 import com.github.bachelorpraktikum.dbvisualization.model.Shapeable;
 import com.github.bachelorpraktikum.dbvisualization.model.train.Train;
 import com.github.bachelorpraktikum.dbvisualization.view.detail.ElementDetailBase;
@@ -159,8 +160,19 @@ public class MainController {
         simulationTime.addListener((observable, oldValue, newValue) -> {
             if (ContextHolder.getInstance().hasContext()) {
                 Context context = ContextHolder.getInstance().getContext();
-                timeText.setText(String.format("%dms", newValue.intValue()));
-                Element.in(context).setTime(newValue.intValue());
+                int oldInt = oldValue.intValue();
+                int newInt = newValue.intValue();
+                timeText.setText(String.format("%dms", newInt));
+                Element.in(context).setTime(newInt);
+
+                boolean messages = Messages.in(context).fireEventsBetween(
+                    node -> getGraph().getNodes().get(node).getShape(),
+                    oldInt > newInt ? Context.INIT_STATE_TIME : oldInt,
+                    newInt
+                );
+                if (messages) {
+                    playToggle.setSelected(false);
+                }
             }
         });
 

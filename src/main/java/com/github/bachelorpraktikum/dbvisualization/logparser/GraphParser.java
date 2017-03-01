@@ -1,9 +1,11 @@
 package com.github.bachelorpraktikum.dbvisualization.logparser;
 
+import com.github.bachelorpraktikum.dbvisualization.logparser.LogParser.MsgContext;
 import com.github.bachelorpraktikum.dbvisualization.model.Context;
 import com.github.bachelorpraktikum.dbvisualization.model.Coordinates;
 import com.github.bachelorpraktikum.dbvisualization.model.Edge;
 import com.github.bachelorpraktikum.dbvisualization.model.Element;
+import com.github.bachelorpraktikum.dbvisualization.model.Messages;
 import com.github.bachelorpraktikum.dbvisualization.model.Node;
 import com.github.bachelorpraktikum.dbvisualization.model.train.Train;
 import java.io.IOException;
@@ -200,6 +202,15 @@ public final class GraphParser {
             Element.State state = Element.State.fromName(ctx.STATE().getText());
             int time = timeVisitor.visitTime(ctx.time());
             element.addEvent(state, time);
+            return context;
+        }
+
+        @Override
+        public Context visitMsg(MsgContext ctx) {
+            int time = timeVisitor.visitTime(ctx.time());
+            String text = ctx.name().getText();
+            Node node = Node.in(context).get(ctx.node_name().getText());
+            Messages.in(context).add(time, text, node);
             return context;
         }
 

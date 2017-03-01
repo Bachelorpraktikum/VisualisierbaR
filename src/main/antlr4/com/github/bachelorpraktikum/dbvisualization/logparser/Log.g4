@@ -12,6 +12,7 @@ elements:         node
                 | mv_start
                 | mv_term
                 | ch
+                | msg
                 | data;
 
 node: 'NODE' SEP node_name SEP coord;
@@ -33,6 +34,8 @@ mv_leaves: MV_IND SEP 'LEAVES' SEP train_name SEP time SEP edge_name SEP distanc
 mv_term: MV_IND SEP 'TERM' SEP train_name SEP time SEP distance;
 
 ch: 'CH' SEP elem_name SEP STATE SEP time;
+
+msg: 'MSG' SEP node_name SEP time SEP name;
 
 data: 'DATA' SEP train_readable_name SEP time WHITESPACE speed SEP time_with_wrapper;
 
