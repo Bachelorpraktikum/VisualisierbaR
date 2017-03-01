@@ -22,7 +22,6 @@ public class LoginController {
     @FXML
     private PasswordField passwordField;
 
-    private Stage stage;
     private ObjectProperty<String> userProperty;
     private ObjectProperty<String> passwordProperty;
 
@@ -58,8 +57,6 @@ public class LoginController {
 
 
     void setStage(Stage stage) {
-        this.stage = stage;
-
         Scene scene = new Scene(rootPane);
         stage.setScene(scene);
 

@@ -20,11 +20,9 @@ public final class ProportionalCoordinatesAdapter implements CoordinatesAdapter 
     private double shortestEdgeLength;
     private Node startingNode;
     private Point2D startingPoint;
-    private Context context;
     private HashMap<Node, Point2D> transformationMap = new HashMap<>();
 
     public ProportionalCoordinatesAdapter(Context context) {
-        this.context = context;
         shortestEdgeLength = Double.MAX_VALUE;
 
         // search for the shortest Edge
