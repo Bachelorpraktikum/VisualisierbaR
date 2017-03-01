@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
@@ -39,7 +40,7 @@ public final class Node implements GraphObject<Circle> {
     private Node(String name, Coordinates coordinates) {
         this.name = Objects.requireNonNull(name);
         this.coordinates = Objects.requireNonNull(coordinates);
-        this.edges = new HashSet<>();
+        this.edges = new LinkedHashSet<>();
         this.elements = new HashSet<>();
         this.stateProperty = new SimpleObjectProperty<>();
     }
