@@ -91,7 +91,7 @@ final class InterpolatableState implements Train.State {
          */
         Builder speed(double speed) {
             if (speed < 0) {
-                throw new IllegalArgumentException(String.format("speed (%d) is negative", speed));
+                throw new IllegalArgumentException(String.format("speed (%f) is negative", speed));
             }
             this.speed = speed;
             return this;
