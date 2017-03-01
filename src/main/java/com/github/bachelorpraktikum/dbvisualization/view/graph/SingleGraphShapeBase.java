@@ -4,6 +4,7 @@ import com.github.bachelorpraktikum.dbvisualization.view.graph.adapter.Coordinat
 import java.util.Collections;
 import java.util.List;
 import javafx.scene.shape.Shape;
+import javax.annotation.Nonnull;
 
 public abstract class SingleGraphShapeBase<R, S extends Shape> extends GraphShapeBase<R, S> {
 
@@ -18,11 +19,13 @@ public abstract class SingleGraphShapeBase<R, S extends Shape> extends GraphShap
         return represented;
     }
 
+    @Nonnull
     @Override
     public List<R> getRepresentedObjects() {
         return Collections.singletonList(represented);
     }
 
+    @Nonnull
     @Override
     public final Shape getShape(R represented) {
         return getShape();

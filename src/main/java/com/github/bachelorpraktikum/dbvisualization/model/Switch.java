@@ -82,16 +82,19 @@ public final class Switch implements Shapeable<Polygon> {
         return Factory.getInstance(context);
     }
 
+    @Nonnull
     @Override
     public String getName() {
         return toString();
     }
 
+    @Nonnull
     @Override
     public Polygon createShape() {
         return new Polygon();
     }
 
+    @Nonnull
     @Override
     public Property<VisibleState> visibleStateProperty() {
         return stateProperty;

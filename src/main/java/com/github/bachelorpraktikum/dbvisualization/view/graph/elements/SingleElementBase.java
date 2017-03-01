@@ -5,6 +5,7 @@ import com.github.bachelorpraktikum.dbvisualization.model.Node;
 import com.github.bachelorpraktikum.dbvisualization.view.graph.adapter.CoordinatesAdapter;
 import java.util.Collections;
 import javafx.scene.shape.Shape;
+import javax.annotation.Nonnull;
 
 abstract class SingleElementBase<S extends Shape> extends ElementBase<S> {
 
@@ -16,6 +17,7 @@ abstract class SingleElementBase<S extends Shape> extends ElementBase<S> {
         return getRepresentedObjects().get(0);
     }
 
+    @Nonnull
     @Override
     public Shape getShape(Element element) {
         return getShape();

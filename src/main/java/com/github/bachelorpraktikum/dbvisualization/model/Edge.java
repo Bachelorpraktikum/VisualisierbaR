@@ -200,11 +200,13 @@ public final class Edge implements GraphObject<Line> {
         return name;
     }
 
+    @Nonnull
     @Override
     public Line createShape() {
         return new Line();
     }
 
+    @Nonnull
     @Override
     public Property<VisibleState> visibleStateProperty() {
         return stateProperty;

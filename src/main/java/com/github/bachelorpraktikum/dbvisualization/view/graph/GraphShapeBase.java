@@ -43,6 +43,7 @@ public abstract class GraphShapeBase<R, S extends Node> implements GraphShape<R>
     protected void initializedShape(S shape) {
     }
 
+    @Nonnull
     @Override
     public final S getShape() {
         if (shape == null) {
@@ -55,6 +56,7 @@ public abstract class GraphShapeBase<R, S extends Node> implements GraphShape<R>
         return shape;
     }
 
+    @Nonnull
     @Override
     public Node getFullNode() {
         if (full == null) {

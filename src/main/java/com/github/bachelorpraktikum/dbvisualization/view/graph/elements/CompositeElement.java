@@ -83,6 +83,7 @@ final class CompositeElement extends ElementBase<Group> {
         node.setScaleY(node.getScaleY() * factor);
     }
 
+    @Nonnull
     @Override
     public Shape getShape(Element represented) {
         return shapes.get(represented);

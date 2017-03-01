@@ -73,11 +73,13 @@ public class Train implements GraphObject<Shape> {
         stateProperty = new SimpleObjectProperty<>(VisibleState.AUTO);
     }
 
+    @Nonnull
     @Override
     public Path createShape() {
         return new Path();
     }
 
+    @Nonnull
     @Override
     public Shape createIconShape() {
         URL url = Train.class.getResource("../symbols/train.fxml");
@@ -86,6 +88,7 @@ public class Train implements GraphObject<Shape> {
         return shape;
     }
 
+    @Nonnull
     @Override
     public Property<VisibleState> visibleStateProperty() {
         return stateProperty;

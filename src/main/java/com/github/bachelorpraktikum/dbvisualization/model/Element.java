@@ -143,6 +143,7 @@ public final class Element implements GraphObject<Shape> {
             return logName;
         }
 
+        @Nonnull
         @Override
         public Shape createShape() {
             Shape shape = shapeSupplier.get();
@@ -155,6 +156,7 @@ public final class Element implements GraphObject<Shape> {
             return shape;
         }
 
+        @Nonnull
         @Override
         public Property<VisibleState> visibleStateProperty() {
             return stateProperty;
@@ -416,11 +418,13 @@ public final class Element implements GraphObject<Shape> {
         return name;
     }
 
+    @Nonnull
     @Override
     public Shape createShape() {
         return getType().createShape();
     }
 
+    @Nonnull
     @Override
     public Property<VisibleState> visibleStateProperty() {
         return getType().visibleStateProperty();

@@ -25,6 +25,7 @@ final class WeichenpunktElement extends ElementBase<Polygon> {
         return aSwitch.getMainElement();
     }
 
+    @Nonnull
     @Override
     public Shape getShape(Element element) {
         return getShape();

@@ -9,7 +9,9 @@ import javafx.fxml.FXMLLoader;
 import javafx.geometry.Bounds;
 import javafx.scene.shape.Shape;
 import javax.annotation.Nonnull;
+import javax.annotation.ParametersAreNonnullByDefault;
 
+@ParametersAreNonnullByDefault
 public interface Shapeable<S extends Shape> {
 
     enum VisibleState {
@@ -21,6 +23,7 @@ public interface Shapeable<S extends Shape> {
      *
      * @return the name
      */
+    @Nonnull
     String getName();
 
     /**
@@ -28,6 +31,7 @@ public interface Shapeable<S extends Shape> {
      *
      * @return a shape
      */
+    @Nonnull
     S createShape();
 
     /**
@@ -36,6 +40,7 @@ public interface Shapeable<S extends Shape> {
      *
      * @return a shape
      */
+    @Nonnull
     default Shape createIconShape() {
         return createShape();
     }
@@ -45,6 +50,7 @@ public interface Shapeable<S extends Shape> {
      *
      * @return the state property
      */
+    @Nonnull
     Property<VisibleState> visibleStateProperty();
 
     /**

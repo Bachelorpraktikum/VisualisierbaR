@@ -44,6 +44,7 @@ public final class Node implements GraphObject<Circle> {
         this.stateProperty = new SimpleObjectProperty<>();
     }
 
+    @Nonnull
     @Override
     public Circle createShape() {
         return new Circle(1);
@@ -202,6 +203,7 @@ public final class Node implements GraphObject<Circle> {
         elements.add(Objects.requireNonNull(element));
     }
 
+    @Nonnull
     @Override
     public Property<VisibleState> visibleStateProperty() {
         return stateProperty;

@@ -13,6 +13,7 @@ import javafx.geometry.Point2D;
 import javafx.scene.Node;
 import javafx.scene.control.Tooltip;
 import javafx.scene.shape.Shape;
+import javax.annotation.Nonnull;
 
 abstract class ElementBase<T extends Node> extends GraphShapeBase<Element, T> {
 
@@ -37,6 +38,7 @@ abstract class ElementBase<T extends Node> extends GraphShapeBase<Element, T> {
         }
     }
 
+    @Nonnull
     @Override
     public List<Element> getRepresentedObjects() {
         return elements;

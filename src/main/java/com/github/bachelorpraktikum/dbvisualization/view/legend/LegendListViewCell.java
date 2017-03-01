@@ -30,7 +30,7 @@ public class LegendListViewCell extends ListCell<Shapeable> {
     private AnchorPane cell;
 
 
-    protected void updateItem(Shapeable element, boolean empty) {
+    protected void updateItem(Shapeable<?> element, boolean empty) {
         super.updateItem(element, empty);
         if (empty) {
             setText(null);
@@ -49,9 +49,6 @@ public class LegendListViewCell extends ListCell<Shapeable> {
             String name = element.getName();
             Shape shape = element.createIconShape();
 
-            if (shape == null) {
-                System.out.println(element.getClass().getName());
-            }
             resizeShape(shape, 20);
 
             eleName.setText(name);
