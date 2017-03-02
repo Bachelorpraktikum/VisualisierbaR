@@ -53,7 +53,11 @@ final class MessageEvent implements Event {
     @Override
     public String getDescription() {
         StringBuilder sb = new StringBuilder();
-        sb.append(text);
+        sb.append("Message{")
+            .append("time=").append(getTime())
+            .append(", ").append("node=").append(getNode().getReadableName())
+            .append(", ").append("text=").append(text)
+            .append("}");
         for (String warning : getWarnings()) {
             sb.append(System.lineSeparator())
                 .append("[WARN] ").append(warning);
@@ -83,7 +87,7 @@ final class MessageEvent implements Event {
         dialog.setY(nodeBounds.getMaxY());
 
         dialog.setTitle("MessageEvent " + getNode().getReadableName());
-        dialog.setContentText(getDescription());
+        dialog.setContentText(text);
         dialog.setHeaderText("Message at time " + getTime() + ":");
         dialog.show();
     }
