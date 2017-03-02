@@ -1,0 +1,11 @@
+<?import javafx.scene.chart.LineChart?>
+<?import javafx.scene.chart.NumberAxis?>
+<LineChart createSymbols="false"
+  legendVisible="false" prefHeight="0.0" prefWidth="0.0" title="Big Chart" animated="false">
+  <xAxis>
+    <NumberAxis side="BOTTOM" label="x"/>
+  </xAxis>
+  <yAxis>
+    <NumberAxis side="LEFT" label="y"/>
+  </yAxis>
+</LineChart>

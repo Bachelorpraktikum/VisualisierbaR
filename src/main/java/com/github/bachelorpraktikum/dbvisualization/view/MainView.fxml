@@ -18,7 +18,9 @@
   xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1"
   fx:controller="com.github.bachelorpraktikum.dbvisualization.view.MainController">
   <center>
-    <Pane fx:id="centerPane"/>
+    <StackPane fx:id="centerPane">
+      <Pane fx:id="graphPane"/>
+    </StackPane>
   </center>
   <top>
     <StackPane>

@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
-<?import javafx.scene.chart.LineChart?>
-<?import javafx.scene.chart.NumberAxis?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.Group?>
 <?import javafx.scene.layout.AnchorPane?>
@@ -55,32 +53,8 @@
         <Insets bottom="3" left="10" right="10" top="3"/>
       </VBox.margin>
     </AnchorPane>
-    <LineChart fx:id="vtChart" createSymbols="false"
-      legendVisible="false" prefHeight="0.0" prefWidth="0.0" title="%title_vt">
-      <xAxis>
-        <NumberAxis side="BOTTOM" label="s"/>
-      </xAxis>
-      <yAxis>
-        <NumberAxis side="LEFT" label="m/s"/>
-      </yAxis>
-    </LineChart>
-    <LineChart fx:id="vdChart" createSymbols="false"
-      legendVisible="false" prefHeight="0.0" prefWidth="0.0" title="%title_vd">
-      <xAxis>
-        <NumberAxis side="BOTTOM" label="km"/>
-      </xAxis>
-      <yAxis>
-        <NumberAxis side="LEFT" label="m/s"/>
-      </yAxis>
-    </LineChart>
-    <LineChart fx:id="dtChart" createSymbols="false"
-      legendVisible="false" prefHeight="0.0" prefWidth="0.0" title="%title_dt">
-      <xAxis>
-        <NumberAxis side="BOTTOM" label="s"/>
-      </xAxis>
-      <yAxis>
-        <NumberAxis side="LEFT" label="km"/>
-      </yAxis>
-    </LineChart>
+    <fx:include fx:id="vtChart" source="LineChart.fxml"/>
+    <fx:include fx:id="vdChart" source="LineChart.fxml"/>
+    <fx:include fx:id="dtChart" source="LineChart.fxml"/>
   </VBox>
 </VBox>

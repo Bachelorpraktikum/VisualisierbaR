@@ -124,6 +124,8 @@ public class MainController {
 
     @FXML
     private Pane centerPane;
+    @FXML
+    private Pane graphPane;
     @Nullable
     private Graph graph;
     private Map<Train, TrainView> trains;
@@ -258,6 +260,8 @@ public class MainController {
             timeText.setDisable(newValue);
             eventTraversal.setDisable(newValue);
         });
+
+        detailBoxController.setCenterPane(centerPane);
     }
 
     private void initializeCenterPane() {
@@ -266,9 +270,9 @@ public class MainController {
                 fitGraphToCenter(getGraph());
             }
         };
-        centerPane.heightProperty().addListener(boundsListener);
-        centerPane.widthProperty().addListener(boundsListener);
-        centerPane.setOnScroll(event -> {
+        graphPane.heightProperty().addListener(boundsListener);
+        graphPane.widthProperty().addListener(boundsListener);
+        graphPane.setOnScroll(event -> {
             if (graph != null) {
                 Group group = graph.getGroup();
                 Bounds bounds = group.localToScene(group.getBoundsInLocal());
@@ -287,11 +291,11 @@ public class MainController {
                 group.setTranslateY(group.getTranslateY() - factor * translateY);
             }
         });
-        centerPane.setOnMouseReleased(event -> {
+        graphPane.setOnMouseReleased(event -> {
             mousePressedX = -1;
             mousePressedY = -1;
         });
-        centerPane.setOnMouseDragged(event -> {
+        graphPane.setOnMouseDragged(event -> {
             if (!event.isPrimaryButtonDown()) {
                 return;
             }
@@ -304,8 +308,8 @@ public class MainController {
             double xOffset = (event.getX() - mousePressedX);
             double yOffset = (event.getY() - mousePressedY);
 
-            centerPane.setTranslateX(centerPane.getTranslateX() + xOffset);
-            centerPane.setTranslateY(centerPane.getTranslateY() + yOffset);
+            graphPane.setTranslateX(graphPane.getTranslateX() + xOffset);
+            graphPane.setTranslateY(graphPane.getTranslateY() + yOffset);
             event.consume();
         });
     }
@@ -637,7 +641,7 @@ public class MainController {
             } else {
                 graph = new Graph(context, new SimpleCoordinatesAdapter());
             }
-            centerPane.getChildren().add(graph.getGroup());
+            graphPane.getChildren().add(graph.getGroup());
             showLegend();
 
             for (Map.Entry<Element, GraphShape<Element>> entry : graph.getElements()
@@ -671,8 +675,8 @@ public class MainController {
 
     private void fitGraphToCenter(Graph graph) {
         Bounds graphBounds = graph.getGroup().getBoundsInParent();
-        double widthFactor = (centerPane.getWidth()) / graphBounds.getWidth();
-        double heightFactor = (centerPane.getHeight()) / graphBounds.getHeight();
+        double widthFactor = (graphPane.getWidth()) / graphBounds.getWidth();
+        double heightFactor = (graphPane.getHeight()) / graphBounds.getHeight();
 
         double scaleFactor = Math.min(widthFactor, heightFactor);
 
@@ -691,10 +695,10 @@ public class MainController {
     private void moveGraphToCenter(Graph graph) {
         Bounds graphBounds = graph.getGroup().getBoundsInParent();
 
-        double finalX = (centerPane.getWidth() - graphBounds.getWidth()) / 2;
+        double finalX = (graphPane.getWidth() - graphBounds.getWidth()) / 2;
         double xTranslate = finalX - graphBounds.getMinX();
 
-        double finalY = (centerPane.getHeight() - graphBounds.getHeight()) / 2;
+        double finalY = (graphPane.getHeight() - graphBounds.getHeight()) / 2;
         double yTranslate = finalY - graphBounds.getMinY();
 
         graph.move(xTranslate, yTranslate);
@@ -704,7 +708,7 @@ public class MainController {
         stage.setMaximized(false);
         if (graph != null) {
             simulation.stop();
-            centerPane.getChildren().clear();
+            graphPane.getChildren().clear();
             graph = null;
         }
         ContextHolder.getInstance().setContext(null);
@@ -736,7 +740,7 @@ public class MainController {
     }
 
     private void switchGraph() {
-        centerPane.getChildren().clear();
+        graphPane.getChildren().clear();
         graph = null;
         fitGraphToCenter(getGraph());
     }
