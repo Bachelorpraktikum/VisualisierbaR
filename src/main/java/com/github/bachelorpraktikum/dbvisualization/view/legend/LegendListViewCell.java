@@ -29,8 +29,8 @@ public class LegendListViewCell extends ListCell<Shapeable> {
     @FXML
     private AnchorPane cell;
 
-
-    protected void updateItem(Shapeable<?> element, boolean empty) {
+    @Override
+    protected void updateItem(Shapeable element, boolean empty) {
         super.updateItem(element, empty);
         if (empty) {
             setText(null);
