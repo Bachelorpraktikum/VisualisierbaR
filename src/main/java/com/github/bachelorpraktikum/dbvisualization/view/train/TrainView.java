@@ -61,7 +61,6 @@ public final class TrainView implements Highlightable {
 
         this.highlightRectangle = new Rectangle();
         highlightRectangle.setFill(Color.TRANSPARENT);
-        highlightRectangle.setStroke(Color.BLUE);
         highlightRectangle.setStrokeWidth(0.05 * calibrationBase);
         highlightRectangle.visibleProperty().bind(highlightedProperty());
         graph.getGroup().getChildren().add(highlightRectangle);
@@ -105,7 +104,10 @@ public final class TrainView implements Highlightable {
         path.getElements().clear();
         Train.State state = train.getState(time);
         if (!state.isInitialized()) {
+            highlightRectangle.setStroke(Color.TRANSPARENT);
             return;
+        } else {
+            highlightRectangle.setStroke(Color.BLUE);
         }
         Train.Position trainPosition = state.getPosition();
         List<Point2D> points = trainPosition.getPositions(coordinatesTranslator);
