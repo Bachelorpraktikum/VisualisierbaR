@@ -35,7 +35,7 @@ mv_term: MV_IND SEP 'TERM' SEP train_name SEP time SEP distance;
 
 ch: 'CH' SEP elem_name SEP STATE SEP time;
 
-msg: 'MSG' SEP node_name SEP time SEP name;
+msg: 'MSG' SEP node_name SEP time SEP message;
 
 data: 'DATA' SEP train_readable_name SEP time WHITESPACE speed SEP time_with_wrapper;
 
@@ -54,6 +54,8 @@ name_prefix: '<' INT DOT INT DOT INT '>' COLON;
 time: rat | INT;
 rat: INT '/' INT;
 time_with_wrapper: 'Time' '(' time ')';
+message: any+;
+any: ~(NEWLINE | SEP);
 
 
 STATE:   NOSIG

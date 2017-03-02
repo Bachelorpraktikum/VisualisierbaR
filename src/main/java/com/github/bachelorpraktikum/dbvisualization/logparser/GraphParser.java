@@ -208,7 +208,7 @@ public final class GraphParser {
         @Override
         public Context visitMsg(MsgContext ctx) {
             int time = timeVisitor.visitTime(ctx.time());
-            String text = ctx.name().getText();
+            String text = ctx.message().getText();
             Node node = Node.in(context).get(ctx.node_name().getText());
             Messages.in(context).add(time, text, node);
             return context;
