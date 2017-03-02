@@ -4,13 +4,16 @@ import com.github.bachelorpraktikum.dbvisualization.model.Event;
 import com.github.bachelorpraktikum.dbvisualization.model.train.Train;
 import com.github.bachelorpraktikum.dbvisualization.model.train.Train.State;
 import java.util.ArrayList;
+import java.util.EnumMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.function.Function;
 import javafx.beans.binding.Binding;
 import javafx.beans.binding.Bindings;
 import javafx.beans.value.ChangeListener;
+import javafx.beans.value.WeakChangeListener;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -55,25 +58,78 @@ public class ElementDetailController {
 
     private List<Object> bindings;
 
-    private ObservableList<Data<Double, Double>> vtData;
-    private ObservableList<Data<Double, Double>> vdData;
-    private ObservableList<Data<Double, Double>> dtData;
+
+    private static final Function<State, Double> DISTANCE = s -> {
+        double distance = s.getTotalDistance() / 1000.0;
+        return distance < 0 ? 0 : distance;
+    };
+    private static final Function<State, Double> TIME = s -> {
+        double time = s.getTime() / 1000.0;
+        return time < 0 ? 0 : time;
+    };
+
+    private enum ChartType {
+        vt(TIME, State::getSpeed, true),
+        vd(DISTANCE, State::getSpeed, true),
+        dt(TIME, DISTANCE, false);
+
+        private final Function<State, Double> xFunction;
+        private final Function<State, Double> yFunction;
+        private final boolean isSpeedOnYAxis;
+
+
+        ChartType(Function<State, Double> xFunction, Function<State, Double> yFunction,
+            boolean isSpeedOnYAxis) {
+            this.xFunction = xFunction;
+            this.yFunction = yFunction;
+            this.isSpeedOnYAxis = isSpeedOnYAxis;
+        }
+
+        public boolean isSpeedOnYAxis() {
+            return isSpeedOnYAxis;
+        }
+
+        public Function<State, Double> getXFunction() {
+            return xFunction;
+        }
+
+        public Function<State, Double> getYFunction() {
+            return yFunction;
+        }
+    }
+
+    private Map<ChartType, LineChart<Double, Double>> charts;
+    private Map<ChartType, ObservableList<Data<Double, Double>>> chartData;
 
     @FXML
     private void initialize() {
         bindings = new LinkedList<>();
-        vtData = FXCollections.observableList(new ArrayList<>(256));
-        vtChart.setData(FXCollections.singletonObservableList(new Series<>(vtData)));
 
-        vdData = FXCollections.observableList(new ArrayList<>(256));
-        vdChart.setData(FXCollections.singletonObservableList(new Series<>(vdData)));
+        charts = new EnumMap<>(ChartType.class);
+        charts.put(ChartType.vt, vtChart);
+        charts.put(ChartType.vd, vdChart);
+        charts.put(ChartType.dt, dtChart);
 
-        dtData = FXCollections.observableList(new ArrayList<>(256));
-        dtChart.setData(FXCollections.singletonObservableList(new Series<>(dtData)));
+        chartData = new EnumMap<>(ChartType.class);
+        for (ChartType type : ChartType.values()) {
+            ObservableList<Data<Double, Double>> data = FXCollections.observableList(
+                new ArrayList<>(256)
+            );
+            chartData.put(type, data);
+            LineChart<Double, Double> chart = charts.get(type);
+            chart.setData(FXCollections.singletonObservableList(new Series<>(data)));
+        }
+    }
+
+    private void resetCharts() {
+        for (ChartType type : ChartType.values()) {
+            chartData.get(type).clear();
+        }
     }
 
     public void setDetail(ElementDetailBase detail) {
         bindings.clear();
+        resetCharts();
         if (detail == null) {
             return;
         }
@@ -115,10 +171,12 @@ public class ElementDetailController {
             bindings.add(speedBinding);
             speedValue.textProperty().bind(speedBinding);
 
+            updateCharts(detail.timeProperty().get(), Integer.MAX_VALUE);
             ChangeListener<Number> chartListener = ((observable, oldValue, newValue) ->
                 updateCharts(newValue.intValue(), oldValue.intValue())
             );
-            detail.timeProperty().addListener(chartListener);
+            bindings.add(chartListener);
+            detail.timeProperty().addListener(new WeakChangeListener<>(chartListener));
         } else {
             Binding<String> stateBinding = Bindings.createStringBinding(() ->
                     String.valueOf(((ElementDetail) detail).getState()),
@@ -154,31 +212,27 @@ public class ElementDetailController {
             return;
         }
 
-        Function<State, Double> distanceFunction = s -> s.getTotalDistance() / 1000.0;
-        Function<State, Double> timeFunction = s -> s.getTime() / 1000.0;
+        if (previousTime > time) {
+            resetCharts();
+        }
 
-        updateChart(vtData, timeFunction, State::getSpeed, true, time, previousTime);
-        updateChart(vdData, distanceFunction, State::getSpeed, true, time, previousTime);
-        updateChart(dtData, timeFunction, distanceFunction, false, time, previousTime);
+        for (ChartType type : ChartType.values()) {
+            updateChart(type, time, previousTime);
+        }
     }
 
-    private <X, Y> void updateChart(ObservableList<Data<X, Y>> data,
-        Function<State, X> xFunction,
-        Function<State, Y> yFunction,
-        boolean ySpeed,
-        int time,
-        int previousTime) {
+    private void updateChart(ChartType type, int time, int previousTime) {
         Train train = (Train) detail.getElement();
+
+        ObservableList<Data<Double, Double>> data = chartData.get(type);
+        Function<State, Double> xFunction = type.getXFunction();
+        Function<State, Double> yFunction = type.getYFunction();
 
         State state = null;
         if (previousTime > time) {
-            data.clear();
+            previousTime = Integer.MIN_VALUE;
             state = train.getState(0);
             data.add(new Data<>(xFunction.apply(state), yFunction.apply(state)));
-        } else {
-            if (!data.isEmpty()) {
-                data.remove(data.size() - 1);
-            }
         }
 
         for (Event event : train.getEvents()) {
@@ -189,9 +243,9 @@ public class ElementDetailController {
                 continue;
             }
             State newState = train.getState(event.getTime(), state);
-            if (ySpeed) {
-                X x = xFunction.apply(newState);
-                Y y = yFunction.apply(state);
+            if (state != null && type.isSpeedOnYAxis()) {
+                Double x = xFunction.apply(newState);
+                Double y = yFunction.apply(state);
                 data.add(new Data<>(x, y));
             }
             state = newState;
