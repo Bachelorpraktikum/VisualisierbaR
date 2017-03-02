@@ -384,7 +384,13 @@ public class MainController {
         Callback<ListView<GraphObject>, ListCell<GraphObject>> elementListCellFactory =
             (listView) -> {
                 ListCell<GraphObject> cell = textFactory.call(listView);
-                TooltipUtil.install(cell, () -> cell.getItem().getName());
+                TooltipUtil.install(cell, () -> {
+                    if (cell.getItem() != null) {
+                        return cell.getItem().getName();
+                    } else {
+                        return "";
+                    }
+                });
                 return cell;
             };
 
