@@ -165,13 +165,15 @@ public class MainController {
                 timeText.setText(String.format("%dms", newInt));
                 Element.in(context).setTime(newInt);
 
-                boolean messages = Messages.in(context).fireEventsBetween(
-                    node -> getGraph().getNodes().get(node).getShape(),
-                    oldInt > newInt ? Context.INIT_STATE_TIME : oldInt,
-                    newInt
-                );
-                if (messages) {
-                    playToggle.setSelected(false);
+                if (newInt > oldInt) {
+                    boolean messages = Messages.in(context).fireEventsBetween(
+                        node -> getGraph().getNodes().get(node).getShape(),
+                        oldInt,
+                        newInt
+                    );
+                    if (messages) {
+                        playToggle.setSelected(false);
+                    }
                 }
             }
         });
