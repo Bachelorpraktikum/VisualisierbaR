@@ -2,6 +2,7 @@ package com.github.bachelorpraktikum.dbvisualization.model.train;
 
 import com.github.bachelorpraktikum.dbvisualization.model.Context;
 import com.github.bachelorpraktikum.dbvisualization.model.Edge;
+import com.github.bachelorpraktikum.dbvisualization.model.Element;
 import com.github.bachelorpraktikum.dbvisualization.model.Event;
 import com.github.bachelorpraktikum.dbvisualization.model.GraphObject;
 import com.github.bachelorpraktikum.dbvisualization.model.Node;
@@ -83,7 +84,7 @@ public class Train implements GraphObject<Shape> {
     @Nonnull
     @Override
     public Shape createIconShape() {
-        URL url = Train.class.getResource("../symbols/train.fxml");
+        URL url = Element.class.getResource("symbols/train.fxml");
         Shape shape = Shapeable.createShape(url);
         shape.setRotate(180);
         return shape;
