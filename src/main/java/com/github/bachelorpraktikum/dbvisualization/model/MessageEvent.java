@@ -10,6 +10,9 @@ import javafx.collections.ObservableList;
 import javafx.geometry.Bounds;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.ButtonBar.ButtonData;
+import javafx.scene.control.ButtonType;
+import javafx.scene.control.Dialog;
 import javafx.stage.Modality;
 import javax.annotation.Nonnull;
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -78,17 +81,21 @@ final class MessageEvent implements Event {
 
     void fire(Function<Node, javafx.scene.Node> nodeResolve) {
         javafx.scene.Node node = nodeResolve.apply(getNode());
-        Alert dialog = new Alert(AlertType.INFORMATION);
+        Dialog<Void> dialog = new Dialog<>();
         dialog.initModality(Modality.NONE);
         dialog.initOwner(node.getScene().getWindow());
+        dialog.setResultConverter(type -> null);
 
         Bounds nodeBounds = node.localToScreen(node.getBoundsInLocal());
         dialog.setX(nodeBounds.getMaxX());
         dialog.setY(nodeBounds.getMaxY());
 
-        dialog.setTitle("MessageEvent " + getNode().getReadableName());
+        dialog.setTitle("MessageEvent at time " + getTime());
         dialog.setContentText(text);
-        dialog.setHeaderText("Message at time " + getTime() + ":");
+
+        // The dialog need a button. Otherwise it won't be closable.
+        ButtonType okButton = new ButtonType("OK", ButtonData.OK_DONE);
+        dialog.getDialogPane().getButtonTypes().add(okButton);
         dialog.show();
     }
 }
