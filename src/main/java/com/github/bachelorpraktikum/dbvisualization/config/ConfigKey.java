@@ -2,9 +2,10 @@ package com.github.bachelorpraktikum.dbvisualization.config;
 
 public enum ConfigKey {
 
-    initialDirectory("%s_initialDirectory"),
+    initialLogFileDirectory("logFile_initialDirectory"),
     colors("trainColors"),
-    speedCheckDelta("speedCheckDelta");
+    speedCheckDelta("speedCheckDelta"),
+    initialDatabaseUri("database_initialDirectory");
 
     private final String key;
 

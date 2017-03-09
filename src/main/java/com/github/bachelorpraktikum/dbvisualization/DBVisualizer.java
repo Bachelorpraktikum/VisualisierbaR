@@ -1,7 +1,7 @@
 package com.github.bachelorpraktikum.dbvisualization;
 
 import com.github.bachelorpraktikum.dbvisualization.config.ConfigFile;
-import com.github.bachelorpraktikum.dbvisualization.view.SourceController;
+import com.github.bachelorpraktikum.dbvisualization.view.sourcechooser.SourceController;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ResourceBundle;
@@ -31,7 +31,9 @@ public class DBVisualizer extends Application {
         ResourceBundle localizationBundle = ResourceBundle.getBundle("bundles.localization");
         primaryStage.setTitle(localizationBundle.getString(APP_NAME_KEY));
 
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("view/SourceChooser.fxml"));
+        FXMLLoader loader = new FXMLLoader(
+            getClass().getResource("view/sourcechooser/SourceChooser.fxml")
+        );
         loader.setResources(localizationBundle);
         loader.load();
         SourceController controller = loader.getController();

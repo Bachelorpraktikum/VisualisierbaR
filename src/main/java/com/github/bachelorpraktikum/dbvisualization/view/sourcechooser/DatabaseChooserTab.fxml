@@ -8,7 +8,7 @@
 <BorderPane xmlns="http://javafx.com/javafx/8.0.111"
   xmlns:fx="http://javafx.com/fxml/1"
   fx:id="rootPane"
-  fx:controller="com.github.bachelorpraktikum.dbvisualization.view.DatabaseChooserController">
+  fx:controller="com.github.bachelorpraktikum.dbvisualization.view.sourcechooser.DatabaseChooserController">
   <center>
     <TextField fx:id="uriField" prefWidth="300" maxWidth="1.7976931348623157E308"
       BorderPane.alignment="CENTER"/>

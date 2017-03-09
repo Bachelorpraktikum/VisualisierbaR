@@ -1,10 +1,8 @@
 package com.github.bachelorpraktikum.dbvisualization.view;
 
 import com.github.bachelorpraktikum.dbvisualization.CompositeObservableList;
-import com.github.bachelorpraktikum.dbvisualization.DataSource;
 import com.github.bachelorpraktikum.dbvisualization.FXCollectors;
-import com.github.bachelorpraktikum.dbvisualization.database.Database;
-import com.github.bachelorpraktikum.dbvisualization.logparser.GraphParser;
+import com.github.bachelorpraktikum.dbvisualization.datasource.DataSource;
 import com.github.bachelorpraktikum.dbvisualization.model.Context;
 import com.github.bachelorpraktikum.dbvisualization.model.Element;
 import com.github.bachelorpraktikum.dbvisualization.model.Event;
@@ -19,9 +17,9 @@ import com.github.bachelorpraktikum.dbvisualization.view.graph.GraphShape;
 import com.github.bachelorpraktikum.dbvisualization.view.graph.adapter.ProportionalCoordinatesAdapter;
 import com.github.bachelorpraktikum.dbvisualization.view.graph.adapter.SimpleCoordinatesAdapter;
 import com.github.bachelorpraktikum.dbvisualization.view.legend.LegendListViewCell;
+import com.github.bachelorpraktikum.dbvisualization.view.sourcechooser.SourceController;
 import com.github.bachelorpraktikum.dbvisualization.view.train.TrainView;
 import java.io.IOException;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -49,7 +47,6 @@ import javafx.fxml.FXMLLoader;
 import javafx.geometry.Bounds;
 import javafx.scene.Group;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonBase;
 import javafx.scene.control.CheckBox;
@@ -533,7 +530,7 @@ public class MainController {
         });
     }
 
-    void setStage(@Nonnull Stage stage) {
+    public void setStage(@Nonnull Stage stage) {
         this.stage = stage;
         stage.setScene(new Scene(rootPane));
 
@@ -594,47 +591,11 @@ public class MainController {
         elementList.setItems(textFilteredItems);
     }
 
-    void setDataSource(@Nonnull DataSource source) {
-        switch (source.getType()) {
-            case LOG_FILE:
-                Context context = null;
-                try {
-                    context = new GraphParser(source.getUri().toURL().getFile()).parse();
-                } catch (IOException | RuntimeException e) {
-                    e.printStackTrace();
-                    Alert alert = new Alert(Alert.AlertType.ERROR);
-                    String headerText = ResourceBundle.getBundle("bundles.localization")
-                        .getString("parse_error_header");
-                    alert.setHeaderText(headerText);
-                    String contentText = ResourceBundle.getBundle("bundles.localization")
-                        .getString("parse_error_content");
-                    alert.setContentText(contentText);
-                    alert.show();
-                    showSourceChooser();
-                    return;
-                }
-                ContextHolder.getInstance().setContext(context);
-                logList.setItems(context.getObservableEvents().sorted());
-                fitGraphToCenter(getGraph());
-
-                break;
-            case DATABASE:
-                Database db;
-                try {
-                    db = new Database(source.getUri());
-                    db.testConnection();
-                } catch (SQLException e) {
-                    if (e.getMessage().contains("ACCESS_DENIED")) {
-                        showLoginWindow();
-                    } else {
-                        System.out.println(e.getMessage());
-                    }
-                }
-                return;
-            default:
-                return;
-        }
-
+    public void setDataSource(@Nonnull DataSource source) {
+        Context context = source.getContext();
+        ContextHolder.getInstance().setContext(context);
+        logList.setItems(context.getObservableEvents().sorted());
+        fitGraphToCenter(getGraph());
         simulationTime.set(Context.INIT_STATE_TIME);
         showElements();
     }
@@ -726,7 +687,8 @@ public class MainController {
             graph = null;
         }
         ContextHolder.getInstance().setContext(null);
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("SourceChooser.fxml"));
+        FXMLLoader loader = new FXMLLoader(getClass().getResource(
+            "sourcechooser/SourceChooser.fxml"));
         loader.setResources(ResourceBundle.getBundle("bundles.localization"));
         try {
             loader.load();
