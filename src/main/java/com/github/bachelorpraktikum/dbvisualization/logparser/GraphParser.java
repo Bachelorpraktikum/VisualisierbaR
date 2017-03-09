@@ -17,7 +17,6 @@ import javax.annotation.Nonnull;
 import javax.annotation.ParametersAreNonnullByDefault;
 import org.antlr.v4.runtime.ANTLRFileStream;
 import org.antlr.v4.runtime.ANTLRInputStream;
-import org.antlr.v4.runtime.BailErrorStrategy;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.DefaultErrorStrategy;
@@ -107,40 +106,64 @@ public final class GraphParser {
 
         @Override
         public void enterNode(LogParser.NodeContext ctx) {
-            String nodeName = ctx.node_name().getText();
-            Coordinates coordinates = createCoordinates(ctx.coord());
-            Node.in(context).create(nodeName, coordinates);
+            try {
+                String nodeName = ctx.node_name().getText();
+                Coordinates coordinates = createCoordinates(ctx.coord());
+                Node.in(context).create(nodeName, coordinates);
+            } catch (IllegalArgumentException e) {
+                log.warning("Could not parse line: " + ctx.getText()
+                    + "\nReason: " + e.getMessage()
+                );
+            }
         }
 
         @Override
         public void enterElem(LogParser.ElemContext ctx) {
-            String elementName = ctx.elem_name().getText();
-            String nodeName = ctx.node_name().getText();
-            Node node = Node.in(context).get(nodeName);
-            Element.State state = Element.State.fromName(ctx.STATE().getText());
-            Element.Type type = Element.Type.fromName(elementName);
-            Element.in(context).create(elementName, type, node, state);
+            try {
+                String elementName = ctx.elem_name().getText();
+                String nodeName = ctx.node_name().getText();
+                Node node = Node.in(context).get(nodeName);
+                Element.State state = Element.State.fromName(ctx.STATE().getText());
+                Element.Type type = Element.Type.fromName(elementName);
+                Element.in(context).create(elementName, type, node, state);
+            } catch (IllegalArgumentException e) {
+                log.warning("Could not parse line: " + ctx.getText()
+                    + "\nReason: " + e.getMessage()
+                );
+            }
         }
 
         @Override
         public void enterEdge(LogParser.EdgeContext ctx) {
-            String edgeName = ctx.edge_name().getText();
-            String node1Name = ctx.node_name(0).getText();
-            String node2Name = ctx.node_name(1).getText();
-            int length = Integer.parseInt(ctx.INT().getText());
+            try {
+                String edgeName = ctx.edge_name().getText();
+                String node1Name = ctx.node_name(0).getText();
+                String node2Name = ctx.node_name(1).getText();
+                int length = Integer.parseInt(ctx.INT().getText());
 
-            Node node1 = Node.in(context).get(node1Name);
-            Node node2 = Node.in(context).get(node2Name);
-            Edge.in(context).create(edgeName, length, node1, node2);
+                Node node1 = Node.in(context).get(node1Name);
+                Node node2 = Node.in(context).get(node2Name);
+                Edge.in(context).create(edgeName, length, node1, node2);
+            } catch (IllegalArgumentException e) {
+                log.warning("Could not parse line: " + ctx.getText()
+                    + "\nReason: " + e.getMessage()
+                );
+            }
         }
 
         @Override
         public void enterTrain(LogParser.TrainContext ctx) {
-            String trainName = ctx.train_name().getText();
-            String humanName = ctx.train_readable_name().getText();
-            int length = Integer.parseInt(ctx.INT().getText());
+            try {
+                String trainName = ctx.train_name().getText();
+                String humanName = ctx.train_readable_name().getText();
+                int length = Integer.parseInt(ctx.INT().getText());
 
-            Train.in(context).create(trainName, humanName, length);
+                Train.in(context).create(trainName, humanName, length);
+            } catch (IllegalArgumentException e) {
+                log.warning("Could not parse line: " + ctx.getText()
+                    + "\nReason: " + e.getMessage()
+                );
+            }
         }
 
         @Override

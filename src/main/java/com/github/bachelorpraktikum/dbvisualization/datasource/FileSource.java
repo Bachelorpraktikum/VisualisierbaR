@@ -4,7 +4,6 @@ import com.github.bachelorpraktikum.dbvisualization.logparser.GraphParser;
 import com.github.bachelorpraktikum.dbvisualization.model.Context;
 import java.io.File;
 import java.io.IOException;
-import javafx.stage.FileChooser;
 
 public class FileSource implements DataSource {
 
