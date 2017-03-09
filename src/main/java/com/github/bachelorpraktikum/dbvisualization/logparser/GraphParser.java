@@ -20,6 +20,8 @@ import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.DefaultErrorStrategy;
+import org.antlr.v4.runtime.Parser;
+import org.antlr.v4.runtime.RecognitionException;
 import org.antlr.v4.runtime.atn.PredictionMode;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
@@ -35,9 +37,15 @@ public final class GraphParser {
     @Nonnull
     private Context parse(@Nonnull CharStream input, @Nonnull Context context) {
         LogLexer lexer = new LogLexer(input);
+        lexer.removeErrorListeners();
         CommonTokenStream tokens = new CommonTokenStream(lexer);
         LogParser parser = new LogParser(tokens);
-        parser.setErrorHandler(new DefaultErrorStrategy());
+        parser.setErrorHandler(new DefaultErrorStrategy() {
+            @Override
+            public void reportError(Parser recognizer, RecognitionException e) {
+                // TODO maybe log errors?
+            }
+        });
         parser.getInterpreter().setPredictionMode(PredictionMode.SLL);
         ParseTree parseTree;
         try {

@@ -8,7 +8,9 @@ public enum ConfigKey {
     initialLogFileDirectory("logFile_initialDirectory"),
     colors("trainColors"),
     speedCheckDelta("speedCheckDelta"),
-    initialDatabaseUri("database_initialDirectory");
+    initialDatabaseUri("database_initialDirectory"),
+    initialRestDirectory("rest_initialDirectory"),
+    initialRestExecutable("rest_initialExecutable");
 
     private final String key;
 

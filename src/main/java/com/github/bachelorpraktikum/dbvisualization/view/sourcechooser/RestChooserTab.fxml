@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.BorderPane?>
+<BorderPane xmlns="http://javafx.com/javafx/8.0.111"
+  xmlns:fx="http://javafx.com/fxml/1"
+  fx:id="rootPane"
+  fx:controller="com.github.bachelorpraktikum.dbvisualization.view.sourcechooser.RestChooserController">
+  <center>
+    <TextField fx:id="pathField" prefWidth="300" maxWidth="1.7976931348623157E308"
+      BorderPane.alignment="CENTER"/>
+  </center>
+  <left>
+    <Label minWidth="-Infinity" text="%choose_simulation_app" BorderPane.alignment="CENTER">
+      <BorderPane.margin>
+        <Insets right="6.0"/>
+      </BorderPane.margin>
+    </Label>
+  </left>
+  <right>
+    <Button fx:id="explorerButton" minWidth="-Infinity" mnemonicParsing="false" text="%explorer"
+      BorderPane.alignment="CENTER">
+      <BorderPane.margin>
+        <Insets left="6.0"/>
+      </BorderPane.margin>
+    </Button>
+  </right>
+  <padding>
+    <Insets bottom="6.0" left="6.0" right="6.0" top="6.0"/>
+  </padding>
+</BorderPane>

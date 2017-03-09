@@ -18,6 +18,9 @@
       <Tab text="%database">
         <fx:include fx:id="databaseChooserTab" source="DatabaseChooserTab.fxml"/>
       </Tab>
+      <Tab text="%live_simulation">
+        <fx:include fx:id="restChooserTab" source="RestChooserTab.fxml"/>
+      </Tab>
     </TabPane>
   </center>
   <bottom>
