@@ -21,6 +21,12 @@ interface SourceChooser<T extends DataSource> {
     @Nonnull
     T getResource() throws IOException;
 
+    /**
+     * An observable boolean value indicating whether a semi-legitimate input has been chosen and
+     * the 'Open'-button can be enabled.
+     *
+     * @return an ObservableBooleanValue
+     */
     @Nonnull
     ObservableBooleanValue inputChosen();
 }
