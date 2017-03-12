@@ -41,7 +41,6 @@ public class DatabaseChooserController implements SourceChooser<DataSource> {
         portProperty = new ReadOnlyObjectWrapper<>();
         completeURIProperty = new ReadOnlyObjectWrapper<>();
         uriChosen = completeURIProperty.isNotNull();
-        loadInitialValues();
 
         ipField.textProperty().addListener((o, oldValue, newValue) -> {
             if (newValue == null || newValue.trim().isEmpty()) {
@@ -75,9 +74,8 @@ public class DatabaseChooserController implements SourceChooser<DataSource> {
                 portProperty.set(null);
             }
         });
-
-        portField.setText(portField.getText() + " ");
-        ipField.setText(ipField.getText() + " ");
+        
+        loadInitialValues();
     }
 
     private void loadInitialValues() {
