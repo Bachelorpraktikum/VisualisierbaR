@@ -6,6 +6,7 @@ import com.github.bachelorpraktikum.dbvisualization.datasource.DataSource;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.logging.Logger;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.beans.value.ObservableBooleanValue;
 import javafx.fxml.FXML;
@@ -17,46 +18,100 @@ import javax.annotation.Nonnull;
 public class DatabaseChooserController implements SourceChooser<DataSource> {
 
     @FXML
-    public BorderPane rootPane;
+    private BorderPane rootPaneDatabase;
     @FXML
-    public TextField uriField;
+    private TextField ipField;
+    @FXML
+    private TextField databaseNameField;
+    @FXML
+    private TextField portField;
     @FXML
     public Label uriError;
 
-    private ReadOnlyObjectWrapper<URI> databaseUriProperty;
+    private ReadOnlyObjectWrapper<URI> databaseURIProperty;
+    private ReadOnlyObjectWrapper<String> databaseNameProperty;
+    private ReadOnlyObjectWrapper<Integer> portProperty;
+    private ReadOnlyObjectWrapper<URI> completeURIProperty;
     private ObservableBooleanValue uriChosen;
 
     @FXML
     public void initialize() {
-        databaseUriProperty = new ReadOnlyObjectWrapper<>();
-        uriChosen = databaseUriProperty.isNotNull();
+        databaseURIProperty = new ReadOnlyObjectWrapper<>();
+        databaseNameProperty = new ReadOnlyObjectWrapper<>();
+        portProperty = new ReadOnlyObjectWrapper<>();
+        completeURIProperty = new ReadOnlyObjectWrapper<>();
+        uriChosen = completeURIProperty.isNotNull();
+        loadInitialValues();
 
-        uriField.textProperty().addListener((o, oldValue, newValue) -> {
+        ipField.textProperty().addListener((o, oldValue, newValue) -> {
             if (newValue == null || newValue.trim().isEmpty()) {
-                databaseUriProperty.set(null);
+                databaseURIProperty.set(null);
                 return;
             }
             URI uri = null;
             try {
                 uri = new URI(newValue);
-                databaseUriProperty.set(uri);
+                databaseURIProperty.set(uri);
+                check();
             } catch (URISyntaxException ignored) {
-                System.out.println(ignored.getMessage());
-                databaseUriProperty.set(null);
+                String message = String.format("%s is not a valid URI.", newValue);
+                Logger.getLogger(getClass().getName()).info(message);
             } finally {
                 // Display the error message if the URI hasn't been set
                 uriError.setVisible(uri == null);
             }
         });
 
-        URI initialUri = getInitialUri();
-        uriField.setText(initialUri == null ? "" : initialUri.toString());
+        databaseNameProperty.bindBidirectional(databaseNameField.textProperty());
 
-        databaseUriProperty.addListener((observable, oldValue, newValue) -> {
-            if (newValue != null) {
-                setInitialUri(newValue);
+        portField.textProperty().addListener((observable, oldValue, newValue) -> {
+            try {
+                int port = Integer.valueOf(newValue);
+                portProperty.set(port);
+                check();
+            } catch (NumberFormatException ignored) {
+                portProperty.set(null);
             }
         });
+    }
+
+    private void loadInitialValues() {
+        String configKey = ConfigKey.initialDatabaseUri.getKey();
+        String uriString = ConfigFile.getInstance().getProperty(configKey);
+        if (!uriString.isEmpty()) {
+            try {
+                URI uri = URI.create(uriString);
+                ipField.setText(String.format("%s://%s", uri.getScheme(), uri.getHost()));
+                portField.setText(String.valueOf(uri.getPort()));
+                databaseNameField.setText(uri.getPath().substring(1));
+            } catch (IllegalArgumentException e) {
+                String message = String.format("URI from config isn't valid:\n%s", e);
+                Logger.getLogger(getClass().getName()).info(message);
+            }
+        }
+    }
+
+    private void check() {
+        if (databaseURIProperty.get() != null
+            && databaseNameProperty.get() != null
+            && portProperty.get() != null) {
+            createCompleteURI();
+            setInitialUri(completeURIProperty.get());
+        } else {
+            completeURIProperty.set(null);
+        }
+    }
+
+    private void createCompleteURI() {
+        String uriString = String
+            .format("%s:%d/%s", databaseURIProperty.get().toString(), portProperty.get(),
+                databaseNameProperty.get());
+        try {
+            completeURIProperty.set(new URI(uriString));
+        } catch (URISyntaxException e) {
+            String message = String.format("Couldn't create uri after check: %s", uriString);
+            Logger.getLogger(getClass().getName()).severe(message);
+        }
     }
 
     @Nonnull
@@ -69,21 +124,6 @@ public class DatabaseChooserController implements SourceChooser<DataSource> {
     @Override
     public DataSource getResource() throws IOException {
         return null; // TODO this should probably return a SubprocessSource
-    }
-
-    private URI getInitialUri() {
-        String key = ConfigKey.initialDatabaseUri.getKey();
-
-        String uri = ConfigFile.getInstance().getProperty(key);
-        if (uri != null) {
-            try {
-                return new URI(uri);
-            } catch (URISyntaxException e) {
-                return null;
-            }
-        } else {
-            return null;
-        }
     }
 
     private void setInitialUri(@Nonnull URI uri) {
