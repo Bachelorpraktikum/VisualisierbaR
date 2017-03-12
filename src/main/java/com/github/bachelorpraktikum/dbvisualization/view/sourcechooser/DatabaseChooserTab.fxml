@@ -1,24 +1,57 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.BorderPane?>
-<BorderPane xmlns="http://javafx.com/javafx/8.0.60"
+<BorderPane xmlns="http://javafx.com/javafx/8.0.111"
   xmlns:fx="http://javafx.com/fxml/1"
-  fx:id="rootPane"
+  fx:id="rootPaneDatabase" id="rootPaneDatabase"
   fx:controller="com.github.bachelorpraktikum.dbvisualization.view.sourcechooser.DatabaseChooserController">
   <center>
-    <TextField fx:id="uriField" prefWidth="300" maxWidth="1.7976931348623157E308"
-      BorderPane.alignment="CENTER"/>
+    <BorderPane>
+      <top>
+        <TextField fx:id="ipField" promptText="e.g. 127.0.0.1"
+          maxWidth="1.7976931348623157E308" prefWidth="300"
+          BorderPane.alignment="CENTER">
+          <BorderPane.margin>
+            <Insets left="6.0" bottom="6.0"/>
+          </BorderPane.margin>
+        </TextField>
+      </top>
+      <center>
+        <TextField fx:id="databaseNameField" maxWidth="1.7976931348623157E308"
+          prefWidth="300"
+          text="ebd"
+          BorderPane.alignment="CENTER">
+          <BorderPane.margin>
+            <Insets left="6.0" bottom="6.0"/>
+          </BorderPane.margin>
+        </TextField>
+      </center>
+      <bottom>
+        <TextField fx:id="portField" maxWidth="1.7976931348623157E308" prefWidth="300"
+          text="3306"
+          BorderPane.alignment="CENTER">
+          <BorderPane.margin>
+            <Insets left="6.0"/>
+          </BorderPane.margin>
+        </TextField>
+      </bottom>
+    </BorderPane>
   </center>
   <left>
-    <Label minWidth="-Infinity" text="%choose_database" BorderPane.alignment="CENTER">
-      <BorderPane.margin>
-        <Insets right="6.0"/>
-      </BorderPane.margin>
-    </Label>
+    <BorderPane>
+      <top>
+        <Label text="%choose_ip"/>
+      </top>
+      <center>
+        <Label text="%choose_database"/>
+      </center>
+      <bottom>
+        <Label text="%choose_port"/>
+      </bottom>
+    </BorderPane>
   </left>
   <bottom>
     <Label fx:id="uriError" text="%uri_error" BorderPane.alignment="CENTER" textFill="#ff0000"
