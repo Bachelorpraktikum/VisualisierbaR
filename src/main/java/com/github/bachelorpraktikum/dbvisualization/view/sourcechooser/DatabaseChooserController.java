@@ -49,6 +49,7 @@ public class DatabaseChooserController implements SourceChooser<DataSource> {
                 return;
             }
             URI uri = null;
+            newValue = newValue.trim();
             try {
                 uri = new URI(newValue);
                 databaseURIProperty.set(uri);
@@ -65,6 +66,7 @@ public class DatabaseChooserController implements SourceChooser<DataSource> {
         databaseNameProperty.bindBidirectional(databaseNameField.textProperty());
 
         portField.textProperty().addListener((observable, oldValue, newValue) -> {
+            newValue = newValue.trim();
             try {
                 int port = Integer.valueOf(newValue);
                 portProperty.set(port);
@@ -73,6 +75,9 @@ public class DatabaseChooserController implements SourceChooser<DataSource> {
                 portProperty.set(null);
             }
         });
+
+        portField.setText(portField.getText() + " ");
+        ipField.setText(ipField.getText() + " ");
     }
 
     private void loadInitialValues() {
