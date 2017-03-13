@@ -1,5 +1,8 @@
 package com.github.bachelorpraktikum.dbvisualization.config;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 public enum ConfigKey {
 
     initialLogFileDirectory("logFile_initialDirectory"),
@@ -13,8 +16,27 @@ public enum ConfigKey {
         this.key = key;
     }
 
+    @Nonnull
     public String getKey() {
         return key;
+    }
+
+    @Nullable
+    public String get() {
+        return ConfigFile.getInstance().getProperty(getKey());
+    }
+
+    @Nonnull
+    public String get(@Nonnull String defaultValue) {
+        return ConfigFile.getInstance().getProperty(getKey(), defaultValue);
+    }
+
+    public void set(@Nullable String value) {
+        if (value == null) {
+            ConfigFile.getInstance().remove(getKey());
+        } else {
+            ConfigFile.getInstance().setProperty(getKey(), value);
+        }
     }
 
     @Override

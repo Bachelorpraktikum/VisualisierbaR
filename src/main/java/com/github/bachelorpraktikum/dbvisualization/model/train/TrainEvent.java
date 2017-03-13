@@ -1,6 +1,5 @@
 package com.github.bachelorpraktikum.dbvisualization.model.train;
 
-import com.github.bachelorpraktikum.dbvisualization.config.ConfigFile;
 import com.github.bachelorpraktikum.dbvisualization.config.ConfigKey;
 import com.github.bachelorpraktikum.dbvisualization.model.Context;
 import com.github.bachelorpraktikum.dbvisualization.model.Edge;
@@ -23,8 +22,7 @@ abstract class TrainEvent implements Event {
     private static final double SPEED_COMPARE_DELTA;
 
     static {
-        String deltaString = ConfigFile.getInstance()
-            .getProperty(ConfigKey.speedCheckDelta.getKey());
+        String deltaString = ConfigKey.speedCheckDelta.get();
         if (deltaString == null) {
             log.warning(String.format(
                 "Missing config entry %s, using default value %f",
@@ -38,7 +36,7 @@ abstract class TrainEvent implements Event {
                 delta = Double.parseDouble(deltaString);
             } catch (NumberFormatException e) {
                 log.warning(String.format(
-                    "Could not parse %s in config file, using %f",
+                    "Could not parse %s in config file, using default value %f",
                     ConfigKey.speedCheckDelta.getKey(),
                     SPEED_COMPARE_DELTA_DEFAULT
                 ));
