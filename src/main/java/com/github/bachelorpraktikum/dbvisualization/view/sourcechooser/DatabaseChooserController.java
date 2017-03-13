@@ -74,14 +74,14 @@ public class DatabaseChooserController implements SourceChooser<DataSource> {
                 portProperty.set(null);
             }
         });
-        
+
         loadInitialValues();
     }
 
     private void loadInitialValues() {
         String configKey = ConfigKey.initialDatabaseUri.getKey();
         String uriString = ConfigFile.getInstance().getProperty(configKey);
-        if (!uriString.isEmpty()) {
+        if (uriString != null && !uriString.isEmpty()) {
             try {
                 URI uri = URI.create(uriString);
                 ipField.setText(String.format("%s://%s", uri.getScheme(), uri.getHost()));
