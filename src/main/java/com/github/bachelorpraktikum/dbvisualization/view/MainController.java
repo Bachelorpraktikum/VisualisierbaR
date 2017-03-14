@@ -5,6 +5,7 @@ import com.github.bachelorpraktikum.dbvisualization.FXCollectors;
 import com.github.bachelorpraktikum.dbvisualization.config.ConfigFile;
 import com.github.bachelorpraktikum.dbvisualization.config.ConfigKey;
 import com.github.bachelorpraktikum.dbvisualization.datasource.DataSource;
+import com.github.bachelorpraktikum.dbvisualization.datasource.RestSource;
 import com.github.bachelorpraktikum.dbvisualization.model.Context;
 import com.github.bachelorpraktikum.dbvisualization.model.Element;
 import com.github.bachelorpraktikum.dbvisualization.model.Event;
@@ -40,7 +41,9 @@ import javafx.animation.Timeline;
 import javafx.beans.binding.Binding;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -124,6 +127,8 @@ public class MainController {
     @FXML
     private TextField timeText;
     @FXML
+    private Button continueSimulation;
+    @FXML
     private HBox rightSpacer;
 
     @FXML
@@ -137,6 +142,7 @@ public class MainController {
     private Highlightable lastHighlighted = null;
 
     private Stage stage;
+    private ObjectProperty<DataSource> dataSource;
 
     private static final double SCALE_DELTA = 1.1;
 
@@ -155,6 +161,7 @@ public class MainController {
     private void initialize() {
         timePattern = Pattern.compile("(\\d+)(m?s?|h)?$");
         trains = new WeakHashMap<>();
+        dataSource = new SimpleObjectProperty<>();
         HBox.setHgrow(rightSpacer, Priority.ALWAYS);
 
         // START OF TIME RELATED INIT
@@ -279,6 +286,16 @@ public class MainController {
         });
 
         detailBoxController.setCenterPane(centerPane);
+
+        dataSource.addListener((observable, oldValue, newValue) ->
+            continueSimulation.setVisible(newValue instanceof RestSource)
+        );
+        continueSimulation.setOnAction(event -> {
+            RestSource source = (RestSource) dataSource.get();
+            continueSimulation.setDisable(true);
+            source.continueSimulation();
+            continueSimulation.setDisable(false);
+        });
     }
 
     private void initializeCenterPane() {
@@ -607,6 +624,7 @@ public class MainController {
         fitGraphToCenter(getGraph());
         simulationTime.set(Context.INIT_STATE_TIME);
         showElements();
+        dataSource.set(source);
     }
 
     /**

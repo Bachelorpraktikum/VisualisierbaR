@@ -38,7 +38,7 @@ public class SubprocessSource implements DataSource {
         // TODO use constants, and create constructor with the first timeout explicitly given
         // Listen until first output is processed
         // (so Node / Edge / Element / Train declarations are processed before MainWindow is shown)
-        listenToOutput(1, TimeUnit.SECONDS);
+        listenToOutput(600, TimeUnit.MILLISECONDS);
     }
 
     /**
@@ -48,7 +48,7 @@ public class SubprocessSource implements DataSource {
      * @param timeout the timeout
      * @param unit the unit of the timeout
      */
-    public synchronized void listenToOutput(long timeout, TimeUnit unit) {
+    synchronized void listenToOutput(long timeout, TimeUnit unit) {
         InputStream inputStream = process.getInputStream();
         BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
 

@@ -35,6 +35,7 @@
             <TextField fx:id="velocityText" prefWidth="100.0" text="1000"/>
             <ToggleButton fx:id="playToggle" text="%play_simulation"/>
             <ToggleButton fx:id="eventTraversal" text="%eventTravsersal"/>
+            <Button fx:id="continueSimulation" text="%continueSimulation" visible="false"/>
             <HBox fx:id="rightSpacer" alignment="CENTER_RIGHT"/>
             <ToggleButton fx:id="proportionalToggle" mnemonicParsing="false" text="%layout"/>
             <ToggleButton fx:id="legendButton" text="%legend"/>

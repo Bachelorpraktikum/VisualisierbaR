@@ -1,10 +1,7 @@
 package com.github.bachelorpraktikum.dbvisualization.datasource;
 
 import java.io.IOException;
-import okhttp3.ResponseBody;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
+import java.util.concurrent.TimeUnit;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
@@ -27,15 +24,13 @@ public class RestSource extends SubprocessSource {
     }
 
     public void continueSimulation() {
-        getService().resumeSimulation().enqueue(new Callback<ResponseBody>() {
-            @Override
-            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-            }
-
-            @Override
-            public void onFailure(Call<ResponseBody> call, Throwable throwable) {
-            }
-        });
+        try {
+            getService().resumeSimulation().execute();
+        } catch (IOException e) {
+            e.printStackTrace();
+            return;
+        }
+        listenToOutput(200, TimeUnit.MILLISECONDS);
     }
 
 
