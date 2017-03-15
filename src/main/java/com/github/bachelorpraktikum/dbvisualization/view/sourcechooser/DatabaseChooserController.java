@@ -98,23 +98,30 @@ public class DatabaseChooserController implements SourceChooser<DataSource> {
         if (databaseURIProperty.get() != null
             && databaseNameProperty.get() != null
             && portProperty.get() != null) {
-            createCompleteURI();
-            setInitialUri(completeURIProperty.get());
+            URI uri = createCompleteURI();
+            if (uri != null) {
+                completeURIProperty.set(uri);
+                setInitialUri(uri);
+            }
         } else {
             completeURIProperty.set(null);
         }
     }
 
-    private void createCompleteURI() {
+    private URI createCompleteURI() {
         String uriString = String
             .format("%s:%d/%s", databaseURIProperty.get().toString(), portProperty.get(),
                 databaseNameProperty.get());
+        URI uri = null;
+
         try {
-            completeURIProperty.set(new URI(uriString));
+            uri = new URI(uriString);
         } catch (URISyntaxException e) {
             String message = String.format("Couldn't create uri after check: %s", uriString);
             Logger.getLogger(getClass().getName()).severe(message);
         }
+
+        return uri;
     }
 
     @Nonnull
