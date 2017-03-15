@@ -1,0 +1,85 @@
+NODE;<0.42.0>:class_Graph_NodeImpl;0;0
+NODE;<0.43.0>:class_Graph_NodeImpl;1;0
+NODE;<0.44.0>:class_Graph_NodeImpl;2;0
+NODE;<0.45.0>:class_Graph_NodeImpl;3;0
+NODE;<0.46.0>:class_Graph_NodeImpl;4;0
+NODE;<0.47.0>:class_Graph_NodeImpl;5;0
+NODE;<0.48.0>:class_Graph_NodeImpl;6;0
+NODE;<0.49.0>:class_Graph_NodeImpl;7;0
+NODE;<0.50.0>:class_Graph_NodeImpl;8;0
+NODE;<0.51.0>:class_Graph_NodeImpl;9;0
+NODE;<0.52.0>:class_Graph_NodeImpl;10;0
+EDGE;<0.53.0>:class_Graph_EdgeImpl;<0.42.0>:class_Graph_NodeImpl;<0.43.0>:class_Graph_NodeImpl;1000
+EDGE;<0.54.0>:class_Graph_EdgeImpl;<0.43.0>:class_Graph_NodeImpl;<0.44.0>:class_Graph_NodeImpl;1000
+EDGE;<0.55.0>:class_Graph_EdgeImpl;<0.44.0>:class_Graph_NodeImpl;<0.45.0>:class_Graph_NodeImpl;75
+EDGE;<0.56.0>:class_Graph_EdgeImpl;<0.45.0>:class_Graph_NodeImpl;<0.46.0>:class_Graph_NodeImpl;50
+EDGE;<0.57.0>:class_Graph_EdgeImpl;<0.46.0>:class_Graph_NodeImpl;<0.47.0>:class_Graph_NodeImpl;1000
+EDGE;<0.58.0>:class_Graph_EdgeImpl;<0.47.0>:class_Graph_NodeImpl;<0.48.0>:class_Graph_NodeImpl;1000
+EDGE;<0.59.0>:class_Graph_EdgeImpl;<0.48.0>:class_Graph_NodeImpl;<0.49.0>:class_Graph_NodeImpl;1000
+EDGE;<0.60.0>:class_Graph_EdgeImpl;<0.49.0>:class_Graph_NodeImpl;<0.50.0>:class_Graph_NodeImpl;1000
+EDGE;<0.61.0>:class_Graph_EdgeImpl;<0.50.0>:class_Graph_NodeImpl;<0.51.0>:class_Graph_NodeImpl;1000
+EDGE;<0.62.0>:class_Graph_EdgeImpl;<0.51.0>:class_Graph_NodeImpl;<0.52.0>:class_Graph_NodeImpl;1000
+ELEM;<0.64.0>:class_TrackElements_GeschwindigkeitsVorAnzeigerImpl;<0.44.0>:class_Graph_NodeImpl;NOSIG
+ELEM;<0.69.0>:class_TrackElements_GeschwindigkeitsAnzeigerImpl;<0.45.0>:class_Graph_NodeImpl;NOSIG
+ELEM;<0.74.0>:class_TrackElements_MagnetImpl;<0.45.0>:class_Graph_NodeImpl;NOSIG
+ELEM;<0.79.0>:class_TrackElements_MagnetImpl;<0.46.0>:class_Graph_NodeImpl;NOSIG
+ELEM;<0.97.0>:class_TrackElements_GeschwindigkeitsAnzeigerImpl;<0.47.0>:class_Graph_NodeImpl;NOSIG
+ELEM;<0.102.0>:class_TrackElements_GeschwindigkeitsVorAnzeigerImpl;<0.48.0>:class_Graph_NodeImpl;NOSIG
+ELEM;<0.107.0>:class_TrackElements_GeschwindigkeitsAnzeigerImpl;<0.49.0>:class_Graph_NodeImpl;NOSIG
+ELEM;<0.112.0>:class_TrackElements_GeschwindigkeitsAnzeigerImpl;<0.50.0>:class_Graph_NodeImpl;NOSIG
+ELEM;<0.117.0>:class_TrackElements_GefahrenPunktImpl;<0.51.0>:class_Graph_NodeImpl;NOSIG
+ZUG;<0.132.0>:class_Train_TrainImpl;z1;70
+MV;INIT;<0.132.0>:class_Train_TrainImpl;0;<0.53.0>:class_Graph_EdgeImpl
+DATA;z1;0 20;Time(0)
+MV;REACHSTART;<0.132.0>:class_Train_TrainImpl;93/2;<0.54.0>:class_Graph_EdgeImpl;930
+DATA;z1;46 20;Time(93/2)
+MV;LEAVES;<0.132.0>:class_Train_TrainImpl;50;<0.54.0>:class_Graph_EdgeImpl;70
+DATA;z1;50 20;Time(50)
+MV;REACHSTART;<0.132.0>:class_Train_TrainImpl;193/2;<0.55.0>:class_Graph_EdgeImpl;930
+DATA;z1;96 20;Time(193/2)
+MV;LEAVES;<0.132.0>:class_Train_TrainImpl;50143/500;<0.55.0>:class_Graph_EdgeImpl;70
+DATA;z1;100 16;Time(50143/500)
+MV;REACHSTART;<0.132.0>:class_Train_TrainImpl;50291/500;<0.56.0>:class_Graph_EdgeImpl;5
+DATA;z1;100 16;Time(50291/500)
+MV;REACHSTART;<0.132.0>:class_Train_TrainImpl;5191/50;<0.57.0>:class_Graph_EdgeImpl;50
+DATA;z1;103 14;Time(5191/50)
+MV;LEAVES;<0.132.0>:class_Train_TrainImpl;21059/200;<0.56.0>:class_Graph_EdgeImpl;20
+DATA;z1;105 12;Time(21059/200)
+MSG;<0.45.0>:class_Graph_NodeImpl;21559/200;Hello there
+MV;SPEED;<0.132.0>:class_Train_TrainImpl;108;42;10
+DATA;z1;108 10;Time(21799/200)
+MV;LEAVES;<0.132.0>:class_Train_TrainImpl;21959/200;<0.57.0>:class_Graph_EdgeImpl;8
+DATA;z1;109 10;Time(21959/200)
+MV;REACHSTART;<0.132.0>:class_Train_TrainImpl;40559/200;<0.58.0>:class_Graph_EdgeImpl;930
+DATA;z1;202 10;Time(40559/200)
+MV;LEAVES;<0.132.0>:class_Train_TrainImpl;41959/200;<0.58.0>:class_Graph_EdgeImpl;70
+MSG;<0.42.0>:class_Graph_NodeImpl;41959/200;message 1
+MSG;<0.50.0>:class_Graph_NodeImpl;41959/200;message 2 at the same time as message 1
+DATA;z1;209 10;Time(41959/200)
+MV;SPEED;<0.132.0>:class_Train_TrainImpl;232;494;33
+DATA;z1;232 33;Time(46559/200)
+MV;REACHSTART;<0.132.0>:class_Train_TrainImpl;246007/1000;<0.59.0>:class_Graph_EdgeImpl;436
+DATA;z1;246 33;Time(246007/1000)
+MV;LEAVES;<0.132.0>:class_Train_TrainImpl;49637/200;<0.59.0>:class_Graph_EdgeImpl;70
+DATA;z1;248 31;Time(49637/200)
+MV;SPEED;<0.132.0>:class_Train_TrainImpl;273;534;11
+DATA;z1;273 11;Time(54701/200)
+MV;REACHSTART;<0.132.0>:class_Train_TrainImpl;61901/200;<0.60.0>:class_Graph_EdgeImpl;396
+DATA;z1;309 11;Time(61901/200)
+MV;LEAVES;<0.132.0>:class_Train_TrainImpl;78967/250;<0.60.0>:class_Graph_EdgeImpl;70
+DATA;z1;315 11;Time(78967/250)
+MV;SPEED;<0.132.0>:class_Train_TrainImpl;315;0;11
+DATA;z1;315 11;Time(78967/250)
+MV;REACHSTART;<0.132.0>:class_Train_TrainImpl;400413/1000;<0.61.0>:class_Graph_EdgeImpl;930
+DATA;z1;400 11;Time(400413/1000)
+MV;LEAVES;<0.132.0>:class_Train_TrainImpl;50847/125;<0.61.0>:class_Graph_EdgeImpl;70
+DATA;z1;406 11;Time(50847/125)
+MV;SPEED;<0.132.0>:class_Train_TrainImpl;417;181;22
+DATA;z1;417 22;Time(52222/125)
+MV;REACHSTART;<0.132.0>:class_Train_TrainImpl;451821/1000;<0.62.0>:class_Graph_EdgeImpl;749
+DATA;z1;451 22;Time(451821/1000)
+MV;LEAVES;<0.132.0>:class_Train_TrainImpl;227501/500;<0.62.0>:class_Graph_EdgeImpl;70
+DATA;z1;455 22;Time(227501/500)
+MV;SPEED;<0.132.0>:class_Train_TrainImpl;471;480;38
+DATA;z1;471 38;Time(235501/500)
+MV;TERM;<0.132.0>:class_Train_TrainImpl;120711/250;450
