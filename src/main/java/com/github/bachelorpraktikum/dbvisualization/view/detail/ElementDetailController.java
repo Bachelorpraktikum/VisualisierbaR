@@ -331,6 +331,9 @@ public class ElementDetailController {
             data.add(new Data<>(xFunction.apply(state), yFunction.apply(state)));
         } else if (!data.isEmpty()) {
             data.remove(data.size() - 1);
+            if (!data.isEmpty()) {
+                state = (State) data.get(data.size() - 1).getExtraValue();
+            }
         }
 
         for (Event event : train.getEvents()) {
@@ -347,7 +350,7 @@ public class ElementDetailController {
                 data.add(new Data<>(x, y));
             }
             state = newState;
-            data.add(new Data<>(xFunction.apply(state), yFunction.apply(state)));
+            data.add(new Data<>(xFunction.apply(state), yFunction.apply(state), state));
         }
         state = train.getState(time, state);
         data.add(new Data<>(xFunction.apply(state), yFunction.apply(state)));
