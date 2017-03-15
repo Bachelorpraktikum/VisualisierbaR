@@ -1,5 +1,7 @@
 package com.github.bachelorpraktikum.dbvisualization.config;
 
+import com.sun.javafx.geom.Dimension2D;
+
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -40,7 +42,7 @@ public class ConfigFile extends Properties {
             store(outputStream);
         } catch (IOException io) {
             log.severe(
-                String.format("Couldn't write to %s due to error: %s.", filepath, io.getMessage()));
+                    String.format("Couldn't write to %s due to error: %s.", filepath, io.getMessage()));
         }
     }
 
@@ -53,7 +55,7 @@ public class ConfigFile extends Properties {
             load(inputStream);
         } catch (IOException io) {
             log.severe(String.format(
-                "Couldn't load %s due to error: %s.", filepath, io.getMessage()
+                    "Couldn't load %s due to error: %s.", filepath, io.getMessage()
             ));
         }
     }
@@ -65,8 +67,8 @@ public class ConfigFile extends Properties {
     public Paint[] getTrainColors() {
         final String defaultColorString = "GREEN;ORANGE;BROWN;DARKMAGENTA";
         final Paint[] defaultColors = Arrays.stream(defaultColorString.split(";"))
-            .map(Paint::valueOf)
-            .toArray(Paint[]::new);
+                .map(Paint::valueOf)
+                .toArray(Paint[]::new);
         String colorsKey = ConfigKey.colors.getKey();
 
         String colorValue = String.valueOf(getOrDefault(colorsKey, defaultColorString));
@@ -76,21 +78,50 @@ public class ConfigFile extends Properties {
         put(colorsKey, colorValue);
 
         Paint[] colors = Arrays.stream(colorValue.split(";")).map(
-            colorString -> {
-                try {
-                    return Paint.valueOf(colorString);
-                } catch (IllegalArgumentException ignored) {
-                    Logger.getLogger(getClass().getName())
-                        .warning(String.format("%s is not a supported color.", colorString));
-                }
+                colorString -> {
+                    try {
+                        return Paint.valueOf(colorString);
+                    } catch (IllegalArgumentException ignored) {
+                        Logger.getLogger(getClass().getName())
+                                .warning(String.format("%s is not a supported color.", colorString));
+                    }
 
-                return null;
-            }
+                    return null;
+                }
         ).filter(Objects::nonNull).toArray(Paint[]::new);
 
         if (colors.length == 0) {
             colors = defaultColors;
         }
         return colors;
+    }
+
+    public Dimension2D getGraphExportDimensions() {
+        final String defaultDimension = "3500x2000";
+        String graphDimKey = ConfigKey.graphExportDimensions.getKey();
+
+        return splitDimensionString(String.valueOf(getOrDefault(graphDimKey, defaultDimension)));
+    }
+
+    public Dimension2D getChartExportDimensions() {
+        final String defaultDimension = "1920x1080";
+        String chartDimKey = ConfigKey.chartExportDimensions.getKey();
+
+        return splitDimensionString(String.valueOf(getOrDefault(chartDimKey, defaultDimension)));
+    }
+
+    private Dimension2D splitDimensionString(String s) {
+        if(s.isEmpty())
+            return null;
+
+        String[] splitInput = s.split("x");
+        if(splitInput.length == 2) {
+            float width = new Float(splitInput[0]);
+            float height = new Float(splitInput[1]);
+            if(width > 0 && height > 0)
+                return new Dimension2D(width, height);
+        }
+
+        return null;
     }
 }

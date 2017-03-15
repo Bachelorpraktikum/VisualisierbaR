@@ -1,9 +1,13 @@
 package com.github.bachelorpraktikum.dbvisualization.view;
 
+import com.github.bachelorpraktikum.dbvisualization.config.ConfigFile;
+import com.github.bachelorpraktikum.dbvisualization.config.ConfigKey;
 import com.github.bachelorpraktikum.dbvisualization.model.Edge;
 import com.github.bachelorpraktikum.dbvisualization.view.graph.Graph;
 import com.github.bachelorpraktikum.dbvisualization.view.graph.GraphShape;
 import com.github.bachelorpraktikum.dbvisualization.view.graph.adapter.CoordinatesAdapter;
+import com.sun.javafx.geom.Dimension2D;
+import com.sun.xml.internal.ws.policy.privateutil.PolicyUtils;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -23,9 +27,6 @@ import javafx.scene.transform.Transform;
 import javax.imageio.ImageIO;
 
 public class Exporter {
-
-    private static final double pixelScale = 2.0;
-
     public static void exportTrainDetail(LineChart<Double, Double> chart, File file) {
         String fileType = file.getPath().substring(file.getPath().length() - 3);
 
@@ -57,9 +58,11 @@ public class Exporter {
         try {
             Bounds bounds = graph.getGroup().getBoundsInParent();
 
-            // aim for a 3000x2500 pixel image
-            double scaleX = 3000/bounds.getWidth();
-            double scaleY = 2500/bounds.getHeight();
+            // load target resolution from config file
+            Dimension2D targetDimension = ConfigFile.getInstance().getGraphExportDimensions();
+            ConfigFile.getInstance().setProperty("graph_export_dimensions", (int) targetDimension.width + "x" + (int) targetDimension.height);
+            double scaleX = targetDimension.width/bounds.getWidth();
+            double scaleY = targetDimension.height/bounds.getHeight();
             double snapScale = (scaleX > scaleY) ? scaleX : scaleY;
             // limit scaling to 2.5 to avoid
             // very large images
@@ -70,22 +73,8 @@ public class Exporter {
             snp.setTransform(Transform.scale(snapScale, snapScale));
             WritableImage image = graph.getGroup().snapshot(snp, null);
 
-            // rewrite image with a gray background
-            // and then save it to avoid red tint
-            // in jpeg images
             if(fileType.equals("jpg")) {
-                BufferedImage original = SwingFXUtils.fromFXImage(image, null);
-
-                double width = image.getWidth();
-                double height = image.getHeight();
-
-                BufferedImage saveImage = new BufferedImage((int) width, (int) height, BufferedImage.TYPE_INT_RGB);
-                Graphics2D g2 = saveImage.createGraphics();
-                g2.setPaint(new Color(244, 244, 244));
-                g2.fillRect(0, 0, (int) width, (int) height);
-                g2.drawImage(original, 0, 0, null);
-
-                ImageIO.write(saveImage, fileType, file);
+                writeJPG(image, file);
                 return;
             }
 
@@ -134,14 +123,22 @@ public class Exporter {
      */
     private static void exportTrainDetailAsImage(LineChart chart, File file, String fileType) {
         try {
-            Bounds bounds = chart.localToScreen(chart.getBoundsInLocal());
-            // aim for a 1920x1080 pixel image
-            double scaleX = 1920 / bounds.getWidth();
-            double scaleY = 1080 / bounds.getHeight();
-            double snapScale = (scaleX > scaleY) ? scaleX : scaleY;
+            // load target resolution from config file
+            Dimension2D targetDimension = ConfigFile.getInstance().getChartExportDimensions();
+            ConfigFile.getInstance().setProperty("chart_export_dimensions", (int) targetDimension.width + "x" + (int) targetDimension.height);
             SnapshotParameters snp = new SnapshotParameters();
-            snp.setTransform(Transform.scale(snapScale, snapScale));
-            WritableImage image = chart.snapshot(new SnapshotParameters(), null);
+            double oldHeight = chart.getMinHeight();
+            double oldWidth = chart.getMinWidth();
+            chart.setMinHeight(targetDimension.height);
+            chart.setMinWidth(targetDimension.width);
+            WritableImage image = chart.snapshot(snp, null);
+            chart.setMinHeight(oldHeight);
+            chart.setMinWidth(oldWidth);
+
+            if(fileType.equals("jpg")) {
+                writeJPG(image, file);
+                return;
+            }
 
             ImageIO.write(SwingFXUtils.fromFXImage(image, null), fileType, file);
         } catch (IOException e) {
@@ -156,7 +153,7 @@ public class Exporter {
      * @param file Export file
      */
     private static void exportTrainDetailAsGNU(ObservableList<Data<Double, Double>> chart,
-        File file) {
+                                               File file) {
         try {
             FileWriter fileWriter = new FileWriter(file);
 
@@ -170,5 +167,23 @@ public class Exporter {
             fileWriter.close();
         } catch (IOException e) {
         }
+    }
+
+    private static void writeJPG(WritableImage image, File file) throws IOException {
+        // rewrite image with a gray background
+        // and then save it to avoid red tint
+        // in jpeg images
+        BufferedImage original = SwingFXUtils.fromFXImage(image, null);
+
+        double width = image.getWidth();
+        double height = image.getHeight();
+
+        BufferedImage saveImage = new BufferedImage((int) width, (int) height, BufferedImage.TYPE_INT_RGB);
+        Graphics2D g2 = saveImage.createGraphics();
+        g2.setPaint(new Color(244, 244, 244));
+        g2.fillRect(0, 0, (int) width, (int) height);
+        g2.drawImage(original, 0, 0, null);
+
+        ImageIO.write(saveImage, "jpg", file);
     }
 }

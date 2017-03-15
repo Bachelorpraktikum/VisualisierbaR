@@ -5,7 +5,10 @@ public enum ConfigKey {
     initialLogFileDirectory("logFile_initialDirectory"),
     colors("trainColors"),
     speedCheckDelta("speedCheckDelta"),
-    initialDatabaseUri("database_initialDirectory");
+    initialDatabaseUri("database_initialDirectory"),
+    graphExportDimensions("graph_export_dimensions"),
+    chartExportDimensions("chart_export_dimensions");
+
 
     private final String key;
 
