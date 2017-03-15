@@ -1,6 +1,5 @@
 package com.github.bachelorpraktikum.dbvisualization.view.sourcechooser;
 
-import com.github.bachelorpraktikum.dbvisualization.config.ConfigFile;
 import com.github.bachelorpraktikum.dbvisualization.config.ConfigKey;
 import com.github.bachelorpraktikum.dbvisualization.datasource.RestSource;
 import java.io.File;
@@ -54,12 +53,12 @@ public class RestChooserController implements SourceChooser<RestSource> {
         chosenDirectory = new SimpleObjectProperty<>(getInitialDirectory());
         chosenDirectory.addListener(((observable, oldValue, newValue) -> {
             if (newValue != null) {
-                setProperty(ConfigKey.initialRestDirectory, newValue.getPath());
+                ConfigKey.initialRestDirectory.set(newValue.getPath());
             }
         }));
         chosenExecutable = new SimpleObjectProperty<>(getInitialExecutable());
         chosenExecutable.addListener(((observable, oldValue, newValue) ->
-            setProperty(ConfigKey.initialRestExecutable, newValue))
+            ConfigKey.initialRestExecutable.set(newValue))
         );
         chosenFullPath = Bindings.createObjectBinding(
             () -> {
@@ -114,7 +113,7 @@ public class RestChooserController implements SourceChooser<RestSource> {
      */
     @Nonnull
     private File getInitialDirectory() {
-        File dir = new File(getProperty(ConfigKey.initialRestDirectory, DEFAULT_DIR));
+        File dir = new File(ConfigKey.initialRestDirectory.get(DEFAULT_DIR));
         if (!dir.isDirectory()) {
             log.info("initial REST dir is invalid, falling back to current directory.");
             dir = new File(DEFAULT_DIR);
@@ -130,27 +129,7 @@ public class RestChooserController implements SourceChooser<RestSource> {
      */
     @Nonnull
     private String getInitialExecutable() {
-        return getProperty(ConfigKey.initialRestExecutable, DEFAULT_EXECUTABLE);
-    }
-
-    @Nonnull
-    private String getProperty(ConfigKey key, String defaultValue) {
-        return ConfigFile.getInstance().getProperty(key.getKey(), defaultValue);
-    }
-
-    /**
-     * Sets a property in the config file to the specified value.
-     * <p>If the new value is empty, the key will be removed from the config.</p>
-     *
-     * @param key the config key of the option you want to set
-     * @param newValue the new config value of the
-     */
-    private void setProperty(ConfigKey key, @Nullable String newValue) {
-        if (newValue == null) {
-            ConfigFile.getInstance().remove(key.getKey());
-        } else {
-            ConfigFile.getInstance().setProperty(key.getKey(), newValue);
-        }
+        return ConfigKey.initialRestExecutable.get(DEFAULT_EXECUTABLE);
     }
 
     /**
