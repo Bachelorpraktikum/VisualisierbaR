@@ -18,7 +18,12 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
+/**
+ * Can be used to start a simulation subprocess and parse its output.
+ */
 public class SubprocessSource implements DataSource {
+
+    public static final long DEFAULT_START_TIMEOUT = 600;
 
     private final Context context;
     private final Process process;
@@ -26,6 +31,17 @@ public class SubprocessSource implements DataSource {
 
     private final GraphParser graphParser;
 
+    /**
+     * Creates a new {@link Context} and starts the process specified by the command with the
+     * specified arguments.
+     *
+     * <p>Parses the process output until there is no output for {@link #DEFAULT_START_TIMEOUT}
+     * milliseconds.</p>
+     *
+     * @param command the command to run. e.g. "echo"
+     * @param args the arguments for the command. e.g. "Hello world!"
+     * @throws IOException if the process can't be started
+     */
     public SubprocessSource(String command, String... args) throws IOException {
         this.context = new Context();
         this.process = createProcess(Objects.requireNonNull(command), args);
@@ -35,15 +51,15 @@ public class SubprocessSource implements DataSource {
 
         Runtime.getRuntime().addShutdownHook(new Thread(this::close));
 
-        // TODO use constants, and create constructor with the first timeout explicitly given
+        // TODO create constructor with the first timeout explicitly given
         // Listen until first output is processed
         // (so Node / Edge / Element / Train declarations are processed before MainWindow is shown)
-        listenToOutput(600, TimeUnit.MILLISECONDS);
+        listenToOutput(DEFAULT_START_TIMEOUT, TimeUnit.MILLISECONDS);
     }
 
     /**
      * Listens to subprocess output and parses it until there is no new output for the specified
-     * timeout.
+     * time.
      *
      * @param timeout the timeout
      * @param unit the unit of the timeout
