@@ -22,7 +22,6 @@
       <center>
         <TextField fx:id="databaseNameField" maxWidth="1.7976931348623157E308"
           prefWidth="300"
-          text="ebd"
           BorderPane.alignment="CENTER">
           <BorderPane.margin>
             <Insets left="6.0" bottom="6.0"/>
@@ -31,7 +30,6 @@
       </center>
       <bottom>
         <TextField fx:id="portField" maxWidth="1.7976931348623157E308" prefWidth="300"
-          text="3306"
           BorderPane.alignment="CENTER">
           <BorderPane.margin>
             <Insets left="6.0"/>
