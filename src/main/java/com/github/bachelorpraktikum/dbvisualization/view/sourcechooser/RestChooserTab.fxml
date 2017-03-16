@@ -6,8 +6,7 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.BorderPane?>
-<BorderPane xmlns="http://javafx.com/javafx/8.0.60"
-  xmlns:fx="http://javafx.com/fxml/1"
+<BorderPane xmlns:fx="http://javafx.com/fxml/1"
   fx:id="rootPane"
   fx:controller="com.github.bachelorpraktikum.dbvisualization.view.sourcechooser.RestChooserController">
   <center>

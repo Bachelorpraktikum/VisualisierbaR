@@ -9,7 +9,6 @@
 <?import javafx.scene.layout.BorderPane?>
 <BorderPane fx:id="rootPane" prefHeight="130.0" prefWidth="393.0"
   xmlns:fx="http://javafx.com/fxml/1"
-  xmlns="http://javafx.com/javafx/8.0.60-ea"
   fx:controller="com.github.bachelorpraktikum.dbvisualization.view.LoginController">
   <right>
     <AnchorPane prefHeight="124.0" prefWidth="160.0" AnchorPane.rightAnchor="0.0">
