@@ -127,7 +127,7 @@ public class DatabaseChooserController implements SourceChooser<DataSource> {
     private void check() {
         URI uri = null;
         if (databaseURIProperty.get() != null
-            && databaseNameProperty.get() != null
+            && databaseNameProperty.get() != null && !databaseNameProperty.get().trim().isEmpty()
             && portProperty.get() != INVALID_PORT) {
             uri = createCompleteURI();
             if (uri != null) {
