@@ -4,11 +4,10 @@ import com.github.bachelorpraktikum.dbvisualization.model.Context;
 import com.github.bachelorpraktikum.dbvisualization.model.Coordinates;
 import com.github.bachelorpraktikum.dbvisualization.model.Edge;
 import com.github.bachelorpraktikum.dbvisualization.model.Node;
-import com.sun.javafx.geom.Vec2d;
 
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.Map;
 import java.util.Set;
 import java.util.Stack;
@@ -26,6 +25,8 @@ public final class ProportionalCoordinatesAdapter implements CoordinatesAdapter 
     private Node startingNode;
     private Point2D startingPoint;
     private HashMap<Node, Point2D> transformationMap = new HashMap<>();
+    private LinkedList<GraphSegment> segments = new LinkedList<>();
+    private final static double MOVING_DISTANCE = 1.5;
 
     public ProportionalCoordinatesAdapter(Context context) {
         this.context = context;
@@ -62,22 +63,20 @@ public final class ProportionalCoordinatesAdapter implements CoordinatesAdapter 
 
         // calculate all transformation Vectors
         this.dfs();
-
-        // find nodes that overlay with other edges
-        // and fix their transformation vector
-        /*boolean foundCollisions = true;
-        while(foundCollisions) {
-            foundCollisions = removeCollisions();
-        }*/
-        //removeCollisions();
+        // detect straight graph segments
+        this.detectSegments();
+        // try to move these segments to avoid overlapping
+        this.removeSegmentCollisions();
+        // moves single nodes to avoid collisions
+        this.removeSingleNodeCollisions();
     }
 
     /**
-     *  Finds and fixes Nodes overlapping with other Edges
+     * Finds and fixes Nodes overlapping with other Edges
      *
      * @return true if a collision was found and fixed, false otherwise.
      */
-    private boolean removeCollisions() {
+    private boolean removeSingleNodeCollisions() {
         boolean foundCollisions = false;
 
         // first find overlapping nodes and replace their transformation vectors
@@ -118,7 +117,7 @@ public final class ProportionalCoordinatesAdapter implements CoordinatesAdapter 
                     }
 
                     Point2D oldVec = entry2.getValue();
-                    Point2D newVec = oldVec.add(edgeVec.multiply(5));
+                    Point2D newVec = oldVec.add(edgeVec.multiply(MOVING_DISTANCE));
                     transformationMap.replace(node, newVec);
 
                     foundCollisions = true;
@@ -158,7 +157,7 @@ public final class ProportionalCoordinatesAdapter implements CoordinatesAdapter 
                     // nodePoint lies on the edge
                     Point2D oldVec = transformationMap.get(node);
                     // move the node along the normal of the edge
-                    Point2D newVec = oldVec.add(edgeNormal.multiply(5));
+                    Point2D newVec = oldVec.add(edgeNormal.multiply(MOVING_DISTANCE));
                     transformationMap.replace(node, newVec);
                     foundCollisions = true;
                 }
@@ -166,6 +165,133 @@ public final class ProportionalCoordinatesAdapter implements CoordinatesAdapter 
         }
 
         return foundCollisions;
+    }
+
+    /**
+     * Tries to move segments of straight edges to remove overlapping nodes
+     * and edges.
+     */
+    private void removeSegmentCollisions() {
+        for(int i=0; i < segments.size(); i++) {
+            for(int j=i+1; j < segments.size(); j++) {
+                GraphSegment gs = segments.get(i);
+                GraphSegment gs2 = segments.get(j);
+
+                // no need to compare segments that are not aligned
+                if(!gs2.isSameTypeAs(gs))
+                    continue;
+
+                if(gs.getSignificantCoordinate() == gs2.getSignificantCoordinate()) {
+                    // collision
+                    if(gs.getSize() > gs2.getSize())
+                        moveNodes(gs2);
+                    else
+                        moveNodes(gs);
+                }
+            }
+        }
+    }
+
+    /**
+     * Moves all Nodes of the given GraphSegment along the normal vector
+     * of that segment.
+     *
+     * @param gs segment that will be moved
+     */
+    private void moveNodes(GraphSegment gs) {
+        Point2D normalVector = gs.getNormalVector();
+
+        for(Node n: gs.getNodes()) {
+            Point2D oldVec = transformationMap.get(n);
+            Point2D newVec = oldVec.add(normalVector.multiply(MOVING_DISTANCE));
+            transformationMap.replace(n, newVec);
+        }
+    }
+
+    /**
+     * Detects segments of consecutive straight edges (only axis-aligned).
+     */
+    private void detectSegments() {
+        Stack<Node> Q = new Stack<>();
+        Set<Node> S = new HashSet<>();
+        Q.push(startingNode);
+        GraphSegment.setAdapter(this);
+        GraphSegment currentSegment = null;
+
+        while (!Q.isEmpty()) {
+            Node current = Q.pop();
+            Node next;
+
+            if (!S.contains(current)) {
+                S.add(current);
+                for (Edge edge : current.getEdges()) {
+                    // choose the right Node
+                    if (edge.getNode1().equals(current)) {
+                        next = edge.getNode2();
+                    } else {
+                        next = edge.getNode1();
+                    }
+
+                    // if node was already seen skip it
+                    if(S.contains(next))
+                        continue;
+
+                    // process the node
+                    Point2D currentPoint = this.apply(current);
+                    Point2D nextPoint = this.apply(next);
+
+                    Point2D cnVector = nextPoint.subtract(currentPoint);
+
+                    if(cnVector.getY() == 0) {
+                        // straight horizontal edge
+                        if(currentSegment == null) {
+                            currentSegment = new GraphSegment(SegmentType.HORIZONTAL);
+                            currentSegment.addNode(current);
+                            currentSegment.addNode(next);
+                        } else if(currentSegment.getSegmentType() == SegmentType.HORIZONTAL) {
+                            currentSegment.addNode(next);
+                        } else {
+                            currentSegment.endSegment();
+                            this.segments.add(currentSegment);
+                            currentSegment = new GraphSegment(SegmentType.HORIZONTAL);
+                            currentSegment.addNode(current);
+                            currentSegment.addNode(next);
+                        }
+                    } else if(cnVector.getX() == 0) {
+                        // straight vertical edge
+                        if(currentSegment == null) {
+                            currentSegment = new GraphSegment(SegmentType.VERTICAL);
+                            currentSegment.addNode(current);
+                            currentSegment.addNode(next);
+                        } else if(currentSegment.getSegmentType() == SegmentType.VERTICAL) {
+                            currentSegment.addNode(next);
+                        } else {
+                            currentSegment.endSegment();
+                            this.segments.add(currentSegment);
+                            currentSegment = new GraphSegment(SegmentType.VERTICAL);
+                            currentSegment.addNode(current);
+                            currentSegment.addNode(next);
+                        }
+                    } else {
+                        // no straight edge anymore
+                        // end the segment
+                        if(currentSegment != null) {
+                            currentSegment.endSegment();
+                            this.segments.add(currentSegment);
+                            currentSegment = null;
+                        }
+                    }
+
+                    // add node to stack
+                    Q.push(next);
+                }
+            }
+        }
+        // add last segment after queue is empty
+        if(currentSegment != null) {
+            currentSegment.endSegment();
+            this.segments.add(currentSegment);
+        }
     }
 
     @Override
