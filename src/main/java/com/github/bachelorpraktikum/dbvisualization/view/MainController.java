@@ -41,16 +41,12 @@ import javafx.animation.Timeline;
 import javafx.beans.binding.Binding;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.IntegerProperty;
-import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleIntegerProperty;
-import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
-import javafx.event.EventHandler;
-import javafx.event.WeakEventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Bounds;
@@ -77,7 +73,6 @@ import javafx.scene.paint.Paint;
 import javafx.scene.shape.Shape;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
-import javafx.stage.WindowEvent;
 import javafx.util.Callback;
 import javafx.util.Duration;
 import javafx.util.StringConverter;
@@ -145,8 +140,6 @@ public class MainController {
     private Highlightable lastHighlighted = null;
 
     private Stage stage;
-    private ObjectProperty<DataSource> dataSource;
-    private EventHandler<WindowEvent> windowCloseHandler;
 
     private static final double SCALE_DELTA = 1.1;
 
@@ -165,14 +158,14 @@ public class MainController {
     private void initialize() {
         timePattern = Pattern.compile("(\\d+)(m?s?|h)?$");
         trains = new WeakHashMap<>();
-        dataSource = new SimpleObjectProperty<>();
         HBox.setHgrow(rightSpacer, Priority.ALWAYS);
 
         // START OF TIME RELATED INIT
 
         simulationTime = new SimpleIntegerProperty();
         simulationTime.addListener((observable, oldValue, newValue) -> {
-            ContextHolder.getInstance().ifPresent(context -> {
+            DataSourceHolder.getInstance().ifPresent(dataSource -> {
+                Context context = dataSource.getContext();
                 int oldInt = oldValue.intValue();
                 int newInt = newValue.intValue();
                 timeText.setText(String.format("%dms", newInt));
@@ -290,11 +283,13 @@ public class MainController {
 
         detailBoxController.setCenterPane(centerPane);
 
-        dataSource.addListener((observable, oldValue, newValue) ->
-            continueSimulation.setVisible(newValue instanceof RestSource)
-        );
+        DataSourceHolder.getInstance().addListener((observable, oldValue, newValue) -> {
+            if (newValue != null) {
+                continueSimulation.setVisible(newValue instanceof RestSource);
+            }
+        });
         continueSimulation.setOnAction(event -> {
-            RestSource source = (RestSource) dataSource.get();
+            RestSource source = (RestSource) DataSourceHolder.getInstance().get();
             continueSimulation.setDisable(true);
             source.continueSimulation();
             continueSimulation.setDisable(false);
@@ -303,7 +298,7 @@ public class MainController {
 
     private void initializeCenterPane() {
         ChangeListener<Number> boundsListener = (observable, oldValue, newValue) -> {
-            if (ContextHolder.getInstance().hasContext()) {
+            if (DataSourceHolder.getInstance().isPresent()) {
                 fitGraphToCenter(getGraph());
             }
         };
@@ -406,7 +401,8 @@ public class MainController {
                 if (!autoChange) {
                     simulationTime.set(newValue.getTime());
                 }
-                Element.in(ContextHolder.getInstance().getContext()).setTime(newValue.getTime());
+                Context context = DataSourceHolder.getInstance().getContext();
+                Element.in(context).setTime(newValue.getTime());
             }
         );
     }
@@ -566,23 +562,10 @@ public class MainController {
         stage.centerOnScreen();
         stage.setMaximized(false);
         stage.setMaximized(true);
-
-        windowCloseHandler = event -> {
-            if (dataSource.get() != null) {
-                try {
-                    dataSource.get().close();
-                } catch (IOException e) {
-                    // TODO log
-                    e.printStackTrace();
-                }
-            }
-        };
-
-        stage.setOnHiding(new WeakEventHandler<>(windowCloseHandler));
     }
 
     private void showLegend() {
-        Context context = ContextHolder.getInstance().getContext();
+        Context context = DataSourceHolder.getInstance().getContext();
         ObservableList<Shapeable> items = Stream.concat(
             Train.in(context).getAll().stream(),
             Element.in(context).getAll().stream()
@@ -599,7 +582,7 @@ public class MainController {
     }
 
     private void showElements() {
-        Context context = ContextHolder.getInstance().getContext();
+        Context context = DataSourceHolder.getInstance().getContext();
 
         FilteredList<Train> trains = FXCollections.observableList(
             new ArrayList<>(Train.in(context).getAll())
@@ -634,13 +617,12 @@ public class MainController {
     }
 
     public void setDataSource(@Nonnull DataSource source) {
+        DataSourceHolder.getInstance().set(source);
         Context context = source.getContext();
-        ContextHolder.getInstance().setContext(context);
         logList.setItems(context.getObservableEvents().sorted());
         fitGraphToCenter(getGraph());
         simulationTime.set(Context.INIT_STATE_TIME);
         showElements();
-        dataSource.set(source);
     }
 
     /**
@@ -653,7 +635,7 @@ public class MainController {
     @Nonnull
     private Graph getGraph() {
         if (graph == null) {
-            Context context = ContextHolder.getInstance().getContext();
+            Context context = DataSourceHolder.getInstance().getContext();
             if (proportionalToggle.isSelected()) {
                 graph = new Graph(context, new ProportionalCoordinatesAdapter(context));
             } else {
@@ -662,8 +644,7 @@ public class MainController {
             graphPane.getChildren().add(graph.getGroup());
             showLegend();
 
-            for (Map.Entry<Element, GraphShape<Element>> entry : graph.getElements()
-                .entrySet()) {
+            for (Map.Entry<Element, GraphShape<Element>> entry : graph.getElements().entrySet()) {
                 Element element = entry.getKey();
                 Shape elementShape = entry.getValue().getShape(element);
                 Binding<Boolean> binding = Bindings.createBooleanBinding(() ->
@@ -758,8 +739,7 @@ public class MainController {
             graphPane.getChildren().clear();
             graph = null;
         }
-        ContextHolder.getInstance().setContext(null);
-        windowCloseHandler.handle(null);
+        DataSourceHolder.getInstance().set(null);
     }
 
     private void switchGraph() {

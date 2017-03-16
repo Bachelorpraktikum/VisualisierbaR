@@ -1,6 +1,7 @@
 package com.github.bachelorpraktikum.dbvisualization;
 
 import com.github.bachelorpraktikum.dbvisualization.config.ConfigFile;
+import com.github.bachelorpraktikum.dbvisualization.view.DataSourceHolder;
 import com.github.bachelorpraktikum.dbvisualization.view.sourcechooser.SourceController;
 import java.io.IOException;
 import java.io.InputStream;
@@ -39,6 +40,15 @@ public class DBVisualizer extends Application {
         SourceController controller = loader.getController();
 
         controller.setStage(primaryStage);
+        primaryStage.setOnHiding(event ->
+            DataSourceHolder.getInstance().ifPresent(dataSource -> {
+                try {
+                    dataSource.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            })
+        );
         primaryStage.show();
     }
 
