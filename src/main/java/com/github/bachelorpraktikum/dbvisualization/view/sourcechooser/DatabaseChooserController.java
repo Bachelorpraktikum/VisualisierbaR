@@ -65,7 +65,7 @@ public class DatabaseChooserController implements SourceChooser<DataSource> {
                 portProperty.set(port);
                 check();
             } catch (NumberFormatException ignored) {
-                portProperty.set(DEFAULT_SQL_PORT);
+                portProperty.set(INVALID_PORT);
             }
         });
 
@@ -120,6 +120,7 @@ public class DatabaseChooserController implements SourceChooser<DataSource> {
             }
         }
         completeURIProperty.set(uri);
+        uriError.setVisible(uri == null);
     }
 
     private URI createCompleteURI(String url, int port, String path) {
