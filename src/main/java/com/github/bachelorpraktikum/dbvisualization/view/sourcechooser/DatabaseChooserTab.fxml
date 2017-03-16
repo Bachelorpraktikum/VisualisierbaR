@@ -11,7 +11,7 @@
   <center>
     <BorderPane>
       <top>
-        <TextField fx:id="databaseURIField" promptText="e.g. 127.0.0.1"
+        <TextField fx:id="databaseURIField" promptText="e.g. http://127.0.0.1"
           maxWidth="1.7976931348623157E308" prefWidth="300"
           BorderPane.alignment="CENTER">
           <BorderPane.margin>
