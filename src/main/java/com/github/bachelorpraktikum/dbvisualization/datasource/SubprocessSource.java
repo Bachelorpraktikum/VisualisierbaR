@@ -23,7 +23,7 @@ import java.util.concurrent.TimeUnit;
  */
 public class SubprocessSource implements DataSource {
 
-    public static final long DEFAULT_START_TIMEOUT = 600;
+    public static final long DEFAULT_START_TIMEOUT = 1000;
 
     private final Context context;
     private final Process process;
