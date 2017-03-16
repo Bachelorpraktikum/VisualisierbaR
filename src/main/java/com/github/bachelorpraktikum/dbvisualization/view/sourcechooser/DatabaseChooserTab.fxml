@@ -11,7 +11,7 @@
   <center>
     <BorderPane>
       <top>
-        <TextField fx:id="ipField" promptText="e.g. 127.0.0.1"
+        <TextField fx:id="databaseURI" promptText="e.g. 127.0.0.1"
           maxWidth="1.7976931348623157E308" prefWidth="300"
           BorderPane.alignment="CENTER">
           <BorderPane.margin>
@@ -60,4 +60,5 @@
   <padding>
     <Insets bottom="6.0" left="6.0" right="6.0" top="6.0"/>
   </padding>
+  >>>>>>> Rename ipField to databaseURI
 </BorderPane>
