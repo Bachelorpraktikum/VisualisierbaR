@@ -161,8 +161,7 @@ public class MainController {
 
         simulationTime = new SimpleIntegerProperty();
         simulationTime.addListener((observable, oldValue, newValue) -> {
-            if (ContextHolder.getInstance().hasContext()) {
-                Context context = ContextHolder.getInstance().getContext();
+            ContextHolder.getInstance().ifPresent(context -> {
                 int oldInt = oldValue.intValue();
                 int newInt = newValue.intValue();
                 timeText.setText(String.format("%dms", newInt));
@@ -178,7 +177,7 @@ public class MainController {
                         playToggle.setSelected(false);
                     }
                 }
-            }
+            });
         });
 
         timeText.setOnAction(event -> {
