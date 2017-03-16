@@ -50,23 +50,26 @@ public class DatabaseChooserController implements SourceChooser<DataSource> {
         databaseURIField.textProperty().addListener((o, oldValue, newValue) -> {
             if (newValue == null || newValue.trim().isEmpty()) {
                 databaseURIProperty.set(null);
-                return;
+            } else {
+                databaseURIProperty.set(newValue.trim());
             }
-            databaseURIProperty.set(newValue.trim());
             check();
         });
 
-        databaseNameProperty.bindBidirectional(databaseNameField.textProperty());
+        databaseNameField.textProperty().addListener((observable, oldValue, newValue) -> {
+            databaseNameProperty.set(newValue);
+            check();
+        });
 
         portField.textProperty().addListener((observable, oldValue, newValue) -> {
             newValue = newValue.trim();
             try {
                 int port = Integer.parseUnsignedInt(newValue);
                 portProperty.set(port);
-                check();
             } catch (NumberFormatException ignored) {
                 portProperty.set(INVALID_PORT);
             }
+            check();
         });
 
         loadInitialValues();
