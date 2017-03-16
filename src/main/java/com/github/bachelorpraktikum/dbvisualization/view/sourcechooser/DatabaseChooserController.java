@@ -87,17 +87,13 @@ public class DatabaseChooserController implements SourceChooser<DataSource> {
                 String message = String.format("Couldn't parse port to number: %s", e.getMessage());
                 Logger.getLogger(getClass().getName()).info(message);
             }
-            if (nameString.startsWith("/")) {
-                nameString = nameString.replaceFirst("/", "");
-            }
+            nameString = stripLeadingSlash(nameString);
             URI uri = createCompleteURI(uriString, port, nameString);
 
             completeURIProperty.set(uri);
             databaseURIField.setText(uri.getHost());
             String path = uri.getPath();
-            if (path.startsWith("/")) {
-                path = path.replaceFirst("/", "");
-            }
+            path = stripLeadingSlash(path);
             databaseNameField.setText(path);
             portField.setText(String.valueOf(uri.getPort()));
         }
@@ -124,11 +120,8 @@ public class DatabaseChooserController implements SourceChooser<DataSource> {
     }
 
     private URI createCompleteURI(String url, int port, String path) {
-        String uriString = String
-            .format("%s:%d/%s", url, port, path);
-        if (!uriString.contains("://")) {
-            uriString = String.format("%s://%s", DEFAULT_PROTOCOL, uriString);
-        }
+        String uriString = String.format("%s:%d/%s", url, port, path);
+        uriString = prependScheme(uriString);
         URI uri = null;
 
         try {
@@ -139,6 +132,22 @@ public class DatabaseChooserController implements SourceChooser<DataSource> {
         }
 
         return uri;
+    }
+
+    private String prependScheme(String uri) {
+        if (!uri.contains("://")) {
+            uri = String.format("%s://%s", DEFAULT_PROTOCOL, uri);
+        }
+
+        return uri;
+    }
+
+    private String stripLeadingSlash(@Nonnull String uriString) {
+        if (uriString.startsWith("/")) {
+            uriString = uriString.replaceFirst("/", "");
+        }
+
+        return uriString;
     }
 
     @Nonnull
@@ -161,6 +170,6 @@ public class DatabaseChooserController implements SourceChooser<DataSource> {
             ConfigFile.getInstance().setProperty(uriKey, uri.getHost());
         }
         ConfigFile.getInstance().setProperty(portKey, String.valueOf(uri.getPort()));
-        ConfigFile.getInstance().setProperty(nameKey, uri.getPath());
+        ConfigFile.getInstance().setProperty(nameKey, stripLeadingSlash(uri.getPath()));
     }
 }
