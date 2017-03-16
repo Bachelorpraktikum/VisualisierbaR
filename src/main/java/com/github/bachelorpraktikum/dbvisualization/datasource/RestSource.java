@@ -4,6 +4,7 @@ import com.github.bachelorpraktikum.dbvisualization.model.Element;
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
+import javafx.application.Platform;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -55,13 +56,13 @@ public class RestSource extends SubprocessSource {
                 } else {
                     log.severe("Break element failed. Error code: " + response.code());
                 }
-                onDone.run();
+                Platform.runLater(onDone);
             }
 
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable throwable) {
                 log.severe("Failed to execute breakNow call");
-                onDone.run();
+                Platform.runLater(onDone);
             }
         });
     }
