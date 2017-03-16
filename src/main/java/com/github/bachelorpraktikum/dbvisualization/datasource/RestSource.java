@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 import javafx.application.Platform;
+import javax.annotation.Nullable;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -47,7 +48,13 @@ public class RestSource extends SubprocessSource {
         listenToOutput(200, TimeUnit.MILLISECONDS);
     }
 
-    public void breakElement(Element element, Runnable onDone) {
+    /**
+     * Breaks the given element. When done, onDone is called on the JavaFX thread.
+     *
+     * @param element the element to break
+     * @param onDone the Runnable to call when the call is done
+     */
+    public void breakElement(Element element, @Nullable Runnable onDone) {
         getService().breakNow(element.getName()).enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
@@ -67,6 +74,11 @@ public class RestSource extends SubprocessSource {
         });
     }
 
+    /**
+     * Gets the current model time. This blocks the calling thread until the call is done.
+     *
+     * @return the current time in milliseconds
+     */
     public int getTime() {
         try {
             Response<LiveTime> time = getService().tellTime().execute();
