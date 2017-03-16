@@ -107,8 +107,6 @@ public class DatabaseChooserController implements SourceChooser<DataSource> {
 
                 if (uri.getPort() != INVALID_PORT) {
                     portField.setText(String.valueOf(uri.getPort()));
-                } else {
-                    portField.setText(String.valueOf(DEFAULT_SQL_PORT));
                 }
 
                 String path = uri.getPath();
@@ -119,6 +117,10 @@ public class DatabaseChooserController implements SourceChooser<DataSource> {
                 String message = String.format("URI from config isn't valid:\n%s", e);
                 Logger.getLogger(getClass().getName()).info(message);
             }
+        }
+
+        if (portField.getText().trim().isEmpty()) {
+            portField.setText(String.valueOf(DEFAULT_SQL_PORT));
         }
     }
 
