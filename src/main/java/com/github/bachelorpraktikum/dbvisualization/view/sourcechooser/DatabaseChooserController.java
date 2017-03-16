@@ -94,12 +94,12 @@ public class DatabaseChooserController implements SourceChooser<DataSource> {
 
             completeURIProperty.set(uri);
             databaseURIField.setText(uri.getHost());
-            portField.setText(String.valueOf(uri.getPort()));
             String path = uri.getPath();
             if (path.startsWith("/")) {
                 path = path.replaceFirst("/", "");
             }
             databaseNameField.setText(path);
+            portField.setText(String.valueOf(uri.getPort()));
         }
 
         if (portField.getText().trim().isEmpty()) {
