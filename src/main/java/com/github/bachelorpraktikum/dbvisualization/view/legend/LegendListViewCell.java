@@ -1,8 +1,9 @@
 package com.github.bachelorpraktikum.dbvisualization.view.legend;
 
+import com.github.bachelorpraktikum.dbvisualization.datasource.DataSource;
 import com.github.bachelorpraktikum.dbvisualization.model.Shapeable;
 import com.github.bachelorpraktikum.dbvisualization.model.Shapeable.VisibleState;
-import com.github.bachelorpraktikum.dbvisualization.view.ContextHolder;
+import com.github.bachelorpraktikum.dbvisualization.view.DataSourceHolder;
 import java.io.IOException;
 import javafx.beans.binding.Binding;
 import javafx.beans.binding.Bindings;
@@ -67,7 +68,7 @@ public class LegendListViewCell extends ListCell<Shapeable> {
                     return VisibleState.DISABLED;
                 }
             }, checkbox.selectedProperty(), checkbox.indeterminateProperty());
-            ContextHolder.getInstance().getContext().addObject(binding);
+            DataSourceHolder.getInstance().getContext().addObject(binding);
             element.visibleStateProperty().bind(binding);
         }
     }

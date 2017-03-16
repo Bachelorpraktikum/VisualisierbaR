@@ -1,5 +1,7 @@
 package com.github.bachelorpraktikum.dbvisualization.config;
 
+import javafx.geometry.Dimension2D;
+
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -9,6 +11,7 @@ import java.util.Arrays;
 import java.util.Objects;
 import java.util.Properties;
 import java.util.logging.Logger;
+
 import javafx.scene.paint.Paint;
 
 public class ConfigFile extends Properties {
@@ -92,5 +95,34 @@ public class ConfigFile extends Properties {
             colors = defaultColors;
         }
         return colors;
+    }
+
+    public Dimension2D getGraphExportDimensions() {
+        final String defaultDimension = "3500x2000";
+        String graphDimKey = ConfigKey.graphExportDimensions.getKey();
+
+        return splitDimensionString(String.valueOf(getOrDefault(graphDimKey, defaultDimension)));
+    }
+
+    public Dimension2D getChartExportDimensions() {
+        final String defaultDimension = "1920x1080";
+        String chartDimKey = ConfigKey.chartExportDimensions.getKey();
+
+        return splitDimensionString(String.valueOf(getOrDefault(chartDimKey, defaultDimension)));
+    }
+
+    private Dimension2D splitDimensionString(String s) {
+        if (s.isEmpty())
+            return null;
+
+        String[] splitInput = s.split("x");
+        if (splitInput.length == 2) {
+            float width = new Float(splitInput[0]);
+            float height = new Float(splitInput[1]);
+            if (width > 0 && height > 0)
+                return new Dimension2D(width, height);
+        }
+
+        return null;
     }
 }

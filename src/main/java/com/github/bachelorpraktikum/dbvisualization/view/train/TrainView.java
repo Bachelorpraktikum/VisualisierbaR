@@ -1,10 +1,11 @@
 package com.github.bachelorpraktikum.dbvisualization.view.train;
 
 import com.github.bachelorpraktikum.dbvisualization.config.ConfigFile;
+import com.github.bachelorpraktikum.dbvisualization.datasource.DataSource;
 import com.github.bachelorpraktikum.dbvisualization.model.Context;
 import com.github.bachelorpraktikum.dbvisualization.model.Node;
 import com.github.bachelorpraktikum.dbvisualization.model.train.Train;
-import com.github.bachelorpraktikum.dbvisualization.view.ContextHolder;
+import com.github.bachelorpraktikum.dbvisualization.view.DataSourceHolder;
 import com.github.bachelorpraktikum.dbvisualization.view.Highlightable;
 import com.github.bachelorpraktikum.dbvisualization.view.TooltipUtil;
 import com.github.bachelorpraktikum.dbvisualization.view.graph.Graph;
@@ -72,9 +73,9 @@ public final class TrainView implements Highlightable {
         graph.getGroup().getChildren().add(path);
         path.toBack();
 
-        Context context = ContextHolder.getInstance().getContext();
-        ObservableBooleanValue visibleBinding = Bindings.createBooleanBinding(() ->
-                train.isVisible(path.getBoundsInParent()),
+        Context context = DataSourceHolder.getInstance().getContext();
+        ObservableBooleanValue visibleBinding = Bindings.createBooleanBinding(
+            () -> train.isVisible(path.getBoundsInParent()),
             train.visibleStateProperty()
         );
         context.addObject(visibleBinding);
@@ -140,8 +141,8 @@ public final class TrainView implements Highlightable {
     }
 
     private static int incrementCounter() {
-        ContextHolder contextHolder = ContextHolder.getInstance();
-        if (contextHolder.hasContext()) {
+        DataSourceHolder contextHolder = DataSourceHolder.getInstance();
+        if (contextHolder.isPresent()) {
             Context context = contextHolder.getContext();
             int current = colorCounters.getOrDefault(context, 0) % COLORS.length;
             colorCounters.put(context, current + 1);

@@ -5,6 +5,7 @@ import com.github.bachelorpraktikum.dbvisualization.FXCollectors;
 import com.github.bachelorpraktikum.dbvisualization.config.ConfigFile;
 import com.github.bachelorpraktikum.dbvisualization.config.ConfigKey;
 import com.github.bachelorpraktikum.dbvisualization.datasource.DataSource;
+import com.github.bachelorpraktikum.dbvisualization.datasource.RestSource;
 import com.github.bachelorpraktikum.dbvisualization.model.Context;
 import com.github.bachelorpraktikum.dbvisualization.model.Element;
 import com.github.bachelorpraktikum.dbvisualization.model.Event;
@@ -54,6 +55,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonBase;
 import javafx.scene.control.CheckBox;
+import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.control.MenuItem;
@@ -124,6 +126,10 @@ public class MainController {
     @FXML
     private TextField timeText;
     @FXML
+    private Button continueSimulation;
+    @FXML
+    private Label modelTime;
+    @FXML
     private HBox rightSpacer;
 
     @FXML
@@ -161,7 +167,8 @@ public class MainController {
 
         simulationTime = new SimpleIntegerProperty();
         simulationTime.addListener((observable, oldValue, newValue) -> {
-            ContextHolder.getInstance().ifPresent(context -> {
+            DataSourceHolder.getInstance().ifPresent(dataSource -> {
+                Context context = dataSource.getContext();
                 int oldInt = oldValue.intValue();
                 int newInt = newValue.intValue();
                 timeText.setText(String.format("%dms", newInt));
@@ -278,11 +285,28 @@ public class MainController {
         });
 
         detailBoxController.setCenterPane(centerPane);
+
+        DataSourceHolder.getInstance().addListener((observable, oldValue, newValue) -> {
+            if (newValue != null) {
+                boolean isRest = newValue instanceof RestSource;
+                continueSimulation.setVisible(isRest);
+                modelTime.setVisible(isRest);
+            }
+        });
+        continueSimulation.setOnAction(event -> {
+            RestSource source = (RestSource) DataSourceHolder.getInstance().get();
+            continueSimulation.setDisable(true);
+            source.continueSimulation();
+            String text = ResourceBundle.getBundle("bundles.localization")
+                .getString("model_time");
+            modelTime.setText(String.format(text, source.getTime()));
+            continueSimulation.setDisable(false);
+        });
     }
 
     private void initializeCenterPane() {
         ChangeListener<Number> boundsListener = (observable, oldValue, newValue) -> {
-            if (ContextHolder.getInstance().hasContext()) {
+            if (DataSourceHolder.getInstance().isPresent()) {
                 fitGraphToCenter(getGraph());
             }
         };
@@ -385,7 +409,8 @@ public class MainController {
                 if (!autoChange) {
                     simulationTime.set(newValue.getTime());
                 }
-                Element.in(ContextHolder.getInstance().getContext()).setTime(newValue.getTime());
+                Context context = DataSourceHolder.getInstance().getContext();
+                Element.in(context).setTime(newValue.getTime());
             }
         );
     }
@@ -548,7 +573,7 @@ public class MainController {
     }
 
     private void showLegend() {
-        Context context = ContextHolder.getInstance().getContext();
+        Context context = DataSourceHolder.getInstance().getContext();
         ObservableList<Shapeable> items = Stream.concat(
             Train.in(context).getAll().stream(),
             Element.in(context).getAll().stream()
@@ -565,7 +590,7 @@ public class MainController {
     }
 
     private void showElements() {
-        Context context = ContextHolder.getInstance().getContext();
+        Context context = DataSourceHolder.getInstance().getContext();
 
         FilteredList<Train> trains = FXCollections.observableList(
             new ArrayList<>(Train.in(context).getAll())
@@ -600,8 +625,8 @@ public class MainController {
     }
 
     public void setDataSource(@Nonnull DataSource source) {
+        DataSourceHolder.getInstance().set(source);
         Context context = source.getContext();
-        ContextHolder.getInstance().setContext(context);
         logList.setItems(context.getObservableEvents().sorted());
         fitGraphToCenter(getGraph());
         simulationTime.set(Context.INIT_STATE_TIME);
@@ -618,7 +643,7 @@ public class MainController {
     @Nonnull
     private Graph getGraph() {
         if (graph == null) {
-            Context context = ContextHolder.getInstance().getContext();
+            Context context = DataSourceHolder.getInstance().getContext();
             if (proportionalToggle.isSelected()) {
                 graph = new Graph(context, new ProportionalCoordinatesAdapter(context));
             } else {
@@ -627,8 +652,7 @@ public class MainController {
             graphPane.getChildren().add(graph.getGroup());
             showLegend();
 
-            for (Map.Entry<Element, GraphShape<Element>> entry : graph.getElements()
-                .entrySet()) {
+            for (Map.Entry<Element, GraphShape<Element>> entry : graph.getElements().entrySet()) {
                 Element element = entry.getKey();
                 Shape elementShape = entry.getValue().getShape(element);
                 Binding<Boolean> binding = Bindings.createBooleanBinding(() ->
@@ -688,13 +712,7 @@ public class MainController {
     }
 
     private void showSourceChooser() {
-        stage.setMaximized(false);
-        if (graph != null) {
-            simulation.stop();
-            graphPane.getChildren().clear();
-            graph = null;
-        }
-        ContextHolder.getInstance().setContext(null);
+        cleanUp();
         FXMLLoader loader = new FXMLLoader(getClass().getResource(
             "sourcechooser/SourceChooser.fxml"));
         loader.setResources(ResourceBundle.getBundle("bundles.localization"));
@@ -709,8 +727,7 @@ public class MainController {
     }
 
     private void showLoginWindow() {
-        graph = null;
-        ContextHolder.getInstance().setContext(null);
+        cleanUp();
         FXMLLoader loader = new FXMLLoader(getClass().getResource("LoginWindow.fxml"));
         loader.setResources(ResourceBundle.getBundle("bundles.localization"));
         try {
@@ -721,6 +738,16 @@ public class MainController {
         }
         LoginController controller = loader.getController();
         controller.setStage(stage);
+    }
+
+    private void cleanUp() {
+        stage.setMaximized(false);
+        if (graph != null) {
+            simulation.stop();
+            graphPane.getChildren().clear();
+            graph = null;
+        }
+        DataSourceHolder.getInstance().set(null);
     }
 
     private void switchGraph() {

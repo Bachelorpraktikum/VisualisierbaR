@@ -15,7 +15,7 @@
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.StackPane?>
 <BorderPane fx:id="rootPane" prefHeight="600" prefWidth="800"
-  xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1"
+  xmlns="http://javafx.com/javafx/8.0.60" xmlns:fx="http://javafx.com/fxml/1"
   fx:controller="com.github.bachelorpraktikum.dbvisualization.view.MainController">
   <center>
     <StackPane fx:id="centerPane">
@@ -35,6 +35,8 @@
             <TextField fx:id="velocityText" prefWidth="100.0" text="1000"/>
             <ToggleButton fx:id="playToggle" text="%play_simulation"/>
             <ToggleButton fx:id="eventTraversal" text="%eventTravsersal"/>
+            <Button fx:id="continueSimulation" text="%continueSimulation" visible="false"/>
+            <Label fx:id="modelTime" visible="false"/>
             <HBox fx:id="rightSpacer" alignment="CENTER_RIGHT"/>
             <ToggleButton fx:id="proportionalToggle" mnemonicParsing="false" text="%layout"/>
             <ToggleButton fx:id="legendButton" text="%legend"/>
