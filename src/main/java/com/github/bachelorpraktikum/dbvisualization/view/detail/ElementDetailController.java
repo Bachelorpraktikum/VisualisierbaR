@@ -53,6 +53,8 @@ public class ElementDetailController {
     @FXML
     private Label stateValue;
     @FXML
+    private Label typeValue;
+    @FXML
     private Label elementName;
     @FXML
     private Group elementImage;
@@ -274,6 +276,9 @@ public class ElementDetailController {
             bindings.add(chartListener);
             detail.timeProperty().addListener(new WeakChangeListener<>(chartListener));
         } else {
+            ElementDetail elementDetail = (ElementDetail) detail;
+            typeValue.setText(elementDetail.getElement().getType().getName());
+
             Binding<String> stateBinding = Bindings.createStringBinding(() ->
                     String.valueOf(((ElementDetail) detail).getState()),
                 detail.timeProperty()

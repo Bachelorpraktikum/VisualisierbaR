@@ -31,6 +31,13 @@
         <Insets bottom="3" left="10" right="10" top="3"/>
       </VBox.margin>
     </AnchorPane>
+    <AnchorPane>
+      <Label AnchorPane.leftAnchor="0" text="%type"/>
+      <Label fx:id="typeValue" AnchorPane.rightAnchor="0"/>
+      <VBox.margin>
+        <Insets bottom="3" left="10" right="10" top="3"/>
+      </VBox.margin>
+    </AnchorPane>
   </VBox>
   <VBox fx:id="trainBox">
     <AnchorPane>
