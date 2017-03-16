@@ -70,6 +70,30 @@ public class GraphSegment {
         adapter = coordinatesAdapter;
     }
 
+    boolean checkForCollision(GraphSegment other) {
+        if(this.getSignificantCoordinate() != other.getSignificantCoordinate())
+            return false;
+
+        // check if the start or end point of the other
+        // segment is on the line represented by
+        // this GraphSegment
+        Point2D otherStart = other.getStartPoint();
+        Point2D otherEnd = other.getEndPoint();
+        Point2D thisStart = this.startPoint;
+        Point2D thisEnd = this.endPoint;
+
+        return isPointOnLine(thisStart, thisEnd, otherEnd) || isPointOnLine(thisStart, thisEnd, otherStart)
+                || isPointOnLine(otherStart, otherEnd, thisStart) || isPointOnLine(otherStart, otherEnd, thisEnd);
+    }
+
+    private boolean isPointOnLine(Point2D start, Point2D end, Point2D p) {
+        double AB = start.distance(end);
+        double AP = start.distance(p);
+        double BP = end.distance(p);
+
+        return AB == AP + BP;
+    }
+
     @Override
     public String toString() {
         if(this.nodes.size() >= 1) {

@@ -24,7 +24,6 @@ public final class Edge implements GraphObject<Line> {
 
     private static final Logger log = Logger.getLogger(Edge.class.getName());
 
-    @Nonnull
     private final String name;
     private final int length;
     @Nonnull

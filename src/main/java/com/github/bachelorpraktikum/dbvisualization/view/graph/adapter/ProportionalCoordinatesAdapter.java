@@ -144,7 +144,7 @@ public final class ProportionalCoordinatesAdapter implements CoordinatesAdapter 
                 Point2D edgeP1 = this.apply(edge.getNode1());
                 Point2D edgeP2 = this.apply(edge.getNode2());
                 double dx = edgeP2.getX() - edgeP1.getX();
-                double dy = edgeP2.getY() - edgeP2.getY();
+                double dy = edgeP2.getY() - edgeP1.getY();
                 Point2D edgeNormal = new Point2D(-dy, dx).normalize();
 
                 // find the distance of the nodePoint (P) from
@@ -181,7 +181,7 @@ public final class ProportionalCoordinatesAdapter implements CoordinatesAdapter 
                 if(!gs2.isSameTypeAs(gs))
                     continue;
 
-                if(gs.getSignificantCoordinate() == gs2.getSignificantCoordinate()) {
+                if(gs.checkForCollision(gs2)) {
                     // collision
                     if(gs.getSize() > gs2.getSize())
                         moveNodes(gs2);
@@ -296,7 +296,7 @@ public final class ProportionalCoordinatesAdapter implements CoordinatesAdapter 
 
     @Override
     public double getCalibrationBase() {
-        return 2;
+        return 2.7;
     }
 
     /**
