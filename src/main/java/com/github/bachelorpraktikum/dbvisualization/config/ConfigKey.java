@@ -12,7 +12,9 @@ public enum ConfigKey {
     graphExportDimensions("graph_export_dimensions"),
     chartExportDimensions("chart_export_dimensions"),
     initialRestDirectory("rest_initialDirectory"),
-    initialRestExecutable("rest_initialExecutable");
+    initialRestExecutable("rest_initialExecutable"),
+    initialDatabasePort("database_initialPort"),
+    initialDatabaseName("database_initialName");
 
     private final String key;
 

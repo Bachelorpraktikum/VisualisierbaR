@@ -20,6 +20,7 @@ import javax.annotation.Nonnull;
 public class DatabaseChooserController implements SourceChooser<DataSource> {
 
     private static final int DEFAULT_SQL_PORT = 3306;
+    private static final String DEFAULT_PROTOCOL = "http";
     private static final int INVALID_PORT = -1;
     @FXML
     private BorderPane rootPaneDatabase;
@@ -32,7 +33,7 @@ public class DatabaseChooserController implements SourceChooser<DataSource> {
     @FXML
     public Label uriError;
 
-    private ReadOnlyObjectWrapper<URI> databaseURIProperty;
+    private ReadOnlyObjectWrapper<String> databaseURIProperty;
     private ReadOnlyObjectWrapper<String> databaseNameProperty;
     private IntegerProperty portProperty;
     private ReadOnlyObjectWrapper<URI> completeURIProperty;
@@ -51,19 +52,8 @@ public class DatabaseChooserController implements SourceChooser<DataSource> {
                 databaseURIProperty.set(null);
                 return;
             }
-            URI uri = null;
-            newValue = newValue.trim();
-            try {
-                uri = new URI(newValue);
-                databaseURIProperty.set(uri);
-                check();
-            } catch (URISyntaxException ignored) {
-                String message = String.format("%s is not a valid URI.", newValue);
-                Logger.getLogger(getClass().getName()).info(message);
-            } finally {
-                // Display the error message if the URI hasn't been set
-                uriError.setVisible(uri == null);
-            }
+            databaseURIProperty.set(newValue.trim());
+            check();
         });
 
         databaseNameProperty.bindBidirectional(databaseNameField.textProperty());
@@ -75,7 +65,7 @@ public class DatabaseChooserController implements SourceChooser<DataSource> {
                 portProperty.set(port);
                 check();
             } catch (NumberFormatException ignored) {
-                portProperty.set(INVALID_PORT);
+                portProperty.set(DEFAULT_SQL_PORT);
             }
         });
 
@@ -83,40 +73,33 @@ public class DatabaseChooserController implements SourceChooser<DataSource> {
     }
 
     private void loadInitialValues() {
-        String configKey = ConfigKey.initialDatabaseUri.getKey();
-        String uriString = ConfigFile.getInstance().getProperty(configKey);
-        if (uriString != null && !uriString.isEmpty()) {
+        String uriConfigKey = ConfigKey.initialDatabaseUri.getKey();
+        String portConfigKey = ConfigKey.initialDatabasePort.getKey();
+        String nameConfigKey = ConfigKey.initialDatabaseName.getKey();
+        String uriString = ConfigFile.getInstance().getProperty(uriConfigKey);
+        String portString = ConfigFile.getInstance().getProperty(portConfigKey);
+        String nameString = ConfigFile.getInstance().getProperty(nameConfigKey);
+        if (uriString != null && portString != null && nameString != null) {
+            int port = DEFAULT_SQL_PORT;
             try {
-                URI uri = URI.create(uriString);
-                String host = uri.getHost();
-
-                String scheme = uri.getScheme();
-                if (scheme != null) {
-                    // e.g. In the url string 'localhost:3306/ebd', 'localhost' will be regarded as the scheme
-                    if (host != null) {
-                        scheme += "://";
-                    }
-                } else {
-                    scheme = "";
-                }
-
-                if (host == null) {
-                    host = "";
-                }
-                databaseURIField.setText(String.format("%s%s", scheme, host));
-
-                if (uri.getPort() != INVALID_PORT) {
-                    portField.setText(String.valueOf(uri.getPort()));
-                }
-
-                String path = uri.getPath();
-                if (path != null && path.length() > 1) {
-                    databaseNameField.setText(uri.getPath().substring(1));
-                }
-            } catch (IllegalArgumentException e) {
-                String message = String.format("URI from config isn't valid:\n%s", e);
+                port = Integer.parseUnsignedInt(portString);
+            } catch (NumberFormatException e) {
+                String message = String.format("Couldn't parse port to number: %s", e.getMessage());
                 Logger.getLogger(getClass().getName()).info(message);
             }
+            if (nameString.startsWith("/")) {
+                nameString = nameString.replaceFirst("/", "");
+            }
+            URI uri = createCompleteURI(uriString, port, nameString);
+
+            completeURIProperty.set(uri);
+            databaseURIField.setText(uri.getHost());
+            portField.setText(String.valueOf(uri.getPort()));
+            String path = uri.getPath();
+            if (path.startsWith("/")) {
+                path = path.replaceFirst("/", "");
+            }
+            databaseNameField.setText(path);
         }
 
         if (portField.getText().trim().isEmpty()) {
@@ -129,7 +112,9 @@ public class DatabaseChooserController implements SourceChooser<DataSource> {
         if (databaseURIProperty.get() != null
             && databaseNameProperty.get() != null && !databaseNameProperty.get().trim().isEmpty()
             && portProperty.get() != INVALID_PORT) {
-            uri = createCompleteURI();
+            String uriString = databaseURIProperty.get();
+            uri = createCompleteURI(uriString, portProperty.get(),
+                databaseNameProperty.get());
             if (uri != null) {
                 setInitialUri(uri);
             }
@@ -137,10 +122,12 @@ public class DatabaseChooserController implements SourceChooser<DataSource> {
         completeURIProperty.set(uri);
     }
 
-    private URI createCompleteURI() {
+    private URI createCompleteURI(String url, int port, String path) {
         String uriString = String
-            .format("%s:%d/%s", databaseURIProperty.get().toString(), portProperty.get(),
-                databaseNameProperty.get());
+            .format("%s:%d/%s", url, port, path);
+        if (!uriString.contains("://")) {
+            uriString = String.format("%s://%s", DEFAULT_PROTOCOL, uriString);
+        }
         URI uri = null;
 
         try {
@@ -166,7 +153,13 @@ public class DatabaseChooserController implements SourceChooser<DataSource> {
     }
 
     private void setInitialUri(@Nonnull URI uri) {
-        String key = ConfigKey.initialDatabaseUri.getKey();
-        ConfigFile.getInstance().setProperty(key, uri.toString());
+        String uriKey = ConfigKey.initialDatabaseUri.getKey();
+        String portKey = ConfigKey.initialDatabasePort.getKey();
+        String nameKey = ConfigKey.initialDatabaseName.getKey();
+        if (uri.getHost() != null) {
+            ConfigFile.getInstance().setProperty(uriKey, uri.getHost());
+        }
+        ConfigFile.getInstance().setProperty(portKey, String.valueOf(uri.getPort()));
+        ConfigFile.getInstance().setProperty(nameKey, uri.getPath());
     }
 }
