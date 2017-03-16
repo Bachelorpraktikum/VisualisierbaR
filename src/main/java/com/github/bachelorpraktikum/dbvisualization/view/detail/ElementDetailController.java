@@ -53,6 +53,8 @@ public class ElementDetailController {
     @FXML
     private Label stateValue;
     @FXML
+    private Label typeValue;
+    @FXML
     private Label elementName;
     @FXML
     private Group elementImage;
@@ -274,6 +276,9 @@ public class ElementDetailController {
             bindings.add(chartListener);
             detail.timeProperty().addListener(new WeakChangeListener<>(chartListener));
         } else {
+            ElementDetail elementDetail = (ElementDetail) detail;
+            typeValue.setText(elementDetail.getElement().getType().getName());
+
             Binding<String> stateBinding = Bindings.createStringBinding(() ->
                     String.valueOf(((ElementDetail) detail).getState()),
                 detail.timeProperty()
@@ -331,6 +336,9 @@ public class ElementDetailController {
             data.add(new Data<>(xFunction.apply(state), yFunction.apply(state)));
         } else if (!data.isEmpty()) {
             data.remove(data.size() - 1);
+            if (!data.isEmpty()) {
+                state = (State) data.get(data.size() - 1).getExtraValue();
+            }
         }
 
         for (Event event : train.getEvents()) {
@@ -347,7 +355,7 @@ public class ElementDetailController {
                 data.add(new Data<>(x, y));
             }
             state = newState;
-            data.add(new Data<>(xFunction.apply(state), yFunction.apply(state)));
+            data.add(new Data<>(xFunction.apply(state), yFunction.apply(state), state));
         }
         state = train.getState(time, state);
         data.add(new Data<>(xFunction.apply(state), yFunction.apply(state)));

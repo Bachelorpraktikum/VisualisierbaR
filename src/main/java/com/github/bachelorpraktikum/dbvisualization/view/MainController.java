@@ -5,6 +5,7 @@ import com.github.bachelorpraktikum.dbvisualization.FXCollectors;
 import com.github.bachelorpraktikum.dbvisualization.config.ConfigFile;
 import com.github.bachelorpraktikum.dbvisualization.config.ConfigKey;
 import com.github.bachelorpraktikum.dbvisualization.datasource.DataSource;
+import com.github.bachelorpraktikum.dbvisualization.datasource.RestSource;
 import com.github.bachelorpraktikum.dbvisualization.model.Context;
 import com.github.bachelorpraktikum.dbvisualization.model.Element;
 import com.github.bachelorpraktikum.dbvisualization.model.Event;
@@ -40,12 +41,16 @@ import javafx.animation.Timeline;
 import javafx.beans.binding.Binding;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
+import javafx.event.EventHandler;
+import javafx.event.WeakEventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Bounds;
@@ -72,6 +77,7 @@ import javafx.scene.paint.Paint;
 import javafx.scene.shape.Shape;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 import javafx.util.Callback;
 import javafx.util.Duration;
 import javafx.util.StringConverter;
@@ -124,6 +130,8 @@ public class MainController {
     @FXML
     private TextField timeText;
     @FXML
+    private Button continueSimulation;
+    @FXML
     private HBox rightSpacer;
 
     @FXML
@@ -137,6 +145,8 @@ public class MainController {
     private Highlightable lastHighlighted = null;
 
     private Stage stage;
+    private ObjectProperty<DataSource> dataSource;
+    private EventHandler<WindowEvent> windowCloseHandler;
 
     private static final double SCALE_DELTA = 1.1;
 
@@ -155,14 +165,14 @@ public class MainController {
     private void initialize() {
         timePattern = Pattern.compile("(\\d+)(m?s?|h)?$");
         trains = new WeakHashMap<>();
+        dataSource = new SimpleObjectProperty<>();
         HBox.setHgrow(rightSpacer, Priority.ALWAYS);
 
         // START OF TIME RELATED INIT
 
         simulationTime = new SimpleIntegerProperty();
         simulationTime.addListener((observable, oldValue, newValue) -> {
-            if (ContextHolder.getInstance().hasContext()) {
-                Context context = ContextHolder.getInstance().getContext();
+            ContextHolder.getInstance().ifPresent(context -> {
                 int oldInt = oldValue.intValue();
                 int newInt = newValue.intValue();
                 timeText.setText(String.format("%dms", newInt));
@@ -178,7 +188,7 @@ public class MainController {
                         playToggle.setSelected(false);
                     }
                 }
-            }
+            });
         });
 
         timeText.setOnAction(event -> {
@@ -279,6 +289,16 @@ public class MainController {
         });
 
         detailBoxController.setCenterPane(centerPane);
+
+        dataSource.addListener((observable, oldValue, newValue) ->
+            continueSimulation.setVisible(newValue instanceof RestSource)
+        );
+        continueSimulation.setOnAction(event -> {
+            RestSource source = (RestSource) dataSource.get();
+            continueSimulation.setDisable(true);
+            source.continueSimulation();
+            continueSimulation.setDisable(false);
+        });
     }
 
     private void initializeCenterPane() {
@@ -546,6 +566,19 @@ public class MainController {
         stage.centerOnScreen();
         stage.setMaximized(false);
         stage.setMaximized(true);
+
+        windowCloseHandler = event -> {
+            if (dataSource.get() != null) {
+                try {
+                    dataSource.get().close();
+                } catch (IOException e) {
+                    // TODO log
+                    e.printStackTrace();
+                }
+            }
+        };
+
+        stage.setOnHiding(new WeakEventHandler<>(windowCloseHandler));
     }
 
     private void showLegend() {
@@ -607,6 +640,7 @@ public class MainController {
         fitGraphToCenter(getGraph());
         simulationTime.set(Context.INIT_STATE_TIME);
         showElements();
+        dataSource.set(source);
     }
 
     /**
@@ -689,13 +723,7 @@ public class MainController {
     }
 
     private void showSourceChooser() {
-        stage.setMaximized(false);
-        if (graph != null) {
-            simulation.stop();
-            graphPane.getChildren().clear();
-            graph = null;
-        }
-        ContextHolder.getInstance().setContext(null);
+        cleanUp();
         FXMLLoader loader = new FXMLLoader(getClass().getResource(
             "sourcechooser/SourceChooser.fxml"));
         loader.setResources(ResourceBundle.getBundle("bundles.localization"));
@@ -710,8 +738,7 @@ public class MainController {
     }
 
     private void showLoginWindow() {
-        graph = null;
-        ContextHolder.getInstance().setContext(null);
+        cleanUp();
         FXMLLoader loader = new FXMLLoader(getClass().getResource("LoginWindow.fxml"));
         loader.setResources(ResourceBundle.getBundle("bundles.localization"));
         try {
@@ -722,6 +749,17 @@ public class MainController {
         }
         LoginController controller = loader.getController();
         controller.setStage(stage);
+    }
+
+    private void cleanUp() {
+        stage.setMaximized(false);
+        if (graph != null) {
+            simulation.stop();
+            graphPane.getChildren().clear();
+            graph = null;
+        }
+        ContextHolder.getInstance().setContext(null);
+        windowCloseHandler.handle(null);
     }
 
     private void switchGraph() {

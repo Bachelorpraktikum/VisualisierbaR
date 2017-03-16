@@ -5,7 +5,7 @@
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TabPane?>
 <?import javafx.scene.layout.BorderPane?>
-<BorderPane fx:id="rootPane" xmlns="http://javafx.com/javafx/8.0.111"
+<BorderPane fx:id="rootPane" xmlns="http://javafx.com/javafx/8.0.60"
   xmlns:fx="http://javafx.com/fxml/1"
   fx:controller="com.github.bachelorpraktikum.dbvisualization.view.sourcechooser.SourceController">
   <center>
@@ -17,6 +17,9 @@
       </Tab>
       <Tab text="%database">
         <fx:include fx:id="databaseChooserTab" source="DatabaseChooserTab.fxml"/>
+      </Tab>
+      <Tab text="%live_simulation">
+        <fx:include fx:id="restChooserTab" source="RestChooserTab.fxml"/>
       </Tab>
     </TabPane>
   </center>

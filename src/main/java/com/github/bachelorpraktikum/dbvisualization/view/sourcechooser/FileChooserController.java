@@ -1,6 +1,5 @@
 package com.github.bachelorpraktikum.dbvisualization.view.sourcechooser;
 
-import com.github.bachelorpraktikum.dbvisualization.config.ConfigFile;
 import com.github.bachelorpraktikum.dbvisualization.config.ConfigKey;
 import com.github.bachelorpraktikum.dbvisualization.datasource.FileSource;
 import java.io.File;
@@ -109,20 +108,15 @@ public class FileChooserController implements SourceChooser<FileSource> {
      * @return Initial directory for the file chooser
      */
     private String getInitialDirectory() {
-        String defaultDirectory = System.getProperty("user.home");
-        return ConfigFile.getInstance().getProperty(getInitialDirectoryKey(), defaultDirectory);
+        return ConfigKey.initialLogFileDirectory.get(System.getProperty("user.home"));
     }
 
     private void setInitialDirectory(String path) {
         File file = new File(path);
         if (file.isFile()) {
             path = file.getParent();
-            ConfigFile.getInstance().setProperty(getInitialDirectoryKey(), path);
+            ConfigKey.initialLogFileDirectory.set(path);
             fileChooser.setInitialDirectory(new File(path));
         }
-    }
-
-    private String getInitialDirectoryKey() {
-        return ConfigKey.initialLogFileDirectory.getKey();
     }
 }

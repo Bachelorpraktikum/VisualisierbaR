@@ -43,4 +43,10 @@ public class GraphParserTest {
         Context context = new GraphParser().parse("src/test/resources/test6.zug");
         assertNotNull(context);
     }
+
+    @Test
+    public void testLog6WithMSG() throws IOException {
+        Context context = new GraphParser().parse("src/test/resources/test6MSG.zug");
+        assertNotNull(context);
+    }
 }

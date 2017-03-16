@@ -38,6 +38,10 @@ public class SourceController {
     @FXML
     private DatabaseChooserController databaseChooserTabController;
     @FXML
+    private Node restChooserTab;
+    @FXML
+    private RestChooserController restChooserTabController;
+    @FXML
     private TabPane tabPane;
 
     private Stage stage;
@@ -58,6 +62,7 @@ public class SourceController {
         controllers = new HashMap<>();
         controllers.put(fileChooserTab, fileChooserTabController);
         controllers.put(databaseChooserTab, databaseChooserTabController);
+        controllers.put(restChooserTab, restChooserTabController);
 
         fireOnEnterPress(openSource);
         fireOnEnterPress(closeWindowButton);

@@ -1,7 +1,8 @@
 grammar Log;
 
-start: (elements NEWLINE)+;
+start: (element_line | error_char)+;
 
+element_line: elements NEWLINE;
 elements:         node
                 | edge
                 | elem
@@ -56,6 +57,7 @@ rat: INT '/' INT;
 time_with_wrapper: 'Time' '(' time ')';
 message: any+;
 any: ~(NEWLINE | SEP);
+error_char: .;
 
 
 STATE:   NOSIG
