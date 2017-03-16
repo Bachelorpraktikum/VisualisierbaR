@@ -185,12 +185,11 @@ public class ElementDetailController {
         }
 
         DataSourceHolder dataSourceHolder = DataSourceHolder.getInstance();
-        BooleanBinding isRestSource = dataSourceHolder.presentProperty().and(
-            Bindings.createBooleanBinding(
-                () -> dataSourceHolder.get() instanceof RestSource,
-                dataSourceHolder
-            )
+        BooleanBinding isRestSource = Bindings.createBooleanBinding(
+            () -> dataSourceHolder.isPresent() && dataSourceHolder.get() instanceof RestSource,
+            dataSourceHolder
         );
+
         bindings.add(isRestSource);
         breakButton.visibleProperty().bind(isRestSource);
         breakButton.setOnAction(event -> {
