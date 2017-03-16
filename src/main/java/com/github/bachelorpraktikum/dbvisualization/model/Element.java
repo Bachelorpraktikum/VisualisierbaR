@@ -139,7 +139,7 @@ public final class Element implements GraphObject<Shape> {
             return name();
         }
 
-        private String getLogName() {
+        String getLogName() {
             return logName;
         }
 
