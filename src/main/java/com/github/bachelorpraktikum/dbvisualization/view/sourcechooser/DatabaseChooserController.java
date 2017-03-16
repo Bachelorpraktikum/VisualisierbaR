@@ -17,6 +17,7 @@ import javax.annotation.Nonnull;
 
 public class DatabaseChooserController implements SourceChooser<DataSource> {
 
+    private static final int DEFAULT_SQL_PORT = 3306;
     @FXML
     private BorderPane rootPaneDatabase;
     @FXML
@@ -84,9 +85,26 @@ public class DatabaseChooserController implements SourceChooser<DataSource> {
         if (uriString != null && !uriString.isEmpty()) {
             try {
                 URI uri = URI.create(uriString);
-                ipField.setText(String.format("%s://%s", uri.getScheme(), uri.getHost()));
-                portField.setText(String.valueOf(uri.getPort()));
-                databaseNameField.setText(uri.getPath().substring(1));
+
+                String scheme = uri.getScheme();
+                if (scheme != null) {
+                    ipField.setText(scheme + "://");
+                }
+
+                if (uri.getHost() != null) {
+                    ipField.setText(String.format("%s%s", ipField.getText(), uri.getHost()));
+                }
+
+                if (uri.getPort() == -1) {
+                    portField.setText(String.valueOf(uri.getPort()));
+                } else {
+                    portField.setText(String.valueOf(DEFAULT_SQL_PORT));
+                }
+
+                String path = uri.getPath();
+                if (path != null && path.length() > 1) {
+                    databaseNameField.setText(uri.getPath().substring(1));
+                }
             } catch (IllegalArgumentException e) {
                 String message = String.format("URI from config isn't valid:\n%s", e);
                 Logger.getLogger(getClass().getName()).info(message);
@@ -95,17 +113,16 @@ public class DatabaseChooserController implements SourceChooser<DataSource> {
     }
 
     private void check() {
+        URI uri = null;
         if (databaseURIProperty.get() != null
             && databaseNameProperty.get() != null
             && portProperty.get() != null) {
-            URI uri = createCompleteURI();
+            uri = createCompleteURI();
             if (uri != null) {
-                completeURIProperty.set(uri);
                 setInitialUri(uri);
             }
-        } else {
-            completeURIProperty.set(null);
         }
+        completeURIProperty.set(uri);
     }
 
     private URI createCompleteURI() {
