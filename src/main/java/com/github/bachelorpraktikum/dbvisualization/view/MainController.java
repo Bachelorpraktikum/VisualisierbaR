@@ -49,6 +49,8 @@ import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
+import javafx.event.EventHandler;
+import javafx.event.WeakEventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Bounds;
@@ -75,6 +77,7 @@ import javafx.scene.paint.Paint;
 import javafx.scene.shape.Shape;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 import javafx.util.Callback;
 import javafx.util.Duration;
 import javafx.util.StringConverter;
@@ -143,6 +146,7 @@ public class MainController {
 
     private Stage stage;
     private ObjectProperty<DataSource> dataSource;
+    private EventHandler<WindowEvent> windowCloseHandler;
 
     private static final double SCALE_DELTA = 1.1;
 
@@ -563,6 +567,19 @@ public class MainController {
         stage.centerOnScreen();
         stage.setMaximized(false);
         stage.setMaximized(true);
+
+        windowCloseHandler = event -> {
+            if (dataSource.get() != null) {
+                try {
+                    dataSource.get().close();
+                } catch (IOException e) {
+                    // TODO log
+                    e.printStackTrace();
+                }
+            }
+        };
+
+        stage.setOnHiding(new WeakEventHandler<>(windowCloseHandler));
     }
 
     private void showLegend() {
@@ -707,13 +724,7 @@ public class MainController {
     }
 
     private void showSourceChooser() {
-        stage.setMaximized(false);
-        if (graph != null) {
-            simulation.stop();
-            graphPane.getChildren().clear();
-            graph = null;
-        }
-        ContextHolder.getInstance().setContext(null);
+        cleanUp();
         FXMLLoader loader = new FXMLLoader(getClass().getResource(
             "sourcechooser/SourceChooser.fxml"));
         loader.setResources(ResourceBundle.getBundle("bundles.localization"));
@@ -728,8 +739,7 @@ public class MainController {
     }
 
     private void showLoginWindow() {
-        graph = null;
-        ContextHolder.getInstance().setContext(null);
+        cleanUp();
         FXMLLoader loader = new FXMLLoader(getClass().getResource("LoginWindow.fxml"));
         loader.setResources(ResourceBundle.getBundle("bundles.localization"));
         try {
@@ -740,6 +750,17 @@ public class MainController {
         }
         LoginController controller = loader.getController();
         controller.setStage(stage);
+    }
+
+    private void cleanUp() {
+        stage.setMaximized(false);
+        if (graph != null) {
+            simulation.stop();
+            graphPane.getChildren().clear();
+            graph = null;
+        }
+        ContextHolder.getInstance().setContext(null);
+        windowCloseHandler.handle(null);
     }
 
     private void switchGraph() {

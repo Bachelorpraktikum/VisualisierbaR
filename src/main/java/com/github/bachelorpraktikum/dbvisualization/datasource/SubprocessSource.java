@@ -49,8 +49,6 @@ public class SubprocessSource implements DataSource {
 
         this.graphParser = new GraphParser();
 
-        Runtime.getRuntime().addShutdownHook(new Thread(this::close));
-
         // TODO create constructor with the first timeout explicitly given
         // Listen until first output is processed
         // (so Node / Edge / Element / Train declarations are processed before MainWindow is shown)
@@ -98,7 +96,6 @@ public class SubprocessSource implements DataSource {
                 e.printStackTrace();
             }
         };
-        readWhileReady.run();
 
         Runnable readAndRescheduleUntilTimeout = new Runnable() {
             @Override
@@ -115,6 +112,8 @@ public class SubprocessSource implements DataSource {
                 }
             }
         };
+
+        readWhileReady.run();
         scheduler.schedule(readAndRescheduleUntilTimeout, timeout, unit);
     }
 
@@ -135,6 +134,8 @@ public class SubprocessSource implements DataSource {
     public void close() {
         scheduler.shutdownNow();
         try {
+            // TODO this fails to shut down the model completely.
+            // maybe a REST call to call exit could be implemented?
             process.destroyForcibly().waitFor();
         } catch (Exception e) {
             e.printStackTrace();
