@@ -21,7 +21,7 @@ public class DatabaseChooserController implements SourceChooser<DataSource> {
     @FXML
     private BorderPane rootPaneDatabase;
     @FXML
-    private TextField databaseURI;
+    private TextField databaseURIField;
     @FXML
     private TextField databaseNameField;
     @FXML
@@ -43,7 +43,7 @@ public class DatabaseChooserController implements SourceChooser<DataSource> {
         completeURIProperty = new ReadOnlyObjectWrapper<>();
         uriChosen = completeURIProperty.isNotNull();
 
-        databaseURI.textProperty().addListener((o, oldValue, newValue) -> {
+        databaseURIField.textProperty().addListener((o, oldValue, newValue) -> {
             if (newValue == null || newValue.trim().isEmpty()) {
                 databaseURIProperty.set(null);
                 return;
@@ -100,7 +100,7 @@ public class DatabaseChooserController implements SourceChooser<DataSource> {
                 if (host == null) {
                     host = "";
                 }
-                databaseURI.setText(String.format("%s%s", scheme, host));
+                databaseURIField.setText(String.format("%s%s", scheme, host));
 
                 if (uri.getPort() != -1) {
                     portField.setText(String.valueOf(uri.getPort()));
