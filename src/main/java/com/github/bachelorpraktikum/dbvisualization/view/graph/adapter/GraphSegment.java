@@ -6,7 +6,7 @@ import java.util.LinkedList;
 
 import javafx.geometry.Point2D;
 
-public class GraphSegment {
+class GraphSegment {
     private LinkedList<Node> nodes = new LinkedList<>();
     private SegmentType segmentType;
     private static ProportionalCoordinatesAdapter adapter;
@@ -19,7 +19,7 @@ public class GraphSegment {
 
     void addNode(Node node) {
         if(nodes.isEmpty()) {
-            this.startPoint = this.adapter.apply(node);
+            this.startPoint = adapter.apply(node);
         }
         this.nodes.add(node);
     }
