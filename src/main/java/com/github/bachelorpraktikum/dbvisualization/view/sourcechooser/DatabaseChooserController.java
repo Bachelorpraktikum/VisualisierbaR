@@ -95,7 +95,7 @@ public class DatabaseChooserController implements SourceChooser<DataSource> {
                     ipField.setText(String.format("%s%s", ipField.getText(), uri.getHost()));
                 }
 
-                if (uri.getPort() == -1) {
+                if (uri.getPort() != -1) {
                     portField.setText(String.valueOf(uri.getPort()));
                 } else {
                     portField.setText(String.valueOf(DEFAULT_SQL_PORT));
