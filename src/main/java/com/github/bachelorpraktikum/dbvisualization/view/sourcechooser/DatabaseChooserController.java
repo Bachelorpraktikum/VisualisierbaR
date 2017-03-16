@@ -85,15 +85,22 @@ public class DatabaseChooserController implements SourceChooser<DataSource> {
         if (uriString != null && !uriString.isEmpty()) {
             try {
                 URI uri = URI.create(uriString);
+                String host = uri.getHost();
 
                 String scheme = uri.getScheme();
                 if (scheme != null) {
-                    ipField.setText(scheme + "://");
+                    // e.g. In the url string 'localhost:3306/ebd', 'localhost' will be regarded as the scheme
+                    if (host != null) {
+                        scheme += "://";
+                    }
+                } else {
+                    scheme = "";
                 }
 
-                if (uri.getHost() != null) {
-                    ipField.setText(String.format("%s%s", ipField.getText(), uri.getHost()));
+                if (host == null) {
+                    host = "";
                 }
+                databaseURI.setText(String.format("%s%s", scheme, host));
 
                 if (uri.getPort() != -1) {
                     portField.setText(String.valueOf(uri.getPort()));
