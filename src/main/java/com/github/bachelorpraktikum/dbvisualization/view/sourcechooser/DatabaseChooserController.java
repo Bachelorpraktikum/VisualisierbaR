@@ -7,7 +7,9 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.logging.Logger;
+import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.ReadOnlyObjectWrapper;
+import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.value.ObservableBooleanValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
@@ -18,6 +20,7 @@ import javax.annotation.Nonnull;
 public class DatabaseChooserController implements SourceChooser<DataSource> {
 
     private static final int DEFAULT_SQL_PORT = 3306;
+    private static final int INVALID_PORT = -1;
     @FXML
     private BorderPane rootPaneDatabase;
     @FXML
@@ -31,7 +34,7 @@ public class DatabaseChooserController implements SourceChooser<DataSource> {
 
     private ReadOnlyObjectWrapper<URI> databaseURIProperty;
     private ReadOnlyObjectWrapper<String> databaseNameProperty;
-    private ReadOnlyObjectWrapper<Integer> portProperty;
+    private IntegerProperty portProperty;
     private ReadOnlyObjectWrapper<URI> completeURIProperty;
     private ObservableBooleanValue uriChosen;
 
@@ -39,7 +42,7 @@ public class DatabaseChooserController implements SourceChooser<DataSource> {
     public void initialize() {
         databaseURIProperty = new ReadOnlyObjectWrapper<>();
         databaseNameProperty = new ReadOnlyObjectWrapper<>();
-        portProperty = new ReadOnlyObjectWrapper<>();
+        portProperty = new SimpleIntegerProperty(INVALID_PORT);
         completeURIProperty = new ReadOnlyObjectWrapper<>();
         uriChosen = completeURIProperty.isNotNull();
 
@@ -72,7 +75,7 @@ public class DatabaseChooserController implements SourceChooser<DataSource> {
                 portProperty.set(port);
                 check();
             } catch (NumberFormatException ignored) {
-                portProperty.set(null);
+                portProperty.set(INVALID_PORT);
             }
         });
 
@@ -102,7 +105,7 @@ public class DatabaseChooserController implements SourceChooser<DataSource> {
                 }
                 databaseURIField.setText(String.format("%s%s", scheme, host));
 
-                if (uri.getPort() != -1) {
+                if (uri.getPort() != INVALID_PORT) {
                     portField.setText(String.valueOf(uri.getPort()));
                 } else {
                     portField.setText(String.valueOf(DEFAULT_SQL_PORT));
@@ -123,7 +126,7 @@ public class DatabaseChooserController implements SourceChooser<DataSource> {
         URI uri = null;
         if (databaseURIProperty.get() != null
             && databaseNameProperty.get() != null
-            && portProperty.get() != null) {
+            && portProperty.get() != INVALID_PORT) {
             uri = createCompleteURI();
             if (uri != null) {
                 setInitialUri(uri);
