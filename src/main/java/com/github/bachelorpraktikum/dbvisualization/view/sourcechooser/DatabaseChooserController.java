@@ -68,7 +68,7 @@ public class DatabaseChooserController implements SourceChooser<DataSource> {
         portField.textProperty().addListener((observable, oldValue, newValue) -> {
             newValue = newValue.trim();
             try {
-                int port = Integer.valueOf(newValue);
+                int port = Integer.parseUnsignedInt(newValue);
                 portProperty.set(port);
                 check();
             } catch (NumberFormatException ignored) {
