@@ -4,17 +4,20 @@ import com.github.bachelorpraktikum.dbvisualization.datasource.DataSource;
 import com.github.bachelorpraktikum.dbvisualization.model.Context;
 import java.io.IOException;
 import java.util.function.Consumer;
+import javafx.beans.InvalidationListener;
+import javafx.beans.binding.BooleanBinding;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableBooleanValue;
+import javafx.beans.value.ObservableValue;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 /**
  * Singleton class that stores an instance of {@link DataSource}.
  */
-public class DataSourceHolder {
+public class DataSourceHolder implements ObservableValue<DataSource> {
 
     private static DataSourceHolder instance = new DataSourceHolder();
 
@@ -28,7 +31,7 @@ public class DataSourceHolder {
     }
 
     private ObjectProperty<DataSource> dataSource;
-    private ObservableBooleanValue isPresent;
+    private BooleanBinding isPresent;
 
     private DataSourceHolder() {
         dataSource = new SimpleObjectProperty<>();
@@ -62,7 +65,7 @@ public class DataSourceHolder {
         return isPresent.get();
     }
 
-    public ObservableBooleanValue presentProperty() {
+    public BooleanBinding presentProperty() {
         return isPresent;
     }
 
@@ -91,7 +94,33 @@ public class DataSourceHolder {
         }
     }
 
-    public void addListener(@Nonnull ChangeListener<? super DataSource> listener) {
+    public void addListener(ChangeListener<? super DataSource> listener) {
         dataSource.addListener(listener);
+    }
+
+    @Override
+    public void removeListener(ChangeListener<? super DataSource> listener) {
+        dataSource.removeListener(listener);
+    }
+
+    /**
+     * Same behavior as {@link #get()}.
+     *
+     * @return the current data source
+     * @throws IllegalStateException if there is no data source
+     */
+    @Override
+    public DataSource getValue() {
+        return get();
+    }
+
+    @Override
+    public void addListener(InvalidationListener listener) {
+        dataSource.addListener(listener);
+    }
+
+    @Override
+    public void removeListener(InvalidationListener listener) {
+        dataSource.removeListener(listener);
     }
 }

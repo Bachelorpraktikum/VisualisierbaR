@@ -5,6 +5,7 @@
 <?import javafx.scene.Group?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.control.Button?>
 <VBox fx:id="detailView" prefHeight="600" xmlns="http://javafx.com/javafx/8.0.60"
   xmlns:fx="http://javafx.com/fxml/1"
   fx:controller="com.github.bachelorpraktikum.dbvisualization.view.detail.ElementDetailController">
@@ -33,6 +34,12 @@
     <AnchorPane>
       <Label AnchorPane.leftAnchor="0" text="%type"/>
       <Label fx:id="typeValue" AnchorPane.rightAnchor="0"/>
+      <VBox.margin>
+        <Insets bottom="3" left="10" right="10" top="3"/>
+      </VBox.margin>
+    </AnchorPane>
+    <AnchorPane>
+      <Button fx:id="breakButton" text="%break_now"/>
       <VBox.margin>
         <Insets bottom="3" left="10" right="10" top="3"/>
       </VBox.margin>

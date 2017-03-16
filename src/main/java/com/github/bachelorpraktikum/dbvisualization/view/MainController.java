@@ -55,6 +55,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonBase;
 import javafx.scene.control.CheckBox;
+import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.control.MenuItem;
@@ -126,6 +127,8 @@ public class MainController {
     private TextField timeText;
     @FXML
     private Button continueSimulation;
+    @FXML
+    private Label modelTime;
     @FXML
     private HBox rightSpacer;
 
@@ -285,13 +288,18 @@ public class MainController {
 
         DataSourceHolder.getInstance().addListener((observable, oldValue, newValue) -> {
             if (newValue != null) {
-                continueSimulation.setVisible(newValue instanceof RestSource);
+                boolean isRest = newValue instanceof RestSource;
+                continueSimulation.setVisible(isRest);
+                modelTime.setVisible(isRest);
             }
         });
         continueSimulation.setOnAction(event -> {
             RestSource source = (RestSource) DataSourceHolder.getInstance().get();
             continueSimulation.setDisable(true);
             source.continueSimulation();
+            String text = ResourceBundle.getBundle("bundles.localization")
+                .getString("model_time");
+            modelTime.setText(String.format(text, source.getTime()));
             continueSimulation.setDisable(false);
         });
     }

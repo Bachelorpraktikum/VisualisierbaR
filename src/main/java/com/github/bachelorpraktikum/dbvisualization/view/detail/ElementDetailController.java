@@ -2,10 +2,12 @@ package com.github.bachelorpraktikum.dbvisualization.view.detail;
 
 import com.github.bachelorpraktikum.dbvisualization.config.ConfigFile;
 import com.github.bachelorpraktikum.dbvisualization.config.ConfigKey;
+import com.github.bachelorpraktikum.dbvisualization.datasource.RestSource;
 import com.github.bachelorpraktikum.dbvisualization.model.Event;
 import com.github.bachelorpraktikum.dbvisualization.model.train.Train;
 import com.github.bachelorpraktikum.dbvisualization.model.train.Train.State;
 import com.github.bachelorpraktikum.dbvisualization.view.ContextMenuUtil;
+import com.github.bachelorpraktikum.dbvisualization.view.DataSourceHolder;
 import com.github.bachelorpraktikum.dbvisualization.view.Exporter;
 import java.io.File;
 import java.io.IOException;
@@ -21,6 +23,7 @@ import java.util.ResourceBundle;
 import java.util.function.Function;
 import javafx.beans.binding.Binding;
 import javafx.beans.binding.Bindings;
+import javafx.beans.binding.BooleanBinding;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.WeakChangeListener;
 import javafx.collections.FXCollections;
@@ -32,6 +35,7 @@ import javafx.scene.Group;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.XYChart.Data;
 import javafx.scene.chart.XYChart.Series;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
 import javafx.scene.input.MouseButton;
@@ -54,6 +58,8 @@ public class ElementDetailController {
     private Label stateValue;
     @FXML
     private Label typeValue;
+    @FXML
+    private Button breakButton;
     @FXML
     private Label elementName;
     @FXML
@@ -177,6 +183,25 @@ public class ElementDetailController {
             exportItem.setOnAction(event -> export(type));
             ContextMenuUtil.attach(chart, Collections.singletonList(exportItem));
         }
+
+        DataSourceHolder dataSourceHolder = DataSourceHolder.getInstance();
+        BooleanBinding isRestSource = dataSourceHolder.presentProperty().and(
+            Bindings.createBooleanBinding(
+                () -> dataSourceHolder.get() instanceof RestSource,
+                dataSourceHolder
+            )
+        );
+        bindings.add(isRestSource);
+        breakButton.visibleProperty().bind(isRestSource);
+        breakButton.setOnAction(event -> {
+            breakButton.setDisable(true);
+            RestSource dataSource = (RestSource) DataSourceHolder.getInstance().get();
+            ElementDetail elementDetail = (ElementDetail) detail;
+            dataSource.breakElement(
+                elementDetail.getElement(),
+                () -> breakButton.setDisable(false)
+            );
+        });
     }
 
     private LineChart<Double, Double> createChart() {

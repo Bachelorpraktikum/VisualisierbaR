@@ -19,12 +19,9 @@ interface SimulationService {
     @GET("call/APP/next")
     Call<ResponseBody> resumeSimulation();
 
-    @GET("call/{object}/{method}")
-    Call<ResponseBody> callMethod(
-        @Path("object") String objectName,
-        @Path("method") String method
-    );
+    @GET("o/call/{element}/breakNow")
+    Call<ResponseBody> breakNow(@Path("element") String element);
 
-    @POST("o/call/{element}/breakNow")
-    Call<ResponseBody> breakNow(String element);
+    @GET("call/APP/tellTime")
+    Call<LiveTime> tellTime();
 }
