@@ -76,6 +76,7 @@ public class RestSource extends SubprocessSource {
 
     /**
      * Gets the current model time. This blocks the calling thread until the call is done.
+     * If the call fails, -1 is returned.
      *
      * @return the current time in milliseconds
      */
@@ -88,7 +89,7 @@ public class RestSource extends SubprocessSource {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        System.out.println("error");
+        log.severe("tellTime() call failed");
         return -1;
     }
 }
