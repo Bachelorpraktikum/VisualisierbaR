@@ -171,15 +171,20 @@ public final class Element implements GraphObject<Shape> {
          */
         @Nonnull
         public static Type fromName(String name) {
-            String[] nameParts = name.split("_");
-            String typeName = nameParts[nameParts.length - 1].toLowerCase();
+            String lowerName = name.toLowerCase();
+            Type longestMatch = UnknownElement;
             for (Type type : values()) {
-                String lowerType = type.getLogName();
-                if (lowerType.equalsIgnoreCase(typeName)) {
-                    return type;
+                if (type.getLogName().length() >= longestMatch.getLogName().length()) {
+                    String lowerTypeName = type.getLogName().toLowerCase();
+                    if (lowerName.contains(lowerTypeName)) {
+                        longestMatch = type;
+                    }
                 }
             }
-            return UnknownElement;
+            if (longestMatch == UnknownElement) {
+                log.warning("Unknown element type: " + name);
+            }
+            return longestMatch;
         }
     }
 
