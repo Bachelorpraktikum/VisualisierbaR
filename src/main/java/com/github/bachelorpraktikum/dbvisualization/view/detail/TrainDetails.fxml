@@ -22,6 +22,8 @@
     </padding>
   </GridPane>
 
+  <fx:include fx:id="restTrainDetail" source="RestTrainDetail.fxml"/>
+
   <GridPane>
     <fx:include fx:id="vtChart" source="LineChart.fxml" GridPane.rowIndex="0"/>
     <fx:include fx:id="vdChart" source="LineChart.fxml" GridPane.rowIndex="1"/>

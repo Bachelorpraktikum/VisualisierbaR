@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.GridPane?>
+<GridPane xmlns:fx="http://javafx.com/fxml/1"
+  fx:controller="com.github.bachelorpraktikum.dbvisualization.view.detail.RestTrainDetailController">
+
+  <Label text="%current_rest_values" GridPane.rowIndex="0"/>
+  <GridPane GridPane.rowIndex="1">
+    <Label text="%current_v" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+    <Label fx:id="v" GridPane.columnIndex="2" GridPane.rowIndex="1"/>
+    <Label text="%current_accelState" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
+    <Label fx:id="accelState" GridPane.columnIndex="2" GridPane.rowIndex="2"/>
+
+    <Label text="%current_emerg_count" GridPane.columnIndex="1" GridPane.rowIndex="3"/>
+    <Label fx:id="emergCount" GridPane.columnIndex="2" GridPane.rowIndex="3"/>
+    <Label text="%current_fahrCount" GridPane.columnIndex="1" GridPane.rowIndex="4"/>
+    <Label fx:id="fahrCount" GridPane.columnIndex="2" GridPane.rowIndex="4"/>
+
+    <padding>
+      <Insets left="5.0"/>
+    </padding>
+  </GridPane>
+
+  <padding>
+    <Insets left="10.0" right="10.0"/>
+  </padding>
+</GridPane>

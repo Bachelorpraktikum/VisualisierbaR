@@ -9,7 +9,6 @@ import javafx.beans.binding.BooleanBinding;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableBooleanValue;
 import javafx.beans.value.ObservableValue;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -80,6 +79,19 @@ public class DataSourceHolder implements ObservableValue<DataSource> {
         if (dataSource == null) {
             throw new IllegalStateException();
         }
+        return dataSource.get();
+    }
+
+    /**
+     * <p>Gets the current data source.</p>
+     *
+     * <p>In contrast to {@link #get()}, this method won't throw an Exception, if there is no data
+     * source present. Instead, null is returned.</p>
+     *
+     * @return the current data source, or null
+     */
+    @Nullable
+    public DataSource getNullable() {
         return dataSource.get();
     }
 

@@ -1,10 +1,15 @@
 package com.github.bachelorpraktikum.dbvisualization.datasource;
 
 import com.github.bachelorpraktikum.dbvisualization.model.Element;
+import com.github.bachelorpraktikum.dbvisualization.model.train.Train;
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 import javafx.application.Platform;
+import javafx.beans.property.Property;
+import javafx.beans.property.ReadOnlyProperty;
+import javafx.beans.property.SimpleObjectProperty;
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
@@ -23,10 +28,12 @@ public class RestSource extends SubprocessSource {
         .build();
 
     private final SimulationService service;
+    private final Property<LiveTime> currentTime;
 
     public RestSource(String appPath) throws IOException {
         super(appPath);
         this.service = RETROFIT.create(SimulationService.class);
+        this.currentTime = new SimpleObjectProperty<>();
     }
 
     private SimulationService getService() {
@@ -46,6 +53,7 @@ public class RestSource extends SubprocessSource {
             return;
         }
         listenToOutput(200, TimeUnit.MILLISECONDS);
+        currentTime.setValue(fetchTime());
     }
 
     /**
@@ -76,20 +84,60 @@ public class RestSource extends SubprocessSource {
 
     /**
      * Gets the current model time. This blocks the calling thread until the call is done.
-     * If the call fails, -1 is returned.
      *
-     * @return the current time in milliseconds
+     * @return the current time, or null
      */
-    public int getTime() {
+    @Nullable
+    private LiveTime fetchTime() {
         try {
             Response<LiveTime> time = getService().tellTime().execute();
             if (time.isSuccessful()) {
-                return time.body().getTime();
+                return time.body();
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
         log.severe("tellTime() call failed");
-        return -1;
+        return null;
+    }
+
+    /**
+     * <p>Gets the current time of the simulated model.</p>
+     *
+     * <p>If there is no current time (probably because of a failed network call), -1 is
+     * returned.</p>
+     *
+     * @return the model time in milliseconds
+     */
+    public int getTime() {
+        LiveTime time = currentTime.getValue();
+        return time == null ? -1 : time.getTime();
+    }
+
+    /**
+     * <p>Gets the state of the specified train at the current {@link #getTime() model time}.</p>
+     *
+     * <p>Performs a blocking network operation.</p>
+     *
+     * @param train the train to look up
+     * @return the current state of the train in the simulated model
+     */
+    @Nonnull
+    public LiveTrain getTrain(@Nonnull Train train) {
+        Response<LiveTrain> response;
+        try {
+            response = getService().getTrain(train.getReadableName()).execute();
+            if (response.isSuccessful()) {
+                LiveTrain result = response.body();
+                return result.isValid() ? result : LiveTrain.INVALID;
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return LiveTrain.INVALID;
+    }
+
+    public ReadOnlyProperty<LiveTime> timeProperty() {
+        return currentTime;
     }
 }

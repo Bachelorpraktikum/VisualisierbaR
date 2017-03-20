@@ -21,11 +21,9 @@ import java.util.function.Function;
 import javafx.beans.binding.Binding;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.BooleanBinding;
-import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableBooleanValue;
 import javafx.beans.value.ObservableIntegerValue;
 import javafx.beans.value.WeakChangeListener;
 import javafx.collections.FXCollections;
@@ -33,6 +31,7 @@ import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Point2D;
+import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.XYChart.Data;
@@ -41,6 +40,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -57,6 +57,19 @@ class TrainDetails extends DetailsBase<Train> {
     private Label coordinateValueBack;
     @FXML
     private Label speedValue;
+    private VBox elementBox;
+    @FXML
+    private Label stateValue;
+    @FXML
+    private Label typeValue;
+    @FXML
+    private Node restTrainDetail;
+    @FXML
+    private RestTrainDetailController restTrainDetailController;
+    @FXML
+    private Label elementName;
+    @FXML
+    private Group elementImage;
     @FXML
     private Label lengthValue;
 
@@ -178,12 +191,14 @@ class TrainDetails extends DetailsBase<Train> {
         bigChart.setVisible(false);
         bigChart.setOnMouseClicked(event -> bigChart.setVisible(false));
 
-        centerPane.addListener((observable, oldValue, newValue) -> {
-            newValue.getChildren().add(bigChart);
-            bigChart.visibleProperty().addListener(
-                (visibleProperty, oldVisible, newVisible) ->
-                    newValue.getChildren().get(1).setVisible(!newVisible)
-            );
+        centerPane.addListener((observable, oldValue, newCenter) -> {
+            if (!newCenter.getChildren().contains(bigChart)) {
+                newCenter.getChildren().add(0, bigChart);
+                bigChart.visibleProperty().addListener(
+                    (visibleProperty, oldVisible, newVisible) ->
+                        newCenter.getChildren().get(1).setVisible(!newVisible)
+                );
+            }
         });
 
         lengthValue.setText(String.format("%dm", getLength()));
@@ -223,6 +238,10 @@ class TrainDetails extends DetailsBase<Train> {
             dataSourceHolder
         );
         addBinding(isRestSource);
+
+        restTrainDetail.managedProperty().bind(restTrainDetail.visibleProperty());
+        restTrainDetail.visibleProperty().bind(isRestSource);
+        restTrainDetailController.setTrain(getObject());
     }
 
     private LineChart<Double, Double> createChart() {
