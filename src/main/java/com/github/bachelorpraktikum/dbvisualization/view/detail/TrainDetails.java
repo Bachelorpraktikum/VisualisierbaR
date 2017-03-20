@@ -31,7 +31,6 @@ import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Point2D;
-import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.XYChart.Data;
@@ -40,7 +39,6 @@ import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.Pane;
-import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -57,7 +55,6 @@ class TrainDetails extends DetailsBase<Train> {
     private Label coordinateValueBack;
     @FXML
     private Label speedValue;
-    private VBox elementBox;
     @FXML
     private Label stateValue;
     @FXML
@@ -66,10 +63,6 @@ class TrainDetails extends DetailsBase<Train> {
     private Node restTrainDetail;
     @FXML
     private RestTrainDetailController restTrainDetailController;
-    @FXML
-    private Label elementName;
-    @FXML
-    private Group elementImage;
     @FXML
     private Label lengthValue;
 

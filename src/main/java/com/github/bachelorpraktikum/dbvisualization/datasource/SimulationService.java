@@ -15,10 +15,13 @@ interface SimulationService {
     @GET("o/{name}")
     Call<LiveTrain> getTrain(@Path("name") String objectName);
 
+    @GET("o/{name}")
+    Call<LiveSignal> getSignal(@Path("name") String elementName);
+
     @GET("call/APP/next")
     Call<ResponseBody> resumeSimulation();
 
-    @GET("o/call/{element}/breakNow")
+    @GET("call/{element}/breakNow")
     Call<ResponseBody> breakNow(@Path("element") String element);
 
     @GET("call/APP/tellTime")

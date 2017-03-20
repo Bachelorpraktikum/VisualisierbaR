@@ -56,14 +56,26 @@ class ElementDetails extends DetailsBase<Element> {
         );
         addBinding(isRestSource);
 
-        breakButton.visibleProperty().bind(isRestSource);
+        BooleanBinding isRestSourceAndCanBeBroken = Bindings.createBooleanBinding(
+            () -> {
+                Element element = getObject();
+                if (isRestSource.get()) {
+                    RestSource restSource = (RestSource) dataSourceHolder.get();
+                    return restSource.hasSignal(element);
+                } else {
+                    return false;
+                }
+            },
+            isRestSource
+        );
+        addBinding(isRestSourceAndCanBeBroken);
+
+        breakButton.visibleProperty().bind(isRestSourceAndCanBeBroken);
         breakButton.setOnAction(event -> {
             breakButton.setDisable(true);
             RestSource dataSource = (RestSource) DataSourceHolder.getInstance().get();
-            dataSource.breakElement(
-                getObject(),
-                () -> breakButton.setDisable(false)
-            );
+            // maybe show some success message? or make method accept onFailure to re-enable button?
+            dataSource.breakElement(getObject(), null);
         });
     }
 
