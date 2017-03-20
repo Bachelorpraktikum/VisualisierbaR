@@ -106,6 +106,7 @@ public abstract class GraphShapeBase<R, S extends Node> implements GraphShape<R>
         circle.setStrokeWidth(
             HIGHLIGHT_STROKE_WIDTH * getCalibrationBase()
         );
+        circle.setMouseTransparent(true);
         return circle;
     }
 

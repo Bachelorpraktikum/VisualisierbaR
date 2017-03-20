@@ -751,9 +751,15 @@ public class MainController {
     }
 
     private void switchGraph() {
+        GraphObject selected = elementList.getSelectionModel().getSelectedItem();
         graphPane.getChildren().clear();
         graph = null;
         fitGraphToCenter(getGraph());
+        if(selected != null) {
+            // reselect element
+            elementList.getSelectionModel().select(null);
+            elementList.getSelectionModel().select(selected);
+        }
     }
 
     private void exportGraph() {

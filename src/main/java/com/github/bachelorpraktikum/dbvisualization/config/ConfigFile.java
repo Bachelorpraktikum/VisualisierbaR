@@ -20,6 +20,7 @@ public class ConfigFile extends Properties {
     private static final Logger log = Logger.getLogger(ConfigFile.class.getName());
 
     private static ConfigFile instance = new ConfigFile();
+    private static Properties defaultConfig;
 
     public static ConfigFile getInstance() {
         return instance;
@@ -34,7 +35,16 @@ public class ConfigFile extends Properties {
     private ConfigFile(String filepath) {
         super();
 
+        try (InputStream defaultInput = getClass().getClassLoader().getResourceAsStream("default.properties")) {
+            defaultConfig = new Properties();
+            defaultConfig.load(defaultInput);
+        } catch (IOException io) {
+            log.severe(
+                String.format("File 'default.properties' not found in classpath. Error: %s", io.getMessage())
+            );
+        }
         this.filepath = filepath;
+        loadDefaultValues();
         load();
     }
 
@@ -58,6 +68,23 @@ public class ConfigFile extends Properties {
             log.severe(String.format(
                 "Couldn't load %s due to error: %s.", filepath, io.getMessage()
             ));
+        }
+    }
+
+    private void loadDefaultValues() {
+        if(defaultConfig != null) {
+            for(ConfigKey key: ConfigKey.values()) {
+                // check if default config is set to avoid NullPointerExceptions
+                // when setting the default values on the real ConfigFile
+                if(defaultConfig.getProperty(key.getKey()) == null) {
+                    log.severe(
+                        String.format("Property %s is not in the default config file.", key.getKey())
+                    );
+                    continue;
+                }
+
+                this.setProperty(key.getKey(), defaultConfig.getProperty(key.getKey()));
+            }
         }
     }
 

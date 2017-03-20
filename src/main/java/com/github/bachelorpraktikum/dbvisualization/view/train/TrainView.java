@@ -64,6 +64,7 @@ public final class TrainView implements Highlightable {
         highlightRectangle.setFill(Color.TRANSPARENT);
         highlightRectangle.setStrokeWidth(0.05 * calibrationBase);
         highlightRectangle.visibleProperty().bind(highlightedProperty());
+        highlightRectangle.setMouseTransparent(true);
         graph.getGroup().getChildren().add(highlightRectangle);
 
         this.path = new Path();
