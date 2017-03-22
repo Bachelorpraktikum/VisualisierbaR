@@ -62,7 +62,7 @@ public class RestSource extends SubprocessSource {
      * @throws IOException if a network error occurs
      */
     private Map<Element, String> loadSignals() throws IOException {
-        Element.Factory factory = Element.in(getContext());
+        Element.ElementFactory factory = Element.in(getContext());
         Map<Element, String> result = new HashMap<>(factory.getAll().size() * 2);
         Response<List<String>> nameResponse = getService().getObjectNames().execute();
         if (!nameResponse.isSuccessful()) {

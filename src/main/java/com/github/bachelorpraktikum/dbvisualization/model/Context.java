@@ -26,8 +26,10 @@ public final class Context {
     }
 
     /**
-     * Gets a list of all events associated with this context.
-     * This list will never contain events for trains created after calling this method though.
+     * <p>Gets a list of all events associated with this context.</p>
+     *
+     * <p>If a train is created after calling this method, the list previously returned will not
+     * contain any of the new train's events.</p>
      *
      * @return an immutable observable list of events
      */
@@ -51,7 +53,7 @@ public final class Context {
     }
 
     /**
-     * Ensures the given object will not be garbage collected until this context is.
+     * <p>Ensures the given object will not be garbage collected until this context is.</p>
      *
      * @param object any object
      * @throws NullPointerException if the object is null

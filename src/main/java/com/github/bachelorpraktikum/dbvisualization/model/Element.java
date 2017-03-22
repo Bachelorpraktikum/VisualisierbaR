@@ -37,7 +37,7 @@ public final class Element implements GraphObject<Shape> {
 
     private static final Logger log = Logger.getLogger(Element.class.getName());
     @Nonnull
-    private final Factory factory;
+    private final ElementFactory factory;
     @Nonnull
     private final String name;
     @Nonnull
@@ -190,7 +190,7 @@ public final class Element implements GraphObject<Shape> {
         }
     }
 
-    private Element(Factory factory, String name, Type type, Node node, State state) {
+    private Element(ElementFactory factory, String name, Type type, Node node, State state) {
         this.factory = Objects.requireNonNull(factory);
         this.name = Objects.requireNonNull(name);
         this.type = Objects.requireNonNull(type);
@@ -215,10 +215,10 @@ public final class Element implements GraphObject<Shape> {
      * method to set the time of all Elements that exist in this factory's context.</p>
      */
     @ParametersAreNonnullByDefault
-    public static final class Factory {
+    public static final class ElementFactory implements Factory<Element> {
 
         private static final int INITIAL_ELEMENTS_CAPACITY = 256;
-        private static final Map<Context, Factory> instances = new WeakHashMap<>();
+        private static final Map<Context, ElementFactory> instances = new WeakHashMap<>();
 
         @Nonnull
         private final Map<String, Element> elements;
@@ -231,14 +231,14 @@ public final class Element implements GraphObject<Shape> {
         private int nextIndex;
 
         @Nonnull
-        private static Factory getInstance(Context context) {
+        private static ElementFactory getInstance(Context context) {
             if (context == null) {
                 throw new NullPointerException("context is null");
             }
-            return instances.computeIfAbsent(context, g -> new Factory(context));
+            return instances.computeIfAbsent(context, g -> new ElementFactory(context));
         }
 
-        private Factory(Context context) {
+        private ElementFactory(Context context) {
             this.elements = new LinkedHashMap<>(INITIAL_ELEMENTS_CAPACITY);
 
             this.switchFactory = Switch.in(context);
@@ -301,14 +301,7 @@ public final class Element implements GraphObject<Shape> {
             return result;
         }
 
-        /**
-         * Gets the {@link Element} with the given unique name.
-         *
-         * @param name the element's name
-         * @return the element instance with this name
-         * @throws NullPointerException if the name is null
-         * @throws IllegalArgumentException if there is no element associated with the name
-         */
+        @Override
         @Nonnull
         public Element get(String name) {
             Element element = elements.get(Objects.requireNonNull(name));
@@ -318,11 +311,7 @@ public final class Element implements GraphObject<Shape> {
             return element;
         }
 
-        /**
-         * Gets all {@link Element} instances in this {@link Context}.
-         *
-         * @return all elements
-         */
+        @Override
         @Nonnull
         public Collection<Element> getAll() {
             return Collections.unmodifiableCollection(elements.values());
@@ -387,19 +376,19 @@ public final class Element implements GraphObject<Shape> {
     }
 
     /**
-     * Gets the {@link Factory} instance for the given {@link Context}.
+     * Gets the {@link ElementFactory} instance for the given {@link Context}.
      *
      * @param context the context
      * @return the factory
      * @throws NullPointerException if context is null
      */
     @Nonnull
-    public static Factory in(Context context) {
-        return Element.Factory.getInstance(context);
+    public static ElementFactory in(Context context) {
+        return ElementFactory.getInstance(context);
     }
 
     @Nonnull
-    private Factory getFactory() {
+    private ElementFactory getFactory() {
         return this.factory;
     }
 
@@ -451,7 +440,7 @@ public final class Element implements GraphObject<Shape> {
 
     /**
      * Gets the property representing the {@link State} of this {@link Element}.<br>
-     * The state will change, if {@link Factory#setTime(int)} is called.
+     * The state will change, if {@link ElementFactory#setTime(int)} is called.
      *
      * @return the state property
      */

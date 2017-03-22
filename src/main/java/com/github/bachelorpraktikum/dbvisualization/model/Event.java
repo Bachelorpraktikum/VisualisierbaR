@@ -1,6 +1,5 @@
 package com.github.bachelorpraktikum.dbvisualization.model;
 
-import java.util.List;
 import javafx.collections.ObservableList;
 import javax.annotation.Nonnull;
 

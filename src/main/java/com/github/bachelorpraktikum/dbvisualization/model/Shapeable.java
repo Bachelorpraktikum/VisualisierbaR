@@ -11,6 +11,11 @@ import javafx.scene.shape.Shape;
 import javax.annotation.Nonnull;
 import javax.annotation.ParametersAreNonnullByDefault;
 
+/**
+ * Represents anything that can be represented as a shape.
+ *
+ * @param <S> the type of shape {@link #createShape()} returns
+ */
 @ParametersAreNonnullByDefault
 public interface Shapeable<S extends Shape> {
 
@@ -35,8 +40,10 @@ public interface Shapeable<S extends Shape> {
     S createShape();
 
     /**
-     * Creates a shape representing this Shapeable outside of the graph.
-     * This might be used in the legend, or the details sidebar.
+     * <p>Creates a shape representing this Shapeable outside of the graph.
+     * This might be used in the legend, or the details sidebar.</p>
+     *
+     * <p>The default implementation calls {@link #createShape()}</p>
      *
      * @return a shape
      */

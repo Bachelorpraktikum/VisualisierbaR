@@ -5,6 +5,7 @@ import com.github.bachelorpraktikum.dbvisualization.model.Context;
 import com.github.bachelorpraktikum.dbvisualization.model.Edge;
 import com.github.bachelorpraktikum.dbvisualization.model.Element;
 import com.github.bachelorpraktikum.dbvisualization.model.Event;
+import com.github.bachelorpraktikum.dbvisualization.model.Factory;
 import com.github.bachelorpraktikum.dbvisualization.model.GraphObject;
 import com.github.bachelorpraktikum.dbvisualization.model.Node;
 import com.github.bachelorpraktikum.dbvisualization.model.Shapeable;
@@ -107,11 +108,11 @@ public class Train implements GraphObject<Shape> {
      * Ensures that there will always be only one instance of Train per name per context.
      */
     @ParametersAreNonnullByDefault
-    public static final class Factory {
+    public static final class TrainFactory implements Factory<Train> {
 
         private static final int INITIAL_TRAINS_CAPACITY = 16;
         private static final Paint[] COLORS = ConfigFile.getInstance().getTrainColors();
-        private static final Map<Context, Factory> instances = new WeakHashMap<>();
+        private static final Map<Context, TrainFactory> instances = new WeakHashMap<>();
 
         @Nonnull
         private final Map<String, Train> trains;
@@ -119,14 +120,14 @@ public class Train implements GraphObject<Shape> {
 
 
         @Nonnull
-        private static Factory getInstance(Context context) {
+        private static TrainFactory getInstance(Context context) {
             if (context == null) {
                 throw new NullPointerException("context is null");
             }
-            return instances.computeIfAbsent(context, g -> new Factory());
+            return instances.computeIfAbsent(context, g -> new TrainFactory());
         }
 
-        private Factory() {
+        private TrainFactory() {
             this.trains = new HashMap<>(INITIAL_TRAINS_CAPACITY);
             this.colorCounter = 0;
         }
@@ -169,15 +170,7 @@ public class Train implements GraphObject<Shape> {
             return result;
         }
 
-        /**
-         * Gets the only {@link Train} instance for the given name.
-         *
-         * @param name the train's name
-         * @return the train instance for the given name
-         * @throws NullPointerException if name is null
-         * @throws IllegalArgumentException if there is no train with the given name in this
-         * context
-         */
+        @Override
         @Nonnull
         public Train get(String name) {
             Train train = trains.get(Objects.requireNonNull(name));
@@ -187,11 +180,7 @@ public class Train implements GraphObject<Shape> {
             return train;
         }
 
-        /**
-         * Gets all trains in this {@link Context}.
-         *
-         * @return an unmodifiable collection of {@link Train} instances
-         */
+        @Override
         @Nonnull
         public Collection<Train> getAll() {
             return Collections.unmodifiableCollection(trains.values());
@@ -199,15 +188,15 @@ public class Train implements GraphObject<Shape> {
     }
 
     /**
-     * Gets the {@link Factory} instance for the given context.
+     * Gets the {@link TrainFactory} instance for the given context.
      *
      * @param context the context
-     * @return the only Factory instance for this context
+     * @return the only NodeFactory instance for this context
      * @throws NullPointerException if context is null
      */
     @Nonnull
-    public static Factory in(Context context) {
-        return Factory.getInstance(context);
+    public static TrainFactory in(Context context) {
+        return TrainFactory.getInstance(context);
     }
 
     @Override
