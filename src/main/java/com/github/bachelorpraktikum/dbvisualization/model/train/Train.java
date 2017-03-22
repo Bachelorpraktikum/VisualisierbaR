@@ -1,5 +1,6 @@
 package com.github.bachelorpraktikum.dbvisualization.model.train;
 
+import com.github.bachelorpraktikum.dbvisualization.config.ConfigFile;
 import com.github.bachelorpraktikum.dbvisualization.model.Context;
 import com.github.bachelorpraktikum.dbvisualization.model.Edge;
 import com.github.bachelorpraktikum.dbvisualization.model.Element;
@@ -24,6 +25,7 @@ import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Point2D;
+import javafx.scene.paint.Paint;
 import javafx.scene.shape.Path;
 import javafx.scene.shape.Shape;
 import javax.annotation.Nonnull;
@@ -50,6 +52,8 @@ public class Train implements GraphObject<Shape> {
     private final String readableName;
     private final int length;
     private final Property<VisibleState> stateProperty;
+    @Nonnull
+    private final Paint color;
 
     @Nonnull
     private final ObservableList<TrainEvent> events;
@@ -62,7 +66,7 @@ public class Train implements GraphObject<Shape> {
      * @param length the length of the train
      * @throws IllegalArgumentException if length <= 0
      */
-    private Train(String name, String readableName, int length) {
+    private Train(String name, String readableName, int length, Paint color) {
         this.name = Objects.requireNonNull(name);
         this.readableName = Objects.requireNonNull(readableName);
         if (length <= 0) {
@@ -73,6 +77,7 @@ public class Train implements GraphObject<Shape> {
         events = FXCollections.observableArrayList();
         events.add(new TrainEvent.Start(this));
         stateProperty = new SimpleObjectProperty<>(VisibleState.AUTO);
+        this.color = Objects.requireNonNull(color);
     }
 
     @Nonnull
@@ -87,6 +92,7 @@ public class Train implements GraphObject<Shape> {
         URL url = Element.class.getResource("symbols/train.fxml");
         Shape shape = Shapeable.createShape(url);
         shape.setRotate(180);
+        shape.setFill(getColor());
         return shape;
     }
 
@@ -104,10 +110,13 @@ public class Train implements GraphObject<Shape> {
     public static final class Factory {
 
         private static final int INITIAL_TRAINS_CAPACITY = 16;
+        private static final Paint[] COLORS = ConfigFile.getInstance().getTrainColors();
         private static final Map<Context, Factory> instances = new WeakHashMap<>();
 
         @Nonnull
         private final Map<String, Train> trains;
+        private int colorCounter;
+
 
         @Nonnull
         private static Factory getInstance(Context context) {
@@ -119,6 +128,7 @@ public class Train implements GraphObject<Shape> {
 
         private Factory() {
             this.trains = new HashMap<>(INITIAL_TRAINS_CAPACITY);
+            this.colorCounter = 0;
         }
 
         /**
@@ -136,7 +146,7 @@ public class Train implements GraphObject<Shape> {
         @Nonnull
         public Train create(String name, String readableName, int length) {
             Train result = trains.computeIfAbsent(Objects.requireNonNull(name), n ->
-                new Train(n, readableName, length)
+                new Train(n, readableName, length, nextColor())
             );
 
             if (result.getLength() != length
@@ -150,6 +160,12 @@ public class Train implements GraphObject<Shape> {
                 throw new IllegalArgumentException(message);
             }
 
+            return result;
+        }
+
+        private Paint nextColor() {
+            Paint result = COLORS[colorCounter];
+            colorCounter = (colorCounter + 1) % COLORS.length;
             return result;
         }
 
@@ -213,6 +229,16 @@ public class Train implements GraphObject<Shape> {
      */
     public int getLength() {
         return length;
+    }
+
+    /**
+     * Gets the color of this train.
+     *
+     * @return a color
+     */
+    @Nonnull
+    public Paint getColor() {
+        return color;
     }
 
     /**
