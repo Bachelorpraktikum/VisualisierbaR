@@ -4,7 +4,6 @@ import com.github.bachelorpraktikum.dbvisualization.model.Context;
 import com.github.bachelorpraktikum.dbvisualization.model.Coordinates;
 import com.github.bachelorpraktikum.dbvisualization.model.Edge;
 import com.github.bachelorpraktikum.dbvisualization.model.Node;
-
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -80,16 +79,16 @@ public final class ProportionalCoordinatesAdapter implements CoordinatesAdapter 
         boolean foundCollisions = false;
 
         // first find overlapping nodes and replace their transformation vectors
-        for(Map.Entry<Node, Point2D> entry: transformationMap.entrySet()) {
-            for(Map.Entry<Node, Point2D> entry2: transformationMap.entrySet()) {
-                if(entry.getValue().equals(entry2.getValue()) &&
-                        !entry.getKey().equals(entry2.getKey())) {
+        for (Map.Entry<Node, Point2D> entry : transformationMap.entrySet()) {
+            for (Map.Entry<Node, Point2D> entry2 : transformationMap.entrySet()) {
+                if (entry.getValue().equals(entry2.getValue()) &&
+                    !entry.getKey().equals(entry2.getKey())) {
                     // same transformation Vector but different Nodes
                     Node node = entry2.getKey();
                     Edge edge = null;
                     Point2D edgeVec = null;
                     // look for an edge that will serve as a vector to move the node
-                    for(Edge e: node.getEdges()) {
+                    for (Edge e : node.getEdges()) {
                         double p1X = this.apply(e.getNode1()).getX();
                         double p1Y = this.apply(e.getNode1()).getY();
                         double p2X = this.apply(e.getNode2()).getX();
@@ -99,14 +98,14 @@ public final class ProportionalCoordinatesAdapter implements CoordinatesAdapter 
                         Point2D eVec = new Point2D(dx, dy);
 
                         // prefer vertical edges
-                        if(eVec.getY() == 0) {
+                        if (eVec.getY() == 0) {
                             edge = e;
                             edgeVec = eVec.normalize();
                             continue;
                         }
 
                         // horizontal edges used if no better edge is found
-                        if(eVec.getY() == 0 && edge == null) {
+                        if (eVec.getY() == 0 && edge == null) {
                             edge = e;
                             edgeVec = eVec.normalize();
                             continue;
@@ -126,20 +125,22 @@ public final class ProportionalCoordinatesAdapter implements CoordinatesAdapter 
         }
 
         // find nodes that lie on other edges and move them
-        for(Node node: Node.in(context).getAll()) {
+        for (Node node : Node.in(context).getAll()) {
             Point2D nodePoint = this.apply(node);
 
-            for(Edge edge: Edge.in(context).getAll()) {
+            for (Edge edge : Edge.in(context).getAll()) {
                 // check if the current node should be part
                 // of the current edge and continue with another edge
                 // if that is the case
                 boolean isNodeEdge = false;
-                for(Edge nodeEdge: node.getEdges()) {
-                    if(nodeEdge.equals(edge))
+                for (Edge nodeEdge : node.getEdges()) {
+                    if (nodeEdge.equals(edge)) {
                         isNodeEdge = true;
+                    }
                 }
-                if(isNodeEdge)
+                if (isNodeEdge) {
                     continue;
+                }
 
                 Point2D edgeP1 = this.apply(edge.getNode1());
                 Point2D edgeP2 = this.apply(edge.getNode2());
@@ -153,7 +154,7 @@ public final class ProportionalCoordinatesAdapter implements CoordinatesAdapter 
                 double AP = edgeP1.distance(nodePoint);
                 double BP = edgeP2.distance(nodePoint);
 
-                if(AB == AP + BP) {
+                if (AB == AP + BP) {
                     // nodePoint lies on the edge
                     Point2D oldVec = transformationMap.get(node);
                     // move the node along the normal of the edge
@@ -172,21 +173,23 @@ public final class ProportionalCoordinatesAdapter implements CoordinatesAdapter 
      * and edges.
      */
     private void removeSegmentCollisions() {
-        for(int i=0; i < segments.size(); i++) {
-            for(int j=i+1; j < segments.size(); j++) {
+        for (int i = 0; i < segments.size(); i++) {
+            for (int j = i + 1; j < segments.size(); j++) {
                 GraphSegment gs = segments.get(i);
                 GraphSegment gs2 = segments.get(j);
 
                 // no need to compare segments that are not aligned
-                if(!gs2.isSameTypeAs(gs))
+                if (!gs2.isSameTypeAs(gs)) {
                     continue;
+                }
 
-                if(gs.checkForCollision(gs2)) {
+                if (gs.checkForCollision(gs2)) {
                     // collision
-                    if(gs.getSize() > gs2.getSize())
+                    if (gs.getSize() > gs2.getSize()) {
                         moveNodes(gs2);
-                    else
+                    } else {
                         moveNodes(gs);
+                    }
                 }
             }
         }
@@ -201,7 +204,7 @@ public final class ProportionalCoordinatesAdapter implements CoordinatesAdapter 
     private void moveNodes(GraphSegment gs) {
         Point2D normalVector = gs.getNormalVector();
 
-        for(Node n: gs.getNodes()) {
+        for (Node n : gs.getNodes()) {
             Point2D oldVec = transformationMap.get(n);
             Point2D newVec = oldVec.add(normalVector.multiply(MOVING_DISTANCE));
             transformationMap.replace(n, newVec);
@@ -233,8 +236,9 @@ public final class ProportionalCoordinatesAdapter implements CoordinatesAdapter 
                     }
 
                     // if node was already seen skip it
-                    if(S.contains(next))
+                    if (S.contains(next)) {
                         continue;
+                    }
 
                     // process the node
                     Point2D currentPoint = this.apply(current);
@@ -242,13 +246,13 @@ public final class ProportionalCoordinatesAdapter implements CoordinatesAdapter 
 
                     Point2D cnVector = nextPoint.subtract(currentPoint);
 
-                    if(cnVector.getY() == 0) {
+                    if (cnVector.getY() == 0) {
                         // straight horizontal edge
-                        if(currentSegment == null) {
+                        if (currentSegment == null) {
                             currentSegment = new GraphSegment(SegmentType.HORIZONTAL);
                             currentSegment.addNode(current);
                             currentSegment.addNode(next);
-                        } else if(currentSegment.getSegmentType() == SegmentType.HORIZONTAL) {
+                        } else if (currentSegment.getSegmentType() == SegmentType.HORIZONTAL) {
                             currentSegment.addNode(next);
                         } else {
                             currentSegment.endSegment();
@@ -257,13 +261,13 @@ public final class ProportionalCoordinatesAdapter implements CoordinatesAdapter 
                             currentSegment.addNode(current);
                             currentSegment.addNode(next);
                         }
-                    } else if(cnVector.getX() == 0) {
+                    } else if (cnVector.getX() == 0) {
                         // straight vertical edge
-                        if(currentSegment == null) {
+                        if (currentSegment == null) {
                             currentSegment = new GraphSegment(SegmentType.VERTICAL);
                             currentSegment.addNode(current);
                             currentSegment.addNode(next);
-                        } else if(currentSegment.getSegmentType() == SegmentType.VERTICAL) {
+                        } else if (currentSegment.getSegmentType() == SegmentType.VERTICAL) {
                             currentSegment.addNode(next);
                         } else {
                             currentSegment.endSegment();
@@ -275,7 +279,7 @@ public final class ProportionalCoordinatesAdapter implements CoordinatesAdapter 
                     } else {
                         // no straight edge anymore
                         // end the segment
-                        if(currentSegment != null) {
+                        if (currentSegment != null) {
                             currentSegment.endSegment();
                             this.segments.add(currentSegment);
                             currentSegment = null;
@@ -288,7 +292,7 @@ public final class ProportionalCoordinatesAdapter implements CoordinatesAdapter 
             }
         }
         // add last segment after queue is empty
-        if(currentSegment != null) {
+        if (currentSegment != null) {
             currentSegment.endSegment();
             this.segments.add(currentSegment);
         }

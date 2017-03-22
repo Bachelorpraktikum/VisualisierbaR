@@ -1,7 +1,6 @@
 package com.github.bachelorpraktikum.dbvisualization.view.train;
 
 import com.github.bachelorpraktikum.dbvisualization.config.ConfigFile;
-import com.github.bachelorpraktikum.dbvisualization.datasource.DataSource;
 import com.github.bachelorpraktikum.dbvisualization.model.Context;
 import com.github.bachelorpraktikum.dbvisualization.model.Node;
 import com.github.bachelorpraktikum.dbvisualization.model.train.Train;
@@ -12,8 +11,6 @@ import com.github.bachelorpraktikum.dbvisualization.view.graph.Graph;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
-import java.util.WeakHashMap;
 import java.util.function.Function;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.BooleanProperty;

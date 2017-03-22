@@ -138,12 +138,12 @@ public class LiveTrain {
 
     @Override
     public String toString() {
-        return "LiveTrain{" +
-            "name='" + name + '\'' +
-            ", emergCount=" + emergCount +
-            ", fahrCount=" + fahrCount +
-            ", v=" + v +
-            ", accelState='" + accelState + '\'' +
-            '}';
+        return "LiveTrain{"
+            + "name='" + name + '\''
+            + ", emergCount=" + emergCount
+            + ", fahrCount=" + fahrCount
+            + ", v=" + v
+            + ", accelState='" + accelState + '\''
+            + '}';
     }
 }

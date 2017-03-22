@@ -1,7 +1,5 @@
 package com.github.bachelorpraktikum.dbvisualization.config;
 
-import javafx.geometry.Dimension2D;
-
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -11,7 +9,7 @@ import java.util.Arrays;
 import java.util.Objects;
 import java.util.Properties;
 import java.util.logging.Logger;
-
+import javafx.geometry.Dimension2D;
 import javafx.scene.paint.Paint;
 
 public class ConfigFile extends Properties {
@@ -112,15 +110,17 @@ public class ConfigFile extends Properties {
     }
 
     private Dimension2D splitDimensionString(String s) {
-        if (s.isEmpty())
+        if (s.isEmpty()) {
             return null;
+        }
 
         String[] splitInput = s.split("x");
         if (splitInput.length == 2) {
             float width = new Float(splitInput[0]);
             float height = new Float(splitInput[1]);
-            if (width > 0 && height > 0)
+            if (width > 0 && height > 0) {
                 return new Dimension2D(width, height);
+            }
         }
 
         return null;

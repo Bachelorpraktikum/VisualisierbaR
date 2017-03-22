@@ -4,14 +4,14 @@
 <?import javafx.scene.paint.Color?>
 <?import javafx.scene.shape.SVGPath?>
 <SVGPath
-        content="M-2598 3 l3 -998 2498 -3 2497 -2 0 1000 0 1000 -155 0 -155 0 0 -845 0 -845 -2190 0 -2190 0 0 845 0 845 -155 0 -155 0 2 -997z"
-        opacity="1">
-    <fill>
-        <Color>
-            <red>0.0</red>
-            <green>0.0</green>
-            <blue>0.0</blue>
-        </Color>
-    </fill>
+  content="M-2598 3 l3 -998 2498 -3 2497 -2 0 1000 0 1000 -155 0 -155 0 0 -845 0 -845 -2190 0 -2190 0 0 845 0 845 -155 0 -155 0 2 -997z"
+  opacity="1">
+  <fill>
+    <Color>
+      <red>0.0</red>
+      <green>0.0</green>
+      <blue>0.0</blue>
+    </Color>
+  </fill>
 </SVGPath>
 
