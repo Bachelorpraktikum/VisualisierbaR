@@ -30,9 +30,12 @@
 - [ ] Mittels einer Filtermaske lassen sich auch Elemente/Elementgruppen textuell filtern
 - [ ] durch anklicken eines Elements werden weitere Informationen zu dem Element angezeigt.
 - [ ] Bei Zügen werden Name, Heckkoordinate, Frontkoordinate, Geschwindigkeit, Länge, v-t, v-s und s-t Diagramme angezeigt.
+- [ ] Im Live-Simulations-Modus werden auch die neuesten "v", "accelState", "emergCount" und "fahrCount" Werte angezeigt
 - [ ] diese Diagramme lassen sich durch anklicken auf die Fenstergröße vergrößern und durch erneutes anklicken wieder verkleinern
 - [ ] die Diagramme lassen sich als Bilder (jpg und png) sowie als Daten (GNU-Plot) exportieren
 - [ ] Bei Elementen werden Name, Position und der Zustand angezeigt
+- [ ] Im Live-Simulations-Modus wird auch ein "breakNow" Button angezeigt
+- [ ] ein Druck auf den breakNow-Button führt dazu, dass das Signal nicht wieder auf STOP schaltet, nachdem ein Zug durchgefahren ist
 - [ ] Mit einem Button lassen sich die Informationen auch wieder ausblenden
 
 - [ ] Es existiert ein Button um eine Legende anzuzeigen (die Legende wird statt der Elementübersicht angezeigt)
