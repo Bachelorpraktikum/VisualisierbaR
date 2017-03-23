@@ -49,22 +49,22 @@ public final class Edge implements GraphObject<Line> {
      * Manages all instances of {@link Edge}.
      */
     @ParametersAreNonnullByDefault
-    public static final class Factory {
+    public static final class EdgeFactory implements Factory<Edge> {
 
         private static final int INITIAL_EDGES_CAPACITY = 512;
-        private static final Map<Context, Factory> instances = new WeakHashMap<>();
+        private static final Map<Context, EdgeFactory> instances = new WeakHashMap<>();
 
         @Nonnull
         private final Map<String, Edge> edges;
 
-        private static Factory getInstance(Context context) {
+        private static EdgeFactory getInstance(Context context) {
             if (context == null) {
                 throw new NullPointerException("context is null");
             }
-            return instances.computeIfAbsent(context, g -> new Factory());
+            return instances.computeIfAbsent(context, g -> new EdgeFactory());
         }
 
-        private Factory() {
+        private EdgeFactory() {
             this.edges = new LinkedHashMap<>(INITIAL_EDGES_CAPACITY);
         }
 
@@ -101,14 +101,7 @@ public final class Edge implements GraphObject<Line> {
             return result;
         }
 
-        /**
-         * Gets the {@link Edge} with the given unique name.
-         *
-         * @param name the edge's name
-         * @return the edge
-         * @throws NullPointerException if name is null
-         * @throws IllegalArgumentException if no edge with this name exists
-         */
+        @Override
         @Nonnull
         public Edge get(String name) {
             Edge edge = edges.get(Objects.requireNonNull(name));
@@ -118,11 +111,7 @@ public final class Edge implements GraphObject<Line> {
             return edge;
         }
 
-        /**
-         * Gets all {@link Edge edges} that exist in this context.
-         *
-         * @return all edges
-         */
+        @Override
         @Nonnull
         public Collection<Edge> getAll() {
             return Collections.unmodifiableCollection(edges.values());
@@ -130,15 +119,15 @@ public final class Edge implements GraphObject<Line> {
     }
 
     /**
-     * Gets the {@link Factory} instance for the given {@link Context}.
+     * Gets the {@link EdgeFactory} instance for the given {@link Context}.
      *
      * @param context the context
      * @return the factory
      * @throws NullPointerException if the context is null
      */
     @Nonnull
-    public static Factory in(Context context) {
-        return Factory.getInstance(context);
+    public static EdgeFactory in(Context context) {
+        return EdgeFactory.getInstance(context);
     }
 
     /**

@@ -1,20 +1,20 @@
 package com.github.bachelorpraktikum.dbvisualization.model;
 
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
-
-import java.util.Random;
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
 
+import java.util.Random;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.rules.ExpectedException;
+
 /**
  * Created by chabare on 19.11.16
  */
 public class CoordinatesTest {
+
     @Rule
     public ExpectedException exception = ExpectedException.none();
 

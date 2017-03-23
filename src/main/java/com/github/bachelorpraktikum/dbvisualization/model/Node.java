@@ -55,23 +55,23 @@ public final class Node implements GraphObject<Circle> {
      * Manages all instances of {@link Node}.<br>
      * Ensures there is always only one instance of node per name per {@link Context}.
      */
-    public static final class Factory {
+    public static final class NodeFactory implements Factory<Node> {
 
         private static final int INITIAL_NODES_CAPACITY = 128;
-        private static final Map<Context, Factory> instances = new WeakHashMap<>();
+        private static final Map<Context, NodeFactory> instances = new WeakHashMap<>();
 
         @Nonnull
         private final Map<String, Node> nodes;
 
         @Nonnull
-        private static Factory getInstance(Context context) {
+        private static NodeFactory getInstance(Context context) {
             if (context == null) {
                 throw new NullPointerException("context is null");
             }
-            return instances.computeIfAbsent(context, g -> new Factory());
+            return instances.computeIfAbsent(context, g -> new NodeFactory());
         }
 
-        private Factory() {
+        private NodeFactory() {
             this.nodes = new LinkedHashMap<>(INITIAL_NODES_CAPACITY);
         }
 
@@ -104,14 +104,7 @@ public final class Node implements GraphObject<Circle> {
             return result;
         }
 
-        /**
-         * Gets the {@link Node} with the given unique name.
-         *
-         * @param name the node's name
-         * @return the node instance with this name
-         * @throws NullPointerException if the name is null
-         * @throws IllegalArgumentException if there is no node associated with the name
-         */
+        @Override
         @Nonnull
         public Node get(String name) {
             Node node = nodes.get(name);
@@ -121,11 +114,7 @@ public final class Node implements GraphObject<Circle> {
             return node;
         }
 
-        /**
-         * Gets all {@link Node} instances in this {@link Context}.
-         *
-         * @return all nodes
-         */
+        @Override
         @Nonnull
         public Collection<Node> getAll() {
             return Collections.unmodifiableCollection(nodes.values());
@@ -133,14 +122,14 @@ public final class Node implements GraphObject<Circle> {
     }
 
     /**
-     * Gets the {@link Factory} instance for the given {@link Context}.
+     * Gets the {@link NodeFactory} instance for the given {@link Context}.
      *
      * @param context the context
      * @return the factory
      * @throws NullPointerException if context is null
      */
-    public static Factory in(Context context) {
-        return Factory.getInstance(context);
+    public static NodeFactory in(Context context) {
+        return NodeFactory.getInstance(context);
     }
 
     void addEdge(Edge edge) {

@@ -1,6 +1,5 @@
 package com.github.bachelorpraktikum.dbvisualization.view.detail;
 
-import com.github.bachelorpraktikum.dbvisualization.config.ConfigFile;
 import com.github.bachelorpraktikum.dbvisualization.config.ConfigKey;
 import com.github.bachelorpraktikum.dbvisualization.datasource.RestSource;
 import com.github.bachelorpraktikum.dbvisualization.model.Event;
@@ -16,71 +15,65 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.EnumMap;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.function.Function;
 import javafx.beans.binding.Binding;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.BooleanBinding;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableIntegerValue;
 import javafx.beans.value.WeakChangeListener;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.geometry.Bounds;
-import javafx.scene.Group;
+import javafx.geometry.Point2D;
+import javafx.scene.Node;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.XYChart.Data;
 import javafx.scene.chart.XYChart.Series;
-import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.Pane;
-import javafx.scene.layout.VBox;
-import javafx.scene.shape.Shape;
 import javafx.stage.FileChooser;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
-public class ElementDetailController {
+class TrainDetails extends DetailsBase<Train> {
+
+    private static final String FXML_LOCATION = "TrainDetails.fxml";
 
     @FXML
-    private VBox detailView;
+    private Node trainDetails;
     @FXML
-    private Label coordinateLabel;
+    private Label coordinateValueFront;
     @FXML
     private Label coordinateValueBack;
     @FXML
-    private VBox elementBox;
+    private Label speedValue;
     @FXML
     private Label stateValue;
     @FXML
     private Label typeValue;
     @FXML
-    private Button breakButton;
+    private Node restTrainDetail;
     @FXML
-    private Label elementName;
+    private RestTrainDetailController restTrainDetailController;
     @FXML
-    private Group elementImage;
-    @FXML
-    private Label coordinateValue;
+    private Label lengthValue;
+
     @FXML
     private LineChart<Double, Double> vtChart;
     @FXML
     private LineChart<Double, Double> vdChart;
     @FXML
     private LineChart<Double, Double> dtChart;
-    @FXML
-    private VBox trainBox;
-    @FXML
-    private Label speedValue;
-    private ElementDetailBase detail;
-    @FXML
-    private Label lengthValue;
 
-    private List<Object> bindings;
+    private ObjectProperty<Pane> centerPane;
 
 
     private static final Function<State, Double> DISTANCE = s -> {
@@ -153,18 +146,21 @@ public class ElementDetailController {
     private LineChart<Double, Double> bigChart;
     private ChartType currentBigChart;
 
+    TrainDetails(Train train, ObservableIntegerValue time, Pane centerPane) {
+        // this is executed first
+        super(train, time, FXML_LOCATION);
+        // this is executed AFTER initialize()
+        this.centerPane.set(centerPane);
+    }
+
     @FXML
     private void initialize() {
-        bindings = new LinkedList<>();
+        centerPane = new SimpleObjectProperty<>();
 
         charts = new EnumMap<>(ChartType.class);
         charts.put(ChartType.vt, vtChart);
         charts.put(ChartType.vd, vdChart);
         charts.put(ChartType.dt, dtChart);
-
-        bigChart = createChart();
-        bigChart.setVisible(false);
-        bigChart.setOnMouseClicked(event -> bigChart.setVisible(false));
 
         chartData = new EnumMap<>(ChartType.class);
         for (ChartType type : ChartType.values()) {
@@ -184,31 +180,70 @@ public class ElementDetailController {
             ContextMenuUtil.attach(chart, Collections.singletonList(exportItem));
         }
 
+        bigChart = createChart();
+        bigChart.setVisible(false);
+        bigChart.setOnMouseClicked(event -> bigChart.setVisible(false));
+
+        centerPane.addListener((observable, oldValue, newCenter) -> {
+            if (!newCenter.getChildren().contains(bigChart)) {
+                newCenter.getChildren().add(0, bigChart);
+                bigChart.visibleProperty().addListener(
+                    (visibleProperty, oldVisible, newVisible) ->
+                        newCenter.getChildren().get(1).setVisible(!newVisible)
+                );
+            }
+        });
+
+        lengthValue.setText(String.format("%dm", getLength()));
+
+        Binding<String> coordBinding = Bindings.createStringBinding(
+            () -> String.valueOf(getCoordinatesString(getFrontCoordinates())),
+            timeProperty()
+        );
+        addBinding(coordBinding);
+        coordinateValueFront.textProperty().bind(coordBinding);
+
+        Binding<String> backCoordBinding = Bindings.createStringBinding(
+            () -> getCoordinatesString(getBackCoordinates()),
+            timeProperty()
+        );
+        addBinding(backCoordBinding);
+        coordinateValueBack.textProperty().bind(backCoordBinding);
+
+        Binding<String> speedBinding = Bindings.createStringBinding(
+            () -> String.format("%fm/s", getSpeed()),
+            timeProperty()
+        );
+        addBinding(speedBinding);
+        speedValue.textProperty().bind(speedBinding);
+
+        updateCharts(timeProperty().get(), Integer.MAX_VALUE);
+        ChangeListener<Number> chartListener = ((observable, oldValue, newValue) ->
+            updateCharts(newValue.intValue(), oldValue.intValue())
+        );
+        addBinding(chartListener);
+        timeProperty().addListener(new WeakChangeListener<>(chartListener));
+
+        // TODO not needed without rest details
         DataSourceHolder dataSourceHolder = DataSourceHolder.getInstance();
         BooleanBinding isRestSource = Bindings.createBooleanBinding(
             () -> dataSourceHolder.isPresent() && dataSourceHolder.get() instanceof RestSource,
             dataSourceHolder
         );
+        addBinding(isRestSource);
 
-        bindings.add(isRestSource);
-        breakButton.visibleProperty().bind(isRestSource);
-        breakButton.setOnAction(event -> {
-            breakButton.setDisable(true);
-            RestSource dataSource = (RestSource) DataSourceHolder.getInstance().get();
-            ElementDetail elementDetail = (ElementDetail) detail;
-            dataSource.breakElement(
-                elementDetail.getElement(),
-                () -> breakButton.setDisable(false)
-            );
-        });
+        restTrainDetail.managedProperty().bind(restTrainDetail.visibleProperty());
+        restTrainDetail.visibleProperty().bind(isRestSource);
+        restTrainDetailController.setTrain(getObject());
     }
 
     private LineChart<Double, Double> createChart() {
-        URL location = ElementDetailController.class.getResource("LineChart.fxml");
+        URL location = DetailsController.class.getResource("LineChart.fxml");
         FXMLLoader loader = new FXMLLoader(location);
         try {
             return loader.load();
         } catch (IOException e) {
+            e.printStackTrace();
             throw new UncheckedIOException(e);
         }
     }
@@ -239,104 +274,7 @@ public class ElementDetailController {
         }
     }
 
-    public void setCenterPane(Pane center) {
-        if (!center.getChildren().contains(bigChart)) {
-            center.getChildren().add(0, bigChart);
-            bigChart.visibleProperty().addListener(
-                (observable, oldValue, newValue) ->
-                    center.getChildren().get(1).setVisible(!newValue)
-            );
-        }
-    }
-
-    public void setDetail(ElementDetailBase detail) {
-        bindings.clear();
-        resetCharts();
-        if (detail == null) {
-            return;
-        }
-
-        this.detail = detail;
-
-        trainBox.setVisible(detail.isTrain());
-        elementBox.setVisible(!detail.isTrain());
-
-        elementName.textProperty().setValue(detail.getName());
-
-        Binding<String> coordBinding = Bindings.createStringBinding(() ->
-                String.valueOf(detail.getCoordinatesString(detail.getCoordinates())),
-            detail.timeProperty()
-        );
-        bindings.add(coordBinding);
-        coordinateValue.textProperty().bind(coordBinding);
-
-        Shape shape = detail.getShape();
-
-        if (detail.isTrain()) {
-            TrainDetail trainDetail = (TrainDetail) detail;
-            Binding<String> backCoordBinding = Bindings.createStringBinding(() ->
-                    detail.getCoordinatesString(trainDetail.getBackCoordinate()),
-                detail.timeProperty()
-            );
-            bindings.add(backCoordBinding);
-            coordinateValueBack.textProperty().bind(backCoordBinding);
-
-            coordinateLabel.setText(
-                ResourceBundle.getBundle("bundles.localization").getString("coordinate_front")
-            );
-            lengthValue.textProperty().setValue(String.format("%dm", trainDetail.getLength()));
-
-            Binding<String> speedBinding = Bindings.createStringBinding(() ->
-                    String.format("%fm/s", trainDetail.getSpeed()),
-                trainDetail.timeProperty()
-            );
-            bindings.add(speedBinding);
-            speedValue.textProperty().bind(speedBinding);
-
-            updateCharts(detail.timeProperty().get(), Integer.MAX_VALUE);
-            ChangeListener<Number> chartListener = ((observable, oldValue, newValue) ->
-                updateCharts(newValue.intValue(), oldValue.intValue())
-            );
-            bindings.add(chartListener);
-            detail.timeProperty().addListener(new WeakChangeListener<>(chartListener));
-        } else {
-            ElementDetail elementDetail = (ElementDetail) detail;
-            typeValue.setText(elementDetail.getElement().getType().getName());
-
-            Binding<String> stateBinding = Bindings.createStringBinding(() ->
-                    String.valueOf(((ElementDetail) detail).getState()),
-                detail.timeProperty()
-            );
-            bindings.add(stateBinding);
-            stateValue.textProperty().bind(stateBinding);
-        }
-
-        if (!elementImage.getChildren().contains(shape)) {
-            if (elementImage.getChildren().size() > 0) {
-                elementImage.getChildren().remove(0);
-            }
-        }
-
-        if (shape != null) {
-            resizeShape(shape, 20);
-            elementImage.getChildren().add(0, shape);
-        }
-    }
-
-    private void resizeShape(Shape shape, double max) {
-        Bounds shapeBounds = shape.getBoundsInParent();
-        double maxShape = Math.max(shapeBounds.getWidth(), shapeBounds.getHeight());
-        double factor = max / maxShape;
-        shape.setScaleX(shape.getScaleX() * factor);
-        shape.setScaleY(shape.getScaleY() * factor);
-        shape.setRotate(180);
-    }
-
     private void updateCharts(int time, int previousTime) {
-        if (!detail.isTrain()) {
-            return;
-        }
-
         if (previousTime > time) {
             resetCharts();
         }
@@ -347,7 +285,7 @@ public class ElementDetailController {
     }
 
     private void updateChart(ChartType type, int time, int previousTime) {
-        Train train = (Train) detail.getElement();
+        Train train = getObject();
 
         ObservableList<Data<Double, Double>> data = chartData.get(type);
         Function<State, Double> xFunction = type.getXFunction();
@@ -385,21 +323,59 @@ public class ElementDetailController {
         data.add(new Data<>(xFunction.apply(state), yFunction.apply(state)));
     }
 
+    @Nonnull
+    @Override
+    Node getDetails() {
+        return trainDetails;
+    }
+
+    Train.State getState() {
+        return getObject().getState(timeProperty().get());
+    }
+
+    double getSpeed() {
+        return getState().getSpeed();
+    }
+
+    int getLength() {
+        return getObject().getLength();
+    }
+
+    @Nullable
+    private Point2D getFrontCoordinates() {
+        State state = getState();
+
+        if (state.isInitialized()) {
+            return getState().getPosition().getFrontCoordinates();
+        } else {
+            return null;
+        }
+    }
+
+    @Nullable
+    private Point2D getBackCoordinates() {
+        State state = getState();
+        if (state.isInitialized()) {
+            return state.getPosition().getBackCoordinates();
+        } else {
+            return null;
+        }
+    }
+
     private void export(ChartType type) {
         FileChooser fileChooser = new FileChooser();
         fileChooser.getExtensionFilters()
             .addAll(new FileChooser.ExtensionFilter("gnuplot (*.dat)", "*.dat"),
                 new FileChooser.ExtensionFilter("PNG Image (*.png)", "*.png"),
                 new FileChooser.ExtensionFilter("JPEG Image (*.jpg)", "*.jpg"));
-        String initDirString = ConfigFile.getInstance().getProperty(
-            ConfigKey.initialLogFileDirectory.getKey(),
+        String initDirString = ConfigKey.initialLogFileDirectory.get(
             System.getProperty("user.home")
         );
         File initDir = new File(initDirString);
         fileChooser.setInitialDirectory(initDir);
         fileChooser.setInitialFileName(type.getTitle());
 
-        File file = fileChooser.showSaveDialog(trainBox.getScene().getWindow());
+        File file = fileChooser.showSaveDialog(trainDetails.getScene().getWindow());
 
         if (file != null) {
             LineChart<Double, Double> chart = charts.get(type);

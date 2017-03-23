@@ -17,6 +17,7 @@ import java.util.Objects;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+import javax.annotation.Nonnull;
 
 /**
  * Can be used to start a simulation subprocess and parse its output.
@@ -125,6 +126,7 @@ public class SubprocessSource implements DataSource {
         return new ProcessBuilder(commands).start();
     }
 
+    @Nonnull
     @Override
     public final Context getContext() {
         return context;

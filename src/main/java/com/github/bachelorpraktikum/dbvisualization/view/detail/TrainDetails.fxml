@@ -1,0 +1,34 @@
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.VBox?>
+<VBox fx:id="trainDetails" xmlns:fx="http://javafx.com/fxml/1">
+
+  <GridPane hgap="5.0">
+    <Label text="%coordinate_front" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+    <Label fx:id="coordinateValueFront" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
+
+    <Label text="%coordinate_back" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
+    <Label fx:id="coordinateValueBack" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+
+    <Label text="%speed" GridPane.columnIndex="0" GridPane.rowIndex="2"/>
+    <Label fx:id="speedValue" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
+
+    <Label text="%length" GridPane.columnIndex="0" GridPane.rowIndex="3"/>
+    <Label fx:id="lengthValue" GridPane.columnIndex="1" GridPane.rowIndex="3"/>
+
+    <padding>
+      <Insets left="10.0" right="10.0"/>
+    </padding>
+  </GridPane>
+
+  <fx:include fx:id="restTrainDetail" source="RestTrainDetail.fxml"/>
+
+  <GridPane>
+    <fx:include fx:id="vtChart" source="LineChart.fxml" GridPane.rowIndex="0"/>
+    <fx:include fx:id="vdChart" source="LineChart.fxml" GridPane.rowIndex="1"/>
+    <fx:include fx:id="dtChart" source="LineChart.fxml" GridPane.rowIndex="2"/>
+  </GridPane>
+
+  <VBox VBox.vgrow="ALWAYS"/>
+</VBox>

@@ -54,11 +54,9 @@
   <right>
     <StackPane fx:id="sidebar" maxWidth="240" style="-fx-background-color: #f4f4f4;">
       <AnchorPane fx:id="detail" style="-fx-background-color: #f4f4f4;">
-        <fx:include fx:id="detailBox" source="detail/ElementDetails.fxml"
+        <fx:include fx:id="detailBox" source="detail/Details.fxml"
           AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0"
-          AnchorPane.topAnchor="0"/>
-        <Button fx:id="closeDetailButton" text="%close_detail" AnchorPane.bottomAnchor="5"
-          AnchorPane.rightAnchor="5"/>
+          AnchorPane.topAnchor="0" AnchorPane.bottomAnchor="0"/>
       </AnchorPane>
       <ListView fx:id="legend" fixedCellSize="0.0" style="-fx-background-color: #ccc;">
         <Label text="Legend goes here."/>

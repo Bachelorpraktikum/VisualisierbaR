@@ -1,7 +1,6 @@
 package com.github.bachelorpraktikum.dbvisualization.view.train;
 
 import com.github.bachelorpraktikum.dbvisualization.config.ConfigFile;
-import com.github.bachelorpraktikum.dbvisualization.datasource.DataSource;
 import com.github.bachelorpraktikum.dbvisualization.model.Context;
 import com.github.bachelorpraktikum.dbvisualization.model.Node;
 import com.github.bachelorpraktikum.dbvisualization.model.train.Train;
@@ -12,8 +11,6 @@ import com.github.bachelorpraktikum.dbvisualization.view.graph.Graph;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
-import java.util.WeakHashMap;
 import java.util.function.Function;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.BooleanProperty;
@@ -39,13 +36,11 @@ public final class TrainView implements Highlightable {
 
     private static final double TRAIN_WIDTH = 0.4;
     private static final double HIGHLIGHT_FACTOR = 0.6;
-    private static final Map<Context, Integer> colorCounters = new WeakHashMap<>();
 
     private final Train train;
     private final IntegerProperty timeProperty;
     private final Function<Node, Point2D> coordinatesTranslator;
     private final double calibrationBase;
-    private final Paint color;
     private final Path path;
     private final Rectangle highlightRectangle;
     private BooleanProperty highlightedProperty;
@@ -57,7 +52,6 @@ public final class TrainView implements Highlightable {
         this.coordinatesTranslator = graph.getCoordinatesAdapter();
         this.calibrationBase = graph.getCoordinatesAdapter().getCalibrationBase();
         this.timeProperty = new SimpleIntegerProperty(0);
-        this.color = generateColor();
         this.highlightedProperty = new SimpleBooleanProperty(false);
 
         this.highlightRectangle = new Rectangle();
@@ -69,7 +63,7 @@ public final class TrainView implements Highlightable {
 
         this.path = new Path();
         path.setStrokeWidth(TRAIN_WIDTH * calibrationBase);
-        path.setStroke(color);
+        path.setStroke(train.getColor());
         path.setStrokeLineCap(StrokeLineCap.BUTT);
         graph.getGroup().getChildren().add(path);
         path.toBack();
@@ -129,7 +123,7 @@ public final class TrainView implements Highlightable {
         if (state.isTerminated()) {
             path.setStroke(Color.GRAY);
         } else {
-            path.setStroke(color);
+            path.setStroke(getTrain().getColor());
         }
 
         Bounds pathBounds = path.getBoundsInParent();
@@ -139,24 +133,6 @@ public final class TrainView implements Highlightable {
         highlightRectangle.setY(pathBounds.getMinY() - (height - pathBounds.getHeight()) / 2);
         highlightRectangle.setWidth(width);
         highlightRectangle.setHeight(height);
-    }
-
-    private static int incrementCounter() {
-        DataSourceHolder contextHolder = DataSourceHolder.getInstance();
-        if (contextHolder.isPresent()) {
-            Context context = contextHolder.getContext();
-            int current = colorCounters.getOrDefault(context, 0) % COLORS.length;
-            colorCounters.put(context, current + 1);
-            return current;
-        } else {
-            // There is no context, so the color this should not matter anymore.
-            return 0;
-        }
-    }
-
-    private static Paint generateColor() {
-        int count = incrementCounter();
-        return COLORS[count];
     }
 
     @Override

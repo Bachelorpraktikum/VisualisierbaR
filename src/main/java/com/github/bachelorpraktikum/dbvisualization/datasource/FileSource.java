@@ -4,6 +4,7 @@ import com.github.bachelorpraktikum.dbvisualization.logparser.GraphParser;
 import com.github.bachelorpraktikum.dbvisualization.model.Context;
 import java.io.File;
 import java.io.IOException;
+import javax.annotation.Nonnull;
 
 public class FileSource implements DataSource {
 
@@ -19,6 +20,7 @@ public class FileSource implements DataSource {
         return new GraphParser().parse(file.getPath());
     }
 
+    @Nonnull
     @Override
     public Context getContext() {
         return context;

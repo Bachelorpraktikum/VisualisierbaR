@@ -1,21 +1,19 @@
 package com.github.bachelorpraktikum.dbvisualization.view.graph.adapter;
 
-import com.github.bachelorpraktikum.dbvisualization.model.Context;
-import com.github.bachelorpraktikum.dbvisualization.model.Coordinates;
-import com.github.bachelorpraktikum.dbvisualization.model.Node;
-
-import org.junit.Before;
-import org.junit.Test;
-
-import java.util.Random;
-
-import javafx.geometry.Point2D;
-
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
+import com.github.bachelorpraktikum.dbvisualization.model.Context;
+import com.github.bachelorpraktikum.dbvisualization.model.Coordinates;
+import com.github.bachelorpraktikum.dbvisualization.model.Node;
+import java.util.Random;
+import javafx.geometry.Point2D;
+import org.junit.Before;
+import org.junit.Test;
+
 public abstract class CoordinatesAdapterTest {
+
     private CoordinatesAdapter adapter;
     private Context context;
 

@@ -14,6 +14,7 @@ import org.junit.rules.ExpectedException;
  * Created by chabare on 19.11.16
  */
 public class EdgeTest {
+
     private Context context;
     private Random random;
     private int nodeCounter;
@@ -30,7 +31,7 @@ public class EdgeTest {
 
     private Coordinates getCoordinate() {
         return new Coordinates(random.nextInt(Integer.MAX_VALUE),
-                random.nextInt(Integer.MAX_VALUE));
+            random.nextInt(Integer.MAX_VALUE));
     }
 
     private Node getNode() {
@@ -43,7 +44,7 @@ public class EdgeTest {
         Edge edge = Edge.in(context).create("edge1", 30, getNode(), getNode());
         assertSame(edge, Edge.in(context).get(edge.getName()));
         assertSame(edge, Edge.in(context).create(edge.getName(),
-                edge.getLength(), edge.getNode1(), edge.getNode2()));
+            edge.getLength(), edge.getNode1(), edge.getNode2()));
         assertTrue(Edge.in(context).getAll().contains(edge));
     }
 
@@ -115,7 +116,7 @@ public class EdgeTest {
         Edge edge = Edge.in(context).create("Edge", 60, n1, n2);
 
         assertEquals(edge.toString(), "Edge{name='Edge', length=60, node1=" + n1.toString() +
-                ", node2=" + n2.toString() + "}");
+            ", node2=" + n2.toString() + "}");
     }
 
     @Test

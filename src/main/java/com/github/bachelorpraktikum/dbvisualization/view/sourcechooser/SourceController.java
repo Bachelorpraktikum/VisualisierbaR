@@ -1,6 +1,7 @@
 package com.github.bachelorpraktikum.dbvisualization.view.sourcechooser;
 
 import com.github.bachelorpraktikum.dbvisualization.datasource.DataSource;
+import com.github.bachelorpraktikum.dbvisualization.model.Context;
 import com.github.bachelorpraktikum.dbvisualization.view.MainController;
 import java.io.IOException;
 import java.util.HashMap;
@@ -139,6 +140,11 @@ public class SourceController {
         DataSource dataSource;
         try {
             dataSource = activeController.getValue().getResource();
+            Context context = dataSource.getContext();
+            if (com.github.bachelorpraktikum.dbvisualization.model.Node.in(context)
+                .getAll().isEmpty()) {
+                throw new IOException("No valid input");
+            }
         } catch (IOException e) {
             e.printStackTrace();
             ResourceBundle bundle = ResourceBundle.getBundle("bundles.localization");
@@ -146,6 +152,7 @@ public class SourceController {
             String headerText = bundle.getString("parse_error_header");
             alert.setHeaderText(headerText);
             String contentText = bundle.getString("parse_error_content");
+            contentText = String.format(contentText, e.getMessage());
             alert.setContentText(contentText);
             alert.showAndWait();
             return;

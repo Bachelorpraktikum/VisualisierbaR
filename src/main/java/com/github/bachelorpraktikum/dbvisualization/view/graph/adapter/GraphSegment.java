@@ -1,12 +1,11 @@
 package com.github.bachelorpraktikum.dbvisualization.view.graph.adapter;
 
 import com.github.bachelorpraktikum.dbvisualization.model.Node;
-
 import java.util.LinkedList;
-
 import javafx.geometry.Point2D;
 
 class GraphSegment {
+
     private LinkedList<Node> nodes = new LinkedList<>();
     private SegmentType segmentType;
     private static ProportionalCoordinatesAdapter adapter;
@@ -18,7 +17,7 @@ class GraphSegment {
     }
 
     void addNode(Node node) {
-        if(nodes.isEmpty()) {
+        if (nodes.isEmpty()) {
             this.startPoint = adapter.apply(node);
         }
         this.nodes.add(node);
@@ -49,10 +48,11 @@ class GraphSegment {
     }
 
     double getSignificantCoordinate() {
-        if(segmentType == SegmentType.HORIZONTAL)
+        if (segmentType == SegmentType.HORIZONTAL) {
             return this.startPoint.getY();
-        else
+        } else {
             return this.startPoint.getX();
+        }
     }
 
     public int getSize() {
@@ -60,10 +60,11 @@ class GraphSegment {
     }
 
     Point2D getNormalVector() {
-        if(segmentType == SegmentType.HORIZONTAL)
+        if (segmentType == SegmentType.HORIZONTAL) {
             return new Point2D(0, -1);
-        else
+        } else {
             return new Point2D(1, 0);
+        }
     }
 
     public static void setAdapter(ProportionalCoordinatesAdapter coordinatesAdapter) {
@@ -71,8 +72,9 @@ class GraphSegment {
     }
 
     boolean checkForCollision(GraphSegment other) {
-        if(this.getSignificantCoordinate() != other.getSignificantCoordinate())
+        if (this.getSignificantCoordinate() != other.getSignificantCoordinate()) {
             return false;
+        }
 
         // check if the start or end point of the other
         // segment is on the line represented by
@@ -82,8 +84,10 @@ class GraphSegment {
         Point2D thisStart = this.startPoint;
         Point2D thisEnd = this.endPoint;
 
-        return isPointOnLine(thisStart, thisEnd, otherEnd) || isPointOnLine(thisStart, thisEnd, otherStart)
-                || isPointOnLine(otherStart, otherEnd, thisStart) || isPointOnLine(otherStart, otherEnd, thisEnd);
+        return isPointOnLine(thisStart, thisEnd, otherEnd) || isPointOnLine(thisStart, thisEnd,
+            otherStart)
+            || isPointOnLine(otherStart, otherEnd, thisStart) || isPointOnLine(otherStart, otherEnd,
+            thisEnd);
     }
 
     private boolean isPointOnLine(Point2D start, Point2D end, Point2D p) {
@@ -96,7 +100,7 @@ class GraphSegment {
 
     @Override
     public String toString() {
-        if(this.nodes.size() >= 1) {
+        if (this.nodes.size() >= 1) {
             return "Type: " + segmentType + " Start: " + startPoint + " End: " + endPoint;
         } else {
             return "Empty Segment. Type: " + segmentType;

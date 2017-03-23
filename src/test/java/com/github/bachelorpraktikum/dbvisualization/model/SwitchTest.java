@@ -1,14 +1,14 @@
 package com.github.bachelorpraktikum.dbvisualization.model;
 
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+
+import org.junit.Before;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.rules.ExpectedException;
 
 public class SwitchTest {
 
@@ -27,9 +27,12 @@ public class SwitchTest {
         Node node2 = Node.in(context).create("n2", new Coordinates(1, 0));
         Node node3 = Node.in(context).create("n3", new Coordinates(2, 0));
 
-        Element element1 = Element.in(context).create("e1", Element.Type.WeichenPunkt, node1, Element.State.NOSIG);
-        Element element2 = Element.in(context).create("e2", Element.Type.WeichenPunkt, node2, Element.State.FAHRT);
-        Element element3 = Element.in(context).create("e3", Element.Type.WeichenPunkt, node3, Element.State.STOP);
+        Element element1 = Element.in(context)
+            .create("e1", Element.Type.WeichenPunkt, node1, Element.State.NOSIG);
+        Element element2 = Element.in(context)
+            .create("e2", Element.Type.WeichenPunkt, node2, Element.State.FAHRT);
+        Element element3 = Element.in(context)
+            .create("e3", Element.Type.WeichenPunkt, node3, Element.State.STOP);
 
         return element1.getSwitch();
     }
@@ -40,9 +43,12 @@ public class SwitchTest {
         Node node2 = Node.in(context).create("n2", new Coordinates(1, 0));
         Node node3 = Node.in(context).create("n3", new Coordinates(2, 0));
 
-        Element element1 = Element.in(context).create("e1", Element.Type.WeichenPunkt, node1, Element.State.NOSIG);
-        Element element2 = Element.in(context).create("e2", Element.Type.WeichenPunkt, node2, Element.State.FAHRT);
-        Element element3 = Element.in(context).create("e3", Element.Type.WeichenPunkt, node3, Element.State.STOP);
+        Element element1 = Element.in(context)
+            .create("e1", Element.Type.WeichenPunkt, node1, Element.State.NOSIG);
+        Element element2 = Element.in(context)
+            .create("e2", Element.Type.WeichenPunkt, node2, Element.State.FAHRT);
+        Element element3 = Element.in(context)
+            .create("e3", Element.Type.WeichenPunkt, node3, Element.State.STOP);
 
         Switch switch1 = element1.getSwitch();
         Switch switch2 = element2.getSwitch();
@@ -62,7 +68,8 @@ public class SwitchTest {
         Switch testSwitch = createSwitch();
 
         Node node1 = Node.in(context).create("n", new Coordinates(10, 0));
-        Element element1 = Element.in(context).create("e", Element.Type.WeichenPunkt, node1, Element.State.NOSIG);
+        Element element1 = Element.in(context)
+            .create("e", Element.Type.WeichenPunkt, node1, Element.State.NOSIG);
 
         assertEquals(3, testSwitch.getElements().size());
     }
@@ -72,8 +79,10 @@ public class SwitchTest {
         Node node1 = Node.in(context).create("n1", new Coordinates(0, 0));
         Node node2 = Node.in(context).create("n2", new Coordinates(1, 0));
 
-        Element element1 = Element.in(context).create("e1", Element.Type.WeichenPunkt, node1, Element.State.NOSIG);
-        Element element2 = Element.in(context).create("e2", Element.Type.WeichenPunkt, node2, Element.State.FAHRT);
+        Element element1 = Element.in(context)
+            .create("e1", Element.Type.WeichenPunkt, node1, Element.State.NOSIG);
+        Element element2 = Element.in(context)
+            .create("e2", Element.Type.WeichenPunkt, node2, Element.State.FAHRT);
 
         Switch switch1 = element1.getSwitch();
 

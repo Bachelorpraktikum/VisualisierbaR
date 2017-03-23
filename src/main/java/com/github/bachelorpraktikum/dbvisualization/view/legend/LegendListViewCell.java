@@ -1,6 +1,5 @@
 package com.github.bachelorpraktikum.dbvisualization.view.legend;
 
-import com.github.bachelorpraktikum.dbvisualization.datasource.DataSource;
 import com.github.bachelorpraktikum.dbvisualization.model.Shapeable;
 import com.github.bachelorpraktikum.dbvisualization.model.Shapeable.VisibleState;
 import com.github.bachelorpraktikum.dbvisualization.view.DataSourceHolder;

@@ -27,16 +27,19 @@ public class ElementTest {
 
     private Element createElement() {
         Node node = Node.in(context).create("node", new Coordinates(0, 0));
-        return Element.in(context).create("element", Element.Type.HauptSignal, node, Element.State.NOSIG);
+        return Element.in(context)
+            .create("element", Element.Type.HauptSignal, node, Element.State.NOSIG);
     }
 
     @Test
     public void testInstanceManager() {
         Node node = Node.in(context).create("node", new Coordinates(0, 0));
-        Element element = Element.in(context).create("element", Element.Type.HauptSignal, node, Element.State.NOSIG);
+        Element element = Element.in(context)
+            .create("element", Element.Type.HauptSignal, node, Element.State.NOSIG);
 
         assertSame(element, Element.in(context).get(element.getName()));
-        assertSame(element, Element.in(context).create(element.getName(), Element.Type.HauptSignal, node, Element.State.NOSIG));
+        assertSame(element, Element.in(context)
+            .create(element.getName(), Element.Type.HauptSignal, node, Element.State.NOSIG));
         assertTrue(Element.in(context).getAll().contains(element));
     }
 
@@ -80,7 +83,8 @@ public class ElementTest {
         Node node = Node.in(context).create("node", new Coordinates(10, 10));
 
         Element.State initState = Element.State.FAHRT;
-        Element element = Element.in(context).create("e", Element.Type.GefahrenPunkt, node, initState);
+        Element element = Element.in(context)
+            .create("e", Element.Type.GefahrenPunkt, node, initState);
 
         Element.State otherState = Element.State.STOP;
         int otherTime = 20;
@@ -197,7 +201,8 @@ public class ElementTest {
     @Test
     public void testGetNode() {
         Node node = Node.in(context).create("node", new Coordinates(0, 0));
-        Element element = Element.in(context).create("element", Element.Type.HauptSignal, node, Element.State.NOSIG);
+        Element element = Element.in(context)
+            .create("element", Element.Type.HauptSignal, node, Element.State.NOSIG);
 
         assertEquals(node, element.getNode());
     }
