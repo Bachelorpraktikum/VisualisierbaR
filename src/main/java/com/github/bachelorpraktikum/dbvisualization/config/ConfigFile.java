@@ -72,11 +72,11 @@ public class ConfigFile extends Properties {
     }
 
     private void loadDefaultValues() {
-        if(defaultConfig != null) {
-            for(ConfigKey key: ConfigKey.values()) {
+        if (defaultConfig != null) {
+            for (ConfigKey key : ConfigKey.values()) {
                 // check if default config is set to avoid NullPointerExceptions
                 // when setting the default values on the real ConfigFile
-                if(defaultConfig.getProperty(key.getKey()) == null) {
+                if (defaultConfig.getProperty(key.getKey()) == null) {
                     log.severe(
                         String.format("Property %s is not in the default config file.", key.getKey())
                     );
