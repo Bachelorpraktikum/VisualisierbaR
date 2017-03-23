@@ -55,6 +55,8 @@ abstract class TrainEvent implements Event {
     @Nonnull
     private final ObservableList<String> warnings;
     private boolean speedChecked = false;
+    @Nullable
+    private InterpolatableState cached = null;
 
     private final InterpolatableState.Builder stateBuilder;
 
@@ -94,6 +96,15 @@ abstract class TrainEvent implements Event {
     public ObservableList<String> getWarnings() {
         return warnings;
     }
+
+    /**
+     * <p>Whether the state built by this event can be cached.</p>
+     *
+     * <p>This should be true for all events that only rely on previous events.</p>
+     *
+     * @return whether caching is valid
+     */
+    abstract boolean canCache();
 
     final int getIndex() {
         return index;
@@ -156,7 +167,13 @@ abstract class TrainEvent implements Event {
      */
     @Nonnull
     final InterpolatableState getState() {
-        return stateBuilder().build();
+        if (canCache() && cached != null) {
+            return cached;
+        } else {
+            // always cache the state and use canCache() as an indicator for
+            // whether the cached value can be used
+            return (cached = stateBuilder().build());
+        }
     }
 
     @Override
@@ -263,6 +280,11 @@ abstract class TrainEvent implements Event {
             return null;
         }
 
+        @Override
+        boolean canCache() {
+            return true;
+        }
+
         @Nonnull
         @Override
         public String getDescription() {
@@ -305,6 +327,11 @@ abstract class TrainEvent implements Event {
                 }
             }
             return null;
+        }
+
+        @Override
+        boolean canCache() {
+            return false;
         }
 
         @Override
@@ -367,6 +394,11 @@ abstract class TrainEvent implements Event {
 
         Position(int index, Train train, int time, int distance, int totalDistance) {
             super(index, train, time, distance, totalDistance);
+        }
+
+        @Override
+        boolean canCache() {
+            return true;
         }
 
         @Override
