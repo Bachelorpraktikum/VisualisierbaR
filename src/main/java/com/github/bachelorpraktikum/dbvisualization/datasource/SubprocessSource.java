@@ -14,8 +14,6 @@ import java.util.concurrent.TimeUnit;
  */
 public class SubprocessSource extends InputParserSource {
 
-    public static final long DEFAULT_START_TIMEOUT = 1000;
-
     private final Process process;
 
     /**

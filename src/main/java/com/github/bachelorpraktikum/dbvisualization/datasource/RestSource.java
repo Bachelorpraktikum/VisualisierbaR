@@ -68,7 +68,7 @@ public class RestSource implements DataSource {
 
         inputParserSource.listenToInput(
             inputStream,
-            SubprocessSource.DEFAULT_START_TIMEOUT,
+            InputParserSource.DEFAULT_START_TIMEOUT,
             TimeUnit.MILLISECONDS
         );
 
@@ -251,5 +251,6 @@ public class RestSource implements DataSource {
     @Override
     public void close() throws IOException {
         inputParserSource.close();
+        log.info("Successfully closed REST-Source");
     }
 }
