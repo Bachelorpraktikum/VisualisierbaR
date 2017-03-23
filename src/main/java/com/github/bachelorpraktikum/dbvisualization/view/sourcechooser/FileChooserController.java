@@ -108,7 +108,11 @@ public class FileChooserController implements SourceChooser<FileSource> {
      * @return Initial directory for the file chooser
      */
     private String getInitialDirectory() {
-        return ConfigKey.initialLogFileDirectory.get(System.getProperty("user.home"));
+        String path = ConfigKey.initialLogFileDirectory.get(System.getProperty("user.home"));
+        if (!new File(path).isDirectory()) {
+            return System.getProperty("user.home");
+        }
+        return path;
     }
 
     private void setInitialDirectory(String path) {
