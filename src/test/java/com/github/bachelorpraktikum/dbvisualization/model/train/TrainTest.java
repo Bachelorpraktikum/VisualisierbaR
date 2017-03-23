@@ -1,20 +1,26 @@
-package com.github.bachelorpraktikum.dbvisualization.model;
+package com.github.bachelorpraktikum.dbvisualization.model.train;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
-import com.github.bachelorpraktikum.dbvisualization.model.train.Train;
+import com.github.bachelorpraktikum.dbvisualization.model.Context;
+import com.github.bachelorpraktikum.dbvisualization.model.Coordinates;
+import com.github.bachelorpraktikum.dbvisualization.model.Edge;
+import com.github.bachelorpraktikum.dbvisualization.model.Event;
+import com.github.bachelorpraktikum.dbvisualization.model.FactoryTest;
+import com.github.bachelorpraktikum.dbvisualization.model.Node;
+import com.github.bachelorpraktikum.dbvisualization.model.train.Train.TrainFactory;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
-public class TrainTest {
+public class TrainTest extends FactoryTest<Train> {
 
     private Context context;
+    private int counter = 0;
 
     @Rule
     public ExpectedException expected = ExpectedException.none();
@@ -24,37 +30,43 @@ public class TrainTest {
         context = new Context();
     }
 
-    @Test
-    public void testInstanceManager() {
-        Train train = Train.in(context).create("t", "train", 100);
-        assertSame(train, Train.in(context).get(train.getName()));
-        assertSame(train,
-            Train.in(context).create(train.getName(), train.getReadableName(), train.getLength()));
-        assertTrue(Train.in(context).getAll().contains(train));
+
+    @Override
+    protected TrainFactory getFactory() {
+        return Train.in(context);
     }
 
-    @Test
-    public void testInstanceManagerInvalidName() {
-        expected.expect(IllegalArgumentException.class);
-        Train.in(context).get("t");
+    @Override
+    protected Train createRandom() {
+        int count = this.counter++;
+        return getFactory().create("train" + count, "t" + count, 10);
     }
 
-    @Test
-    public void testInstanceManagerExistsDifferentLength() {
-        String name = "t";
-        String readableName = "train";
-        Train train = Train.in(context).create(name, readableName, 10);
-        expected.expect(IllegalArgumentException.class);
-        Train.in(context).create(name, readableName, 20);
+    @Override
+    protected Train createSame(Train train) {
+        return getFactory().create(train.getName(), train.getReadableName(), train.getLength());
     }
 
-    @Test
-    public void testInstanceManagerExistsDifferentReadableName() {
-        String name = "t";
-        String readableName = "train";
-        Train train = Train.in(context).create(name, readableName, 10);
-        expected.expect(IllegalArgumentException.class);
-        Train.in(context).create(name, "trainz", 10);
+    @Override
+    public void testCreateDifferentArg(Train train, int arg) {
+        switch (arg) {
+            case 1:
+                getFactory().create(
+                    train.getName(),
+                    train.getReadableName() + "invalid",
+                    train.getLength()
+                );
+                break;
+            case 2:
+                getFactory().create(
+                    train.getName(),
+                    train.getReadableName(),
+                    train.getLength() + 1
+                );
+                break;
+            default:
+                throw new IllegalStateException();
+        }
     }
 
     private Edge[] createEdges(Integer edgeLength, Integer... edgeLengths) {

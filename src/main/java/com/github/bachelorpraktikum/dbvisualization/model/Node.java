@@ -107,7 +107,7 @@ public final class Node implements GraphObject<Circle> {
         @Override
         @Nonnull
         public Node get(String name) {
-            Node node = nodes.get(name);
+            Node node = nodes.get(Objects.requireNonNull(name));
             if (node == null) {
                 throw new IllegalArgumentException("unknown node: " + name);
             }

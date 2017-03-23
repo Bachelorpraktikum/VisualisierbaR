@@ -3,18 +3,19 @@ package com.github.bachelorpraktikum.dbvisualization.model;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
+import com.github.bachelorpraktikum.dbvisualization.model.Node.NodeFactory;
 import java.util.Collection;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
-public class NodeTest {
+public class NodeTest extends FactoryTest<Node> {
 
     private Context context;
+    private int counter = 0;
 
     @Rule
     public ExpectedException expected = ExpectedException.none();
@@ -22,28 +23,6 @@ public class NodeTest {
     @Before
     public void init() {
         context = new Context();
-    }
-
-    @Test
-    public void testInstanceManager() {
-        Node node = Node.in(context).create("node", new Coordinates(0, 0));
-        assertSame(node, Node.in(context).get(node.getName()));
-        assertSame(node, Node.in(context).create(node.getName(), node.getCoordinates()));
-        assertTrue(Node.in(context).getAll().contains(node));
-    }
-
-    @Test
-    public void testInstanceManagerInvalidName() {
-        expected.expect(IllegalArgumentException.class);
-        Node.in(context).get("t");
-    }
-
-    @Test
-    public void testInstanceManagerExistsDifferentCoordinates() {
-        String name = "node";
-        Node node = Node.in(context).create(name, new Coordinates(0, 0));
-        expected.expect(IllegalArgumentException.class);
-        Node.in(context).create(name, new Coordinates(0, 1));
     }
 
     @Test
@@ -135,5 +114,35 @@ public class NodeTest {
 
         expected.expect(NullPointerException.class);
         node1.otherEdges(null);
+    }
+
+    @Override
+    protected NodeFactory getFactory() {
+        return Node.in(context);
+    }
+
+    private Coordinates createCoordinates() {
+        return new Coordinates(counter++, counter++);
+    }
+
+    @Override
+    protected Node createRandom() {
+        return getFactory().create("node" + counter++, createCoordinates());
+    }
+
+    @Override
+    protected Node createSame(Node node) {
+        return getFactory().create(node.getName(), node.getCoordinates());
+    }
+
+    @Override
+    public void testCreateDifferentArg(Node node, int arg) {
+        switch (arg) {
+            case 1:
+                getFactory().create(node.getName(), createCoordinates());
+                break;
+            default:
+                throw new IllegalStateException();
+        }
     }
 }

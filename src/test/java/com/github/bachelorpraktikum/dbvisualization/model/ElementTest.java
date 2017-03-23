@@ -5,6 +5,9 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
+import com.github.bachelorpraktikum.dbvisualization.model.Element.ElementFactory;
+import com.github.bachelorpraktikum.dbvisualization.model.Element.State;
+import com.github.bachelorpraktikum.dbvisualization.model.Element.Type;
 import java.util.concurrent.atomic.AtomicReference;
 import javafx.beans.property.Property;
 import javafx.beans.property.ReadOnlyProperty;
@@ -13,9 +16,10 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
-public class ElementTest {
+public class ElementTest extends FactoryTest<Element> {
 
     private Context context;
+    private int counter;
 
     @Rule
     public ExpectedException expected = ExpectedException.none();
@@ -25,57 +29,15 @@ public class ElementTest {
         this.context = new Context();
     }
 
+    private Node createNode() {
+        Coordinates coordinates = new Coordinates(counter++, counter++);
+        return Node.in(context).create("node" + counter++, coordinates);
+    }
+
     private Element createElement() {
-        Node node = Node.in(context).create("node", new Coordinates(0, 0));
+        Node node = createNode();
         return Element.in(context)
-            .create("element", Element.Type.HauptSignal, node, Element.State.NOSIG);
-    }
-
-    @Test
-    public void testInstanceManager() {
-        Node node = Node.in(context).create("node", new Coordinates(0, 0));
-        Element element = Element.in(context)
-            .create("element", Element.Type.HauptSignal, node, Element.State.NOSIG);
-
-        assertSame(element, Element.in(context).get(element.getName()));
-        assertSame(element, Element.in(context)
-            .create(element.getName(), Element.Type.HauptSignal, node, Element.State.NOSIG));
-        assertTrue(Element.in(context).getAll().contains(element));
-    }
-
-    @Test
-    public void testInstanceManagerInvalidName() {
-        expected.expect(IllegalArgumentException.class);
-        Element.in(context).get("e");
-    }
-
-    @Test
-    public void testInstanceManagerExistsDifferentType() {
-        Element element = createElement();
-
-        expected.expect(IllegalArgumentException.class);
-        Element.in(context)
-            .create(element.getName(), Element.Type.GefahrenPunkt, element.getNode(),
-                element.getState());
-    }
-
-    @Test
-    public void testInstanceManagerExistsDifferentNode() {
-        Element element = createElement();
-        Node otherNode = Node.in(context).create("otherNode", new Coordinates(10, 10));
-
-        expected.expect(IllegalArgumentException.class);
-        Element.in(context)
-            .create(element.getName(), element.getType(), otherNode, element.getState());
-    }
-
-    @Test
-    public void testInstanceManagerExistsDifferentState() {
-        Element element = createElement();
-
-        expected.expect(IllegalArgumentException.class);
-        Element.in(context)
-            .create(element.getName(), element.getType(), element.getNode(), Element.State.FAHRT);
+            .create("element" + counter++, Element.Type.HauptSignal, node, Element.State.NOSIG);
     }
 
     @Test
@@ -194,7 +156,8 @@ public class ElementTest {
 
     @Test
     public void testGetName() {
-        Element element = createElement();
+        Element element = getFactory()
+            .create("element", Type.GefahrenPunkt, createNode(), State.NOSIG);
         assertEquals("element", element.getName());
     }
 
@@ -260,5 +223,47 @@ public class ElementTest {
     public void testGetType() {
         Element element = createElement();
         assertEquals(Element.Type.HauptSignal, element.getType());
+    }
+
+    @Override
+    protected ElementFactory getFactory() {
+        return Element.in(context);
+    }
+
+    @Override
+    protected Element createRandom() {
+        return createElement();
+    }
+
+    @Override
+    protected Element createSame(Element element) {
+        return getFactory().create(
+            element.getName(),
+            element.getType(),
+            element.getNode(),
+            element.getState()
+        );
+    }
+
+    @Override
+    public void testCreateDifferentArg(Element element, int arg) {
+        switch (arg) {
+            case 1:
+                Element.Type[] values = Element.Type.values();
+                int newIndex = (element.getType().ordinal() + 1) % values.length;
+                Element.Type type = values[newIndex];
+                getFactory().create(element.getName(), type, element.getNode(), element.getState());
+                break;
+            case 2:
+                getFactory()
+                    .create(element.getName(), element.getType(), createNode(), element.getState());
+                break;
+            case 3:
+                getFactory()
+                    .create(element.getName(), element.getType(), element.getNode(), State.FAHRT);
+                break;
+            default:
+                throw new IllegalStateException();
+        }
     }
 }
