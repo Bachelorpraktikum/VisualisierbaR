@@ -1,8 +1,10 @@
 package com.github.bachelorpraktikum.dbvisualization.datasource;
 
+import com.github.bachelorpraktikum.dbvisualization.model.Context;
 import com.github.bachelorpraktikum.dbvisualization.model.Element;
 import com.github.bachelorpraktikum.dbvisualization.model.train.Train;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -22,7 +24,7 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-public class RestSource extends SubprocessSource {
+public class RestSource implements DataSource {
 
     private static final Logger log = Logger.getLogger(RestSource.class.getName());
 
@@ -31,14 +33,45 @@ public class RestSource extends SubprocessSource {
         .baseUrl("http://localhost:8080")
         .build();
 
+    private final InputParserSource inputParserSource;
+    private final InputStream inputStream;
     private final SimulationService service;
     private final Property<LiveTime> currentTime;
     private final Map<Element, String> signals;
 
+    /**
+     * Creates a REST-Source that starts a model subprocess and listens to its output.
+     *
+     * @param appPath the path to the model executable
+     * @throws IOException if a network error occurs
+     * @throws IOException if the subprocess can't be started
+     */
     public RestSource(String appPath) throws IOException {
-        super(appPath);
+        SubprocessSource inputSource = new SubprocessSource(appPath);
+        this.inputParserSource = inputSource;
+        this.inputStream = inputSource.getInputStream();
         this.service = RETROFIT.create(SimulationService.class);
         this.currentTime = new SimpleObjectProperty<>();
+        this.signals = loadSignals();
+    }
+
+    /**
+     * Creates a REST-Source that listens for model output on System.in.
+     *
+     * @throws IOException if a network error occurs
+     */
+    public RestSource() throws IOException {
+        this.inputParserSource = new InputParserSource();
+        this.inputStream = System.in;
+        this.service = RETROFIT.create(SimulationService.class);
+        this.currentTime = new SimpleObjectProperty<>();
+
+        inputParserSource.listenToInput(
+            inputStream,
+            SubprocessSource.DEFAULT_START_TIMEOUT,
+            TimeUnit.MILLISECONDS
+        );
+
         this.signals = loadSignals();
     }
 
@@ -106,7 +139,7 @@ public class RestSource extends SubprocessSource {
             e.printStackTrace();
             return;
         }
-        listenToOutput(200, TimeUnit.MILLISECONDS);
+        inputParserSource.listenToInput(inputStream, 200, TimeUnit.MILLISECONDS);
         currentTime.setValue(fetchTime());
     }
 
@@ -133,13 +166,19 @@ public class RestSource extends SubprocessSource {
                 } else {
                     log.severe("Break element failed. Error code: " + response.code());
                 }
-                Platform.runLater(onDone);
+                onDone();
             }
 
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable throwable) {
                 log.severe("Failed to execute breakNow call." + throwable);
-                Platform.runLater(onDone);
+                onDone();
+            }
+
+            private void onDone() {
+                if (onDone != null) {
+                    Platform.runLater(onDone);
+                }
             }
         });
     }
@@ -201,5 +240,16 @@ public class RestSource extends SubprocessSource {
 
     public ReadOnlyProperty<LiveTime> timeProperty() {
         return currentTime;
+    }
+
+    @Nonnull
+    @Override
+    public Context getContext() {
+        return inputParserSource.getContext();
+    }
+
+    @Override
+    public void close() throws IOException {
+        inputParserSource.close();
     }
 }
