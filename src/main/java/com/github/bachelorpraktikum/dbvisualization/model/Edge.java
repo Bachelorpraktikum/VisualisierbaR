@@ -1,5 +1,6 @@
 package com.github.bachelorpraktikum.dbvisualization.model;
 
+import java.lang.ref.WeakReference;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedHashMap;
@@ -52,16 +53,27 @@ public final class Edge implements GraphObject<Line> {
     public static final class EdgeFactory implements Factory<Edge> {
 
         private static final int INITIAL_EDGES_CAPACITY = 512;
-        private static final Map<Context, EdgeFactory> instances = new WeakHashMap<>();
+        private static final Map<Context, WeakReference<EdgeFactory>> instances = new WeakHashMap<>();
 
         @Nonnull
         private final Map<String, Edge> edges;
 
+        @Nonnull
         private static EdgeFactory getInstance(Context context) {
             if (context == null) {
                 throw new NullPointerException("context is null");
             }
-            return instances.computeIfAbsent(context, g -> new EdgeFactory());
+
+            EdgeFactory result = instances.computeIfAbsent(context, ctx -> {
+                EdgeFactory factory = new EdgeFactory();
+                ctx.addObject(factory);
+                return new WeakReference<>(factory);
+            }).get();
+
+            if (result == null) {
+                throw new IllegalStateException();
+            }
+            return result;
         }
 
         private EdgeFactory() {

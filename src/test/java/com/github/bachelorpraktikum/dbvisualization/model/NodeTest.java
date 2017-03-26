@@ -117,7 +117,7 @@ public class NodeTest extends FactoryTest<Node> {
     }
 
     @Override
-    protected NodeFactory getFactory() {
+    protected NodeFactory getFactory(Context context) {
         return Node.in(context);
     }
 
@@ -126,20 +126,20 @@ public class NodeTest extends FactoryTest<Node> {
     }
 
     @Override
-    protected Node createRandom() {
-        return getFactory().create("node" + counter++, createCoordinates());
+    protected Node createRandom(Context context) {
+        return getFactory(context).create("node" + counter++, createCoordinates());
     }
 
     @Override
-    protected Node createSame(Node node) {
-        return getFactory().create(node.getName(), node.getCoordinates());
+    protected Node createSame(Context context, Node node) {
+        return getFactory(context).create(node.getName(), node.getCoordinates());
     }
 
     @Override
-    public void testCreateDifferentArg(Node node, int arg) {
-        switch (arg) {
+    public void testCreateDifferentArg(Context context, Node node, int argIndex) {
+        switch (argIndex) {
             case 1:
-                getFactory().create(node.getName(), createCoordinates());
+                getFactory(context).create(node.getName(), createCoordinates());
                 break;
             default:
                 throw new IllegalStateException();

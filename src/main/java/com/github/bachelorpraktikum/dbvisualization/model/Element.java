@@ -1,5 +1,6 @@
 package com.github.bachelorpraktikum.dbvisualization.model;
 
+import java.lang.ref.WeakReference;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -218,7 +219,7 @@ public final class Element implements GraphObject<Shape> {
     public static final class ElementFactory implements Factory<Element> {
 
         private static final int INITIAL_ELEMENTS_CAPACITY = 256;
-        private static final Map<Context, ElementFactory> instances = new WeakHashMap<>();
+        private static final Map<Context, WeakReference<ElementFactory>> instances = new WeakHashMap<>();
 
         @Nonnull
         private final Map<String, Element> elements;
@@ -235,7 +236,17 @@ public final class Element implements GraphObject<Shape> {
             if (context == null) {
                 throw new NullPointerException("context is null");
             }
-            return instances.computeIfAbsent(context, g -> new ElementFactory(context));
+
+            ElementFactory result = instances.computeIfAbsent(context, ctx -> {
+                ElementFactory factory = new ElementFactory(ctx);
+                ctx.addObject(factory);
+                return new WeakReference<>(factory);
+            }).get();
+
+            if (result == null) {
+                throw new IllegalStateException();
+            }
+            return result;
         }
 
         private ElementFactory(Context context) {

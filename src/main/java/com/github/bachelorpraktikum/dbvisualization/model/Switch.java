@@ -1,5 +1,6 @@
 package com.github.bachelorpraktikum.dbvisualization.model;
 
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -102,7 +103,7 @@ public final class Switch implements Shapeable<Polygon> {
 
     static final class Factory {
 
-        private static final Map<Context, Factory> instances = new WeakHashMap<>();
+        private static final Map<Context, WeakReference<Factory>> instances = new WeakHashMap<>();
         @Nullable
         private Switch currentSwitch;
 
@@ -110,7 +111,17 @@ public final class Switch implements Shapeable<Polygon> {
             if (context == null) {
                 throw new NullPointerException("context is null");
             }
-            return instances.computeIfAbsent(context, g -> new Factory());
+
+            Factory result = instances.computeIfAbsent(context, ctx -> {
+                Factory factory = new Factory();
+                ctx.addObject(factory);
+                return new WeakReference<>(factory);
+            }).get();
+
+            if (result == null) {
+                throw new IllegalStateException();
+            }
+            return result;
         }
 
         private Factory() {

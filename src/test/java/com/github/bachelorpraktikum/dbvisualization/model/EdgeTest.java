@@ -31,9 +31,13 @@ public class EdgeTest extends FactoryTest<Edge> {
             random.nextInt(Integer.MAX_VALUE));
     }
 
-    private Node getNode() {
+    private Node getNode(Context context) {
         nodeCounter++;
         return Node.in(context).create("node" + nodeCounter, getCoordinate());
+    }
+
+    private Node getNode() {
+        return getNode(context);
     }
 
     @Test
@@ -95,18 +99,18 @@ public class EdgeTest extends FactoryTest<Edge> {
     }
 
     @Override
-    protected EdgeFactory getFactory() {
+    protected EdgeFactory getFactory(Context context) {
         return Edge.in(context);
     }
 
     @Override
-    protected Edge createRandom() {
-        return getFactory().create("edge" + nodeCounter++, random.nextInt(), getNode(), getNode());
+    protected Edge createRandom(Context context) {
+        return getFactory(context).create("edge" + nodeCounter++, random.nextInt(), getNode(context), getNode(context));
     }
 
     @Override
-    protected Edge createSame(Edge edge) {
-        return getFactory().create(
+    protected Edge createSame(Context context, Edge edge) {
+        return getFactory(context).create(
             edge.getName(),
             edge.getLength(),
             edge.getNode1(),
@@ -115,10 +119,10 @@ public class EdgeTest extends FactoryTest<Edge> {
     }
 
     @Override
-    public void testCreateDifferentArg(Edge edge, int arg) {
-        switch (arg) {
+    public void testCreateDifferentArg(Context context, Edge edge, int argIndex) {
+        switch (argIndex) {
             case 1:
-                getFactory().create(
+                getFactory(context).create(
                     edge.getName(),
                     edge.getLength() + 1,
                     edge.getNode1(),
@@ -126,19 +130,19 @@ public class EdgeTest extends FactoryTest<Edge> {
                 );
                 break;
             case 2:
-                getFactory().create(
+                getFactory(context).create(
                     edge.getName(),
                     edge.getLength(),
-                    getNode(),
+                    getNode(context),
                     edge.getNode2()
                 );
                 break;
             case 3:
-                getFactory().create(
+                getFactory(context).create(
                     edge.getName(),
                     edge.getLength(),
                     edge.getNode1(),
-                    getNode()
+                    getNode(context)
                 );
                 break;
             default:

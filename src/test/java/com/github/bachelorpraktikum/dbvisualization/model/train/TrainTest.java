@@ -32,33 +32,33 @@ public class TrainTest extends FactoryTest<Train> {
 
 
     @Override
-    protected TrainFactory getFactory() {
+    protected TrainFactory getFactory(Context context) {
         return Train.in(context);
     }
 
     @Override
-    protected Train createRandom() {
+    protected Train createRandom(Context context) {
         int count = this.counter++;
-        return getFactory().create("train" + count, "t" + count, 10);
+        return getFactory(context).create("train" + count, "t" + count, 10);
     }
 
     @Override
-    protected Train createSame(Train train) {
-        return getFactory().create(train.getName(), train.getReadableName(), train.getLength());
+    protected Train createSame(Context context, Train train) {
+        return getFactory(context).create(train.getName(), train.getReadableName(), train.getLength());
     }
 
     @Override
-    public void testCreateDifferentArg(Train train, int arg) {
-        switch (arg) {
+    public void testCreateDifferentArg(Context context, Train train, int argIndex) {
+        switch (argIndex) {
             case 1:
-                getFactory().create(
+                getFactory(context).create(
                     train.getName(),
                     train.getReadableName() + "invalid",
                     train.getLength()
                 );
                 break;
             case 2:
-                getFactory().create(
+                getFactory(context).create(
                     train.getName(),
                     train.getReadableName(),
                     train.getLength() + 1

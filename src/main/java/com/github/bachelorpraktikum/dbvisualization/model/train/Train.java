@@ -9,6 +9,7 @@ import com.github.bachelorpraktikum.dbvisualization.model.Factory;
 import com.github.bachelorpraktikum.dbvisualization.model.GraphObject;
 import com.github.bachelorpraktikum.dbvisualization.model.Node;
 import com.github.bachelorpraktikum.dbvisualization.model.Shapeable;
+import java.lang.ref.WeakReference;
 import java.net.URL;
 import java.util.Collection;
 import java.util.Collections;
@@ -112,7 +113,7 @@ public class Train implements GraphObject<Shape> {
 
         private static final int INITIAL_TRAINS_CAPACITY = 16;
         private static final Paint[] COLORS = ConfigFile.getInstance().getTrainColors();
-        private static final Map<Context, TrainFactory> instances = new WeakHashMap<>();
+        private static final Map<Context, WeakReference<TrainFactory>> instances = new WeakHashMap<>();
 
         @Nonnull
         private final Map<String, Train> trains;
@@ -124,7 +125,17 @@ public class Train implements GraphObject<Shape> {
             if (context == null) {
                 throw new NullPointerException("context is null");
             }
-            return instances.computeIfAbsent(context, g -> new TrainFactory());
+
+            TrainFactory result = instances.computeIfAbsent(context, ctx -> {
+                TrainFactory factory = new TrainFactory();
+                ctx.addObject(factory);
+                return new WeakReference<>(factory);
+            }).get();
+
+            if (result == null) {
+                throw new IllegalStateException();
+            }
+            return result;
         }
 
         private TrainFactory() {

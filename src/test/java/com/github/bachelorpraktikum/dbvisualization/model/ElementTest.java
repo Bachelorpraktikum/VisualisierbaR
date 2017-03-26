@@ -29,15 +29,23 @@ public class ElementTest extends FactoryTest<Element> {
         this.context = new Context();
     }
 
-    private Node createNode() {
+    private Node createNode(Context context) {
         Coordinates coordinates = new Coordinates(counter++, counter++);
         return Node.in(context).create("node" + counter++, coordinates);
     }
 
-    private Element createElement() {
-        Node node = createNode();
+    private Node createNode() {
+        return createNode(context);
+    }
+
+    private Element createElement(Context context) {
+        Node node = createNode(context);
         return Element.in(context)
             .create("element" + counter++, Element.Type.HauptSignal, node, Element.State.NOSIG);
+    }
+
+    private Element createElement() {
+        return createElement(context);
     }
 
     @Test
@@ -156,7 +164,7 @@ public class ElementTest extends FactoryTest<Element> {
 
     @Test
     public void testGetName() {
-        Element element = getFactory()
+        Element element = getFactory(context)
             .create("element", Type.GefahrenPunkt, createNode(), State.NOSIG);
         assertEquals("element", element.getName());
     }
@@ -226,18 +234,18 @@ public class ElementTest extends FactoryTest<Element> {
     }
 
     @Override
-    protected ElementFactory getFactory() {
+    protected ElementFactory getFactory(Context context) {
         return Element.in(context);
     }
 
     @Override
-    protected Element createRandom() {
-        return createElement();
+    protected Element createRandom(Context context) {
+        return createElement(context);
     }
 
     @Override
-    protected Element createSame(Element element) {
-        return getFactory().create(
+    protected Element createSame(Context context, Element element) {
+        return getFactory(context).create(
             element.getName(),
             element.getType(),
             element.getNode(),
@@ -246,20 +254,22 @@ public class ElementTest extends FactoryTest<Element> {
     }
 
     @Override
-    public void testCreateDifferentArg(Element element, int arg) {
-        switch (arg) {
+    public void testCreateDifferentArg(Context context, Element element, int argIndex) {
+        switch (argIndex) {
             case 1:
                 Element.Type[] values = Element.Type.values();
                 int newIndex = (element.getType().ordinal() + 1) % values.length;
                 Element.Type type = values[newIndex];
-                getFactory().create(element.getName(), type, element.getNode(), element.getState());
+                getFactory(context)
+                    .create(element.getName(), type, element.getNode(), element.getState());
                 break;
             case 2:
-                getFactory()
-                    .create(element.getName(), element.getType(), createNode(), element.getState());
+                getFactory(context)
+                    .create(element.getName(), element.getType(), createNode(context),
+                        element.getState());
                 break;
             case 3:
-                getFactory()
+                getFactory(context)
                     .create(element.getName(), element.getType(), element.getNode(), State.FAHRT);
                 break;
             default:
