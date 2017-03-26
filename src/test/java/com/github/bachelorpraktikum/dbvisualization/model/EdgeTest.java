@@ -98,6 +98,15 @@ public class EdgeTest extends FactoryTest<Edge> {
         Edge edge = Edge.in(context).create(null, 50, getNode(), getNode());
     }
 
+    @Test(expected = IllegalArgumentException.class)
+    public void testCreateNodeDifferentContext() {
+        Node node1 = getNode();
+        Node node2 = getNode();
+
+        Context otherContext = new Context();
+        Edge.in(otherContext).create("e", 1, node1, node2);
+    }
+
     @Override
     protected EdgeFactory getFactory(Context context) {
         return Edge.in(context);
@@ -105,7 +114,8 @@ public class EdgeTest extends FactoryTest<Edge> {
 
     @Override
     protected Edge createRandom(Context context) {
-        return getFactory(context).create("edge" + nodeCounter++, random.nextInt(), getNode(context), getNode(context));
+        return getFactory(context)
+            .create("edge" + nodeCounter++, random.nextInt(), getNode(context), getNode(context));
     }
 
     @Override

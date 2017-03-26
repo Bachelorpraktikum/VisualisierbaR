@@ -196,6 +196,11 @@ public class Train implements GraphObject<Shape> {
         public Collection<Train> getAll() {
             return Collections.unmodifiableCollection(trains.values());
         }
+
+        @Override
+        public boolean checkAffiliated(@Nonnull Train train) {
+            return trains.get(train.getName()) == train;
+        }
     }
 
     /**

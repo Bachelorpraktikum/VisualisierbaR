@@ -2,7 +2,9 @@ package com.github.bachelorpraktikum.dbvisualization.model;
 
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
@@ -85,6 +87,12 @@ public abstract class FactoryTest<T extends GraphObject<?>> {
     }
 
     @Test(expected = IllegalArgumentException.class)
+    public void testGetOtherContext() {
+        T t = createRandom(context);
+        getFactory(new Context()).get(t.getName());
+    }
+
+    @Test(expected = IllegalArgumentException.class)
     public void testGetInvalid() {
         getFactory().get("invalid");
     }
@@ -160,5 +168,16 @@ public abstract class FactoryTest<T extends GraphObject<?>> {
         System.gc();
         assertNull(weakFactory.get());
         assertNull(weakT.get());
+    }
+
+    @Test
+    public void testCheckAffiliation() {
+        T t = createRandom(context);
+        Context otherContext = new Context();
+        T other = createRandom(otherContext);
+
+        assertNotSame(t, other);
+        assertTrue(getFactory(context).checkAffiliated(t));
+        assertFalse(getFactory(context).checkAffiliated(other));
     }
 }

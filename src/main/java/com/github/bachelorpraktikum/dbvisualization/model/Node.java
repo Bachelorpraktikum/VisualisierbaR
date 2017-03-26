@@ -129,6 +129,11 @@ public final class Node implements GraphObject<Circle> {
         public Collection<Node> getAll() {
             return Collections.unmodifiableCollection(nodes.values());
         }
+
+        @Override
+        public boolean checkAffiliated(@Nonnull Node node) {
+            return nodes.get(node.getName()) == node;
+        }
     }
 
     /**

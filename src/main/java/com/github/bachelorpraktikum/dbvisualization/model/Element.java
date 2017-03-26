@@ -227,6 +227,8 @@ public final class Element implements GraphObject<Shape> {
         @Nonnull
         private final Switch.Factory switchFactory;
         @Nonnull
+        private final Factory<Node> nodeFactory;
+        @Nonnull
         private final ObservableList<ElementEvent> events;
         private int currentTime;
         private int nextIndex;
@@ -253,6 +255,7 @@ public final class Element implements GraphObject<Shape> {
             this.elements = new LinkedHashMap<>(INITIAL_ELEMENTS_CAPACITY);
 
             this.switchFactory = Switch.in(context);
+            this.nodeFactory = Node.in(context);
             this.events = FXCollections.observableArrayList();
             this.currentTime = -1;
             this.nextIndex = 0;
@@ -274,9 +277,14 @@ public final class Element implements GraphObject<Shape> {
          * @throws NullPointerException if either of the arguments is null
          * @throws IllegalArgumentException if an element with the same name but different
          * parameters already exists
+         * @throws IllegalArgumentException if the given node is from within another context
          */
         @Nonnull
         public Element create(String name, Type type, Node node, State state) {
+            if (!nodeFactory.checkAffiliated(node)) {
+                throw new IllegalArgumentException("Node is from the wrong context. " + node);
+            }
+
             Element element = elements.computeIfAbsent(Objects.requireNonNull(name), elementName ->
                 new Element(this, elementName, type, node, state)
             );
@@ -326,6 +334,11 @@ public final class Element implements GraphObject<Shape> {
         @Nonnull
         public Collection<Element> getAll() {
             return Collections.unmodifiableCollection(elements.values());
+        }
+
+        @Override
+        public boolean checkAffiliated(@Nonnull Element element) {
+            return elements.get(element.getName()) == element;
         }
 
         private void addEvent(Element element, State state, int time) {

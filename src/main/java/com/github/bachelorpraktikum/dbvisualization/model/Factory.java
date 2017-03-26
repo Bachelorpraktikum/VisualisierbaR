@@ -23,7 +23,7 @@ public interface Factory<T extends GraphObject<?>> {
      * @throws IllegalArgumentException if there is no object associated with the name
      */
     @Nonnull
-    T get(String name);
+    T get(@Nonnull String name);
 
     /**
      * Gets all instances in this {@link Context}.
@@ -32,4 +32,12 @@ public interface Factory<T extends GraphObject<?>> {
      */
     @Nonnull
     Collection<T> getAll();
+
+    /**
+     * Checks whether the given instance of T was created by this factory.
+     *
+     * @param t the instance to check affiliation for
+     * @return whether the given object was created by this factory
+     */
+    boolean checkAffiliated(@Nonnull T t);
 }

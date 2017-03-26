@@ -57,6 +57,8 @@ public final class Edge implements GraphObject<Line> {
 
         @Nonnull
         private final Map<String, Edge> edges;
+        @Nonnull
+        private final Factory<Node> nodeFactory;
 
         @Nonnull
         private static EdgeFactory getInstance(Context context) {
@@ -65,7 +67,7 @@ public final class Edge implements GraphObject<Line> {
             }
 
             EdgeFactory result = instances.computeIfAbsent(context, ctx -> {
-                EdgeFactory factory = new EdgeFactory();
+                EdgeFactory factory = new EdgeFactory(ctx);
                 ctx.addObject(factory);
                 return new WeakReference<>(factory);
             }).get();
@@ -76,8 +78,9 @@ public final class Edge implements GraphObject<Line> {
             return result;
         }
 
-        private EdgeFactory() {
+        private EdgeFactory(Context ctx) {
             this.edges = new LinkedHashMap<>(INITIAL_EDGES_CAPACITY);
+            this.nodeFactory = Node.in(ctx);
         }
 
         /**
@@ -91,9 +94,15 @@ public final class Edge implements GraphObject<Line> {
          * @throws NullPointerException if at least one of the arguments is null
          * @throws IllegalArgumentException if an edge with the same name but different parameters
          * already exists
+         * @throws IllegalArgumentException if either of the given nodes are not from within the
+         * same context
          */
         @Nonnull
         public Edge create(String name, int length, Node node1, Node node2) {
+            if (!nodeFactory.checkAffiliated(node1) || !nodeFactory.checkAffiliated(node2)) {
+                throw new IllegalArgumentException("at least one node is from the wrong context");
+            }
+
             Edge result = edges.computeIfAbsent(Objects.requireNonNull(name), edgeName ->
                 new Edge(edgeName, length, node1, node2)
             );
@@ -127,6 +136,11 @@ public final class Edge implements GraphObject<Line> {
         @Nonnull
         public Collection<Edge> getAll() {
             return Collections.unmodifiableCollection(edges.values());
+        }
+
+        @Override
+        public boolean checkAffiliated(@Nonnull Edge edge) {
+            return edges.get(edge.getName()) == edge;
         }
     }
 
