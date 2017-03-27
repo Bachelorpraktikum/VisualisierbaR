@@ -1,15 +1,16 @@
 package com.github.bachelorpraktikum.dbvisualization.model.train;
 
-import com.github.bachelorpraktikum.dbvisualization.model.Coordinates;
 import com.github.bachelorpraktikum.dbvisualization.model.Edge;
 import com.github.bachelorpraktikum.dbvisualization.model.Node;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 import java.util.function.Function;
 import javafx.geometry.Point2D;
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 import javax.annotation.concurrent.Immutable;
 
@@ -44,7 +45,29 @@ final class TrainPosition implements Train.Position {
         this.unreachedBackNode = unreachedBackNode;
     }
 
+    /**
+     * <p>Creates a TrainPosition as if the train was initialized on the given edge.</p>
+     *
+     * @param train the train this position belongs to
+     * @param edge the edge the train was initialized on
+     * @param start the node the front is coming from
+     * @param end the node the front is trying to reach
+     * @return a TrainPosition
+     * @throws NullPointerException if any argument is null
+     * @throws IllegalArgumentException if the edge doesn't connect the nodes
+     * @see Train.EventFactory#init(int, Edge)
+     */
+    @Nonnull
     static TrainPosition init(Train train, Edge edge, Node start, Node end) {
+        Objects.requireNonNull(train);
+        Objects.requireNonNull(edge);
+        Objects.requireNonNull(start);
+        Objects.requireNonNull(end);
+
+        if (!edge.getOtherNode(start).equals(end)) {
+            throw new IllegalArgumentException("end node is not on edge");
+        }
+
         LinkedList<Edge> edges = new LinkedList<>();
         edges.add(edge);
 
@@ -137,12 +160,7 @@ final class TrainPosition implements Train.Position {
 
     @Nonnull
     private Point2D toPoint(Node node) {
-        return toPoint(node.getCoordinates());
-    }
-
-    @Nonnull
-    private Point2D toPoint(Coordinates coordinates) {
-        return new Point2D(coordinates.getX(), coordinates.getY());
+        return node.getCoordinates().toPoint2D();
     }
 
     @Nonnull
@@ -189,6 +207,12 @@ final class TrainPosition implements Train.Position {
         return Collections.unmodifiableList(edges);
     }
 
+    /**
+     * Creates a position for the same train, moved by the specified distance.
+     *
+     * @param distance the distance in meters
+     * @return a new TrainPosition
+     */
     @Nonnull
     TrainPosition move(int distance) {
         int newDistance = getFrontDistance() + distance;
@@ -202,6 +226,17 @@ final class TrainPosition implements Train.Position {
             unreachedBackNode);
     }
 
+    /**
+     * Creates a position for the same train, moved by the specified distance.
+     * This should only be called if the train's back is exactly at the start of the "newBack" Edge.
+     *
+     * @param newBack the Edge the train's back is at
+     * @param movedDistance the distance in meters the train has moved
+     * @return a new TrainPosition
+     * @throws NullPointerException if newBack is null
+     * @throws IllegalArgumentException if newBack can't be the new last edge
+     * @see Train.EventFactory#leave(int, Edge, int)
+     */
     @Nonnull
     TrainPosition leaveBack(Edge newBack, int movedDistance) {
         LinkedList<Edge> edges = new LinkedList<>(getEdges());
@@ -218,6 +253,17 @@ final class TrainPosition implements Train.Position {
             unreachedBackNode);
     }
 
+    /**
+     * Creates a position for the same train at which the train's front just reached the "newStart"
+     * Edge.
+     *
+     * @param newStart the Edge the train's front just reached
+     * @return a new TrainPosition
+     * @throws NullPointerException if newStart is null
+     * @throws IllegalArgumentException if the train can't reach newStart from its current position
+     * with a simple reach event
+     * @see Train.EventFactory#reach(int, Edge, int)
+     */
     @Nonnull
     TrainPosition reachFront(Edge newStart) {
         LinkedList<Edge> edges = new LinkedList<>(getEdges());
@@ -252,8 +298,17 @@ final class TrainPosition implements Train.Position {
         return trainLength;
     }
 
+    /**
+     * Creates a position of the same train moved by the specified distance. If the front leaves the
+     * current front edge while doing so, the possibleNewStart is assumed to be the new front edge.
+     *
+     * @param moveDistance the moved distance in meters
+     * @param possibleNewStart the possible new front edge
+     * @return a new TrainPosition
+     * @throws NullPointerException if possibleNewStart is needed and null
+     */
     @Nonnull
-    TrainPosition interpolationMove(int moveDistance, Edge possibleNewStart) {
+    TrainPosition interpolationMove(int moveDistance, @Nullable Edge possibleNewStart) {
         LinkedList<Edge> edges = new LinkedList<>(getEdges());
         Node frontNode = this.frontNode;
         Node unreachedFrontNode = this.unreachedFrontNode;
@@ -262,7 +317,7 @@ final class TrainPosition implements Train.Position {
             edges.addFirst(possibleNewStart);
             newDistance -= getFrontEdge().getLength();
             frontNode = unreachedFrontNode;
-            unreachedFrontNode = possibleNewStart.getOtherNode(frontNode);
+            unreachedFrontNode = Objects.requireNonNull(possibleNewStart).getOtherNode(frontNode);
         }
 
         int trainLength = getTrain().getLength();
@@ -288,43 +343,49 @@ final class TrainPosition implements Train.Position {
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
+    public boolean equals(Object o) {
+        if (this == o) {
             return true;
         }
-        if (!(obj instanceof Train.Position)) {
+        if (o == null || getClass() != o.getClass()) {
             return false;
         }
 
-        Train.Position that = (Train.Position) obj;
+        TrainPosition that = (TrainPosition) o;
 
-        if (!train.equals(that.getTrain())) {
+        if (frontDistance != that.frontDistance) {
             return false;
         }
-        if (frontDistance != that.getFrontDistance()) {
+        if (!train.equals(that.train)) {
             return false;
         }
-        if (!getFrontEdge().equals(that.getFrontEdge())) {
+        if (!frontNode.equals(that.frontNode)) {
             return false;
         }
-        if (backDistance != that.getBackDistance()) {
-            return false;
-        }
-        return getBackEdge().equals(that.getBackEdge());
+        return unreachedFrontNode.equals(that.unreachedFrontNode);
     }
 
     @Override
     public int hashCode() {
-        int result = getFrontEdge().hashCode();
+        int result = train.hashCode();
+        result = 31 * result + frontNode.hashCode();
+        result = 31 * result + unreachedFrontNode.hashCode();
         result = 31 * result + frontDistance;
         return result;
     }
 
     @Override
     public String toString() {
-        return "Position{"
-            + "edge=" + getFrontEdge()
+        return "TrainPosition{"
+            + "train=" + train.getName()
+            + ", frontEdge=" + getFrontEdge().getName()
+            + ", frontNode=" + frontNode.getName()
+            + ", unreachedFrontNode=" + unreachedFrontNode.getName()
             + ", frontDistance=" + frontDistance
+            + ", backEdge=" + getBackEdge().getName()
+            + ", backNode=" + backNode.getName()
+            + ", unreachedBackNode=" + unreachedBackNode.getName()
+            + ", backDistance=" + backDistance
             + '}';
     }
 }
