@@ -141,14 +141,19 @@ public class TrainTest extends FactoryTest<Train> {
     public void testInitMiddle() {
         Train train = Train.in(context).create("t", "train", 20);
         Edge edge2 = createEdges(30, 40, 50)[1];
-        train.eventFactory().init(0, edge2);
+        train.eventFactory().init(5, edge2);
 
-        Train.State state = train.getState(0);
+        Train.State state = train.getState(5);
         assertEquals(train.getLength(), state.getPosition().getFrontDistance());
         assertEquals(edge2, state.getPosition().getFrontEdge());
         assertEquals(edge2.getLength(), state.getPosition().getBackDistance());
         assertEquals(0, state.getTotalDistance());
         assertTrue(state.isInitialized());
+
+        String description = train.getEvents().get(1).getDescription().toLowerCase();
+        assertTrue(description.contains("init"));
+        assertTrue(description.contains(String.valueOf(5)));
+        assertTrue(description.contains(edge2.getName().toLowerCase()));
     }
 
     @Test
@@ -177,6 +182,12 @@ public class TrainTest extends FactoryTest<Train> {
         assertTrue(state.isInitialized());
 
         assertEquals(state, train.getState(time * 2));
+
+        String description = train.getEvents().get(2).getDescription().toLowerCase();
+        assertTrue(description.contains("speed"));
+        assertTrue(description.contains(String.valueOf(time)));
+        assertTrue(description.contains(String.valueOf(distance)));
+        assertTrue(description.contains(String.valueOf(speed)));
     }
 
     @Test
@@ -195,6 +206,12 @@ public class TrainTest extends FactoryTest<Train> {
         assertEquals(edges[0], state.getPosition().getBackEdge());
         assertEquals(10, state.getPosition().getBackDistance());
         assertFalse(state.isTerminated());
+
+        String description = train.getEvents().get(2).getDescription().toLowerCase();
+        assertTrue(description.contains("reach"));
+        assertTrue(description.contains(String.valueOf(10)));
+        assertTrue(description.contains(String.valueOf(10)));
+        assertTrue(description.contains(edges[1].getName()));
     }
 
     @Test
@@ -214,6 +231,12 @@ public class TrainTest extends FactoryTest<Train> {
         assertEquals(10, state.getPosition().getFrontDistance());
         assertEquals(20, state.getTotalDistance());
         assertFalse(state.isTerminated());
+
+        String description = train.getEvents().get(3).getDescription().toLowerCase();
+        assertTrue(description.contains("leave"));
+        assertTrue(description.contains(String.valueOf(20)));
+        assertTrue(description.contains(String.valueOf(10)));
+        assertTrue(description.contains(edges[1].getName()));
     }
 
     @Test
@@ -230,6 +253,10 @@ public class TrainTest extends FactoryTest<Train> {
         assertEquals(18, state.getPosition().getFrontDistance());
         assertEquals(8, state.getTotalDistance());
         assertEquals(0.8, state.getSpeed(), 0.01);
+
+        String description = train.getEvents().get(3).getDescription().toLowerCase();
+        assertTrue(description.contains("terminate"));
+        assertTrue(description.contains(String.valueOf(10000)));
     }
 
     @Test
