@@ -192,6 +192,22 @@ public class ElementTest extends FactoryTest<Element> {
     }
 
     @Test
+    public void testGetSwitch() {
+        Node node = createNode();
+        Element e1 = Element.in(context).create("e1", Type.WeichenPunkt, node, State.NOSIG);
+        Element e2 = Element.in(context).create("e2", Type.WeichenPunkt, node, State.NOSIG);
+        Element e3 = Element.in(context).create("e3", Type.WeichenPunkt, node, State.NOSIG);
+
+        assertEquals(e1.getSwitch(), e2.getSwitch());
+        assertEquals(e2.getSwitch(), e3.getSwitch());
+    }
+
+    @Test(expected = IllegalStateException.class)
+    public void testGetSwitchNoSwitch() {
+        createElement().getSwitch();
+    }
+
+    @Test
     public void testStatePropertyCastToWritable() {
         Element element = createElement();
         ReadOnlyProperty<Element.State> stateReadOnlyProperty = element.stateProperty();
@@ -231,6 +247,23 @@ public class ElementTest extends FactoryTest<Element> {
     public void testGetType() {
         Element element = createElement();
         assertEquals(Element.Type.HauptSignal, element.getType());
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testCreateNodeDifferentContext() {
+        Node node = createNode(context);
+        Context otherContext = new Context();
+        Element.in(otherContext).create("e", Type.HauptSignal, node, State.FAHRT);
+    }
+
+    @Test
+    public void testSetTimeInitialTime() {
+        Element.in(context).setTime(Context.INIT_STATE_TIME);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testSetTimeInvalidTime() {
+        Element.in(context).setTime(-2);
     }
 
     @Override
