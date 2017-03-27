@@ -3,6 +3,7 @@ package com.github.bachelorpraktikum.dbvisualization.model;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.logging.Logger;
 import javafx.collections.FXCollections;
@@ -13,12 +14,19 @@ import javafx.scene.control.ButtonType;
 import javafx.scene.control.Dialog;
 import javafx.stage.Modality;
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 
 @ParametersAreNonnullByDefault
 final class MessageEvent implements Event {
 
     private static final Logger log = Logger.getLogger(Node.class.getName());
+    /**
+     * For testing purposes only. Will get called instead of {@link #fire(Function)} if it is not
+     * null.
+     */
+    @Nullable
+    static Consumer<MessageEvent> testFire = null;
 
     private final int time;
     @Nonnull
@@ -78,6 +86,11 @@ final class MessageEvent implements Event {
     }
 
     void fire(Function<Node, javafx.scene.Node> nodeResolve) {
+        if (testFire != null) {
+            testFire.accept(this);
+            return;
+        }
+
         javafx.scene.Node node = nodeResolve.apply(getNode());
         Dialog<Void> dialog = new Dialog<>();
         dialog.initModality(Modality.NONE);

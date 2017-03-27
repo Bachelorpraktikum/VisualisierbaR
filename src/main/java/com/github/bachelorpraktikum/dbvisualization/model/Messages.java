@@ -56,6 +56,9 @@ public final class Messages {
     /**
      * <p>Registers a new message.</p>
      *
+     * <p>If the time is before the time of the last event, it will be corrected to the time of the
+     * last event and a warning will be added.</p>
+     *
      * @param time the time at which the message will be shown
      * @param text the content of the message
      * @param node the node at which the message should appear
@@ -96,9 +99,13 @@ public final class Messages {
      * @param endTime the maximum time of the last message event to be fired
      * @return whether any events have been fired
      * @throws IllegalArgumentException if startTime is after endTime
+     * @throws NullPointerException if nodeResolver is null
      */
     public boolean fireEventsBetween(Function<Node, javafx.scene.Node> nodeResolver,
         int startTime, int endTime) {
+        if (nodeResolver == null) {
+            throw new NullPointerException("nodeResolver is null");
+        }
         if (startTime > endTime) {
             throw new IllegalArgumentException("startTime > endTime");
         }
