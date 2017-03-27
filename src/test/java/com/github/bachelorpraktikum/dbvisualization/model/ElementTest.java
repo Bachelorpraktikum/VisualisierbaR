@@ -2,6 +2,8 @@ package com.github.bachelorpraktikum.dbvisualization.model;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
@@ -139,6 +141,46 @@ public class ElementTest extends FactoryTest<Element> {
         }
         assertTrue(hasZeroTime);
         assertTrue(zeroTimeHasWarnings);
+    }
+
+    @Test
+    public void testAddEventTwice() {
+        Element element = createElement();
+
+        element.addEvent(State.FAHRT, 10);
+        element.addEvent(State.FAHRT, 10);
+
+        Event event = getFactory(context).getEvents().get(1);
+        Event event2 = getFactory(context).getEvents().get(2);
+
+        assertFalse(event.equals(null));
+
+        assertEquals(event, event);
+
+        assertNotSame(event, event2);
+        assertEquals(event, event2);
+        assertEquals(event2, event);
+
+        assertEquals(event.hashCode(), event2.hashCode());
+    }
+
+    @Test
+    public void testEventEqualDifferentElements() {
+        Element element1 = createElement();
+        Element element2 = createElement();
+        element2.addEvent(State.FAHRT, 10);
+
+        Event event1 = getFactory(context).getEvents().get(0);
+        Event event2 = getFactory(context).getEvents().get(1);
+        Event event3 = getFactory(context).getEvents().get(2);
+
+        assertNotSame(event1, event2);
+
+        assertNotEquals(event1, event2);
+        assertNotEquals(event2, event1);
+
+        assertNotEquals(event2, event3);
+        assertNotEquals(event1, event3);
     }
 
     @Test

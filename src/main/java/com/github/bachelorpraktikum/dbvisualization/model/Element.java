@@ -529,10 +529,6 @@ public final class Element implements GraphObject<Shape> {
         @Nonnull
         private final ObservableList<String> warnings;
 
-        private ElementEvent(Element element, int time, State state) {
-            this(element, time, state, FXCollections.emptyObservableList());
-        }
-
         private ElementEvent(Element element, int time, State state,
             ObservableList<String> warnings) {
             this.element = element;
@@ -584,6 +580,9 @@ public final class Element implements GraphObject<Shape> {
 
             ElementEvent event = (ElementEvent) obj;
 
+            if (!element.equals(event.element)) {
+                return false;
+            }
             if (time != event.time) {
                 return false;
             }
