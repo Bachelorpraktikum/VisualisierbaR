@@ -219,7 +219,7 @@ final class InterpolatableState implements Train.State {
             return other.interpolate(targetTime, this);
         }
 
-        if (getTime() > targetTime) {
+        if (getTime() > targetTime || other.getTime() < targetTime) {
             throw new IllegalArgumentException("time not between states");
         }
 

@@ -295,7 +295,7 @@ public class Train implements GraphObject<Shape> {
             return getState(time);
         }
 
-        if (!before.getTrain().equals(this)) {
+        if (!this.equals(before.getTrain())) {
             throw new IllegalArgumentException("passed state of different train");
         }
 

@@ -12,7 +12,9 @@ import com.github.bachelorpraktikum.dbvisualization.model.Edge;
 import com.github.bachelorpraktikum.dbvisualization.model.Event;
 import com.github.bachelorpraktikum.dbvisualization.model.FactoryTest;
 import com.github.bachelorpraktikum.dbvisualization.model.Node;
+import com.github.bachelorpraktikum.dbvisualization.model.train.Train.Position;
 import com.github.bachelorpraktikum.dbvisualization.model.train.Train.TrainFactory;
+import javax.annotation.Nonnull;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -31,6 +33,17 @@ public class TrainTest extends FactoryTest<Train> {
         context = new Context();
     }
 
+    @Test
+    public void testCreateNegativeLength() {
+        expected.expect(IllegalArgumentException.class);
+        getFactory(context).create("train", "t", -1);
+    }
+
+    @Test
+    public void testCreateZeroLength() {
+        expected.expect(IllegalArgumentException.class);
+        getFactory(context).create("train", "t", 0);
+    }
 
     @Override
     protected TrainFactory getFactory(Context context) {
@@ -199,6 +212,37 @@ public class TrainTest extends FactoryTest<Train> {
     }
 
     @Test
+    public void testMove() {
+        Train train = createRandom(context);
+        Edge edge = createEdges(50)[0];
+        train.eventFactory().init(0, edge);
+
+        Train.State initState = train.getState(0);
+
+        int time = 10000;
+        int distance = 20;
+        train.eventFactory().move(time, distance);
+
+        assertNotEquals(initState, train.getState(0));
+
+        Train.State state = train.getState(time);
+        assertFalse(state.isTerminated());
+        assertEquals(train, state.getTrain());
+        assertEquals(time, state.getTime());
+        assertEquals(edge, state.getPosition().getFrontEdge());
+        assertEquals(train.getLength() + distance, state.getPosition().getFrontDistance());
+        assertEquals(distance, state.getTotalDistance());
+        assertTrue(state.isInitialized());
+
+        assertEquals(state, train.getState(time * 2));
+
+        String description = train.getEvents().get(2).getDescription().toLowerCase();
+        assertTrue(description.contains("speed"));
+        assertTrue(description.contains(String.valueOf(time)));
+        assertTrue(description.contains(String.valueOf(distance)));
+    }
+
+    @Test
     public void testReach() {
         Train train = Train.in(context).create("t", "train", 10);
         Edge[] edges = createEdges(20, 40);
@@ -265,6 +309,107 @@ public class TrainTest extends FactoryTest<Train> {
         String description = train.getEvents().get(3).getDescription().toLowerCase();
         assertTrue(description.contains("terminate"));
         assertTrue(description.contains(String.valueOf(10000)));
+    }
+
+    @Test
+    public void testInterpolatableStateEqualsBogusState() {
+        Train train = createRandom(context);
+        Train.State state = train.getState(0);
+
+        assertFalse(state.equals(new Train.State() {
+            @Nonnull
+            @Override
+            public Train getTrain() {
+                return state.getTrain();
+            }
+
+            @Override
+            public int getTime() {
+                return state.getTime();
+            }
+
+            @Override
+            public boolean isTerminated() {
+                return state.isTerminated();
+            }
+
+            @Override
+            public boolean isInitialized() {
+                return state.isInitialized();
+            }
+
+            @Override
+            public double getSpeed() {
+                return state.getSpeed();
+            }
+
+            @Nonnull
+            @Override
+            public Position getPosition() {
+                return null;
+            }
+
+            @Override
+            public int getTotalDistance() {
+                return state.getTotalDistance();
+            }
+        }));
+    }
+
+    @Test
+    public void testInterpolationTimeTooSmall() {
+        Train train = Train.in(context).create("t", "train", 10);
+        Edge edge = createEdges(50)[0];
+        train.eventFactory().init(5, edge);
+        train.eventFactory().speed(10, 10, 10);
+
+        InterpolatableState init = (InterpolatableState) train.getState(5);
+        InterpolatableState speed = (InterpolatableState) train.getState(10);
+
+        expected.expect(IllegalArgumentException.class);
+        init.interpolate(2, speed);
+    }
+
+    @Test
+    public void testInterpolationTimeTooBig() {
+        Train train = Train.in(context).create("t", "train", 10);
+        Edge edge = createEdges(50)[0];
+        train.eventFactory().init(5, edge);
+        train.eventFactory().speed(10, 10, 10);
+
+        InterpolatableState init = (InterpolatableState) train.getState(5);
+        InterpolatableState speed = (InterpolatableState) train.getState(10);
+
+        expected.expect(IllegalArgumentException.class);
+        init.interpolate(100, speed);
+    }
+
+    @Test
+    public void testInterpolationWrongStartState() {
+        Train train = Train.in(context).create("t", "train", 10);
+        Edge edge = createEdges(50)[0];
+        train.eventFactory().init(5, edge);
+        train.eventFactory().speed(10, 10, 10);
+
+        InterpolatableState init = (InterpolatableState) train.getState(5);
+        InterpolatableState speed = (InterpolatableState) train.getState(10);
+
+        assertEquals(init.interpolate(8, speed), speed.interpolate(8, init));
+    }
+
+    @Test
+    public void testInterpolationUninitialized() {
+        Train train = Train.in(context).create("t", "train", 10);
+        Edge edge = createEdges(50)[0];
+        train.eventFactory().init(5, edge);
+
+        Train.State start = train.getState(Context.INIT_STATE_TIME);
+        Train.State state = train.getState(2);
+        assertEquals(start.isInitialized(), state.isInitialized());
+        assertEquals(start.isTerminated(), state.isTerminated());
+        assertEquals(start.getSpeed(), state.getSpeed(), 0.0001);
+        assertEquals(start.getTrain(), state.getTrain());
+        assertEquals(start.getTotalDistance(), state.getTotalDistance());
     }
 
     @Test
@@ -393,12 +538,70 @@ public class TrainTest extends FactoryTest<Train> {
     }
 
     @Test
+    public void testGetStateWithBogusStateImplementation() {
+        Train train = createRandom(context);
+        Edge[] edges = createEdges(20, 20);
+
+        train.eventFactory().init(0, edges[0]);
+        train.eventFactory().reach(5, edges[1], 10);
+
+        Train.State state = train.getState(10, new Train.State() {
+            @Nonnull
+            @Override
+            public Train getTrain() {
+                return train;
+            }
+
+            @Override
+            public int getTime() {
+                return 0;
+            }
+
+            @Override
+            public boolean isTerminated() {
+                return false;
+            }
+
+            @Override
+            public boolean isInitialized() {
+                return false;
+            }
+
+            @Override
+            public double getSpeed() {
+                return 0;
+            }
+
+            @Nonnull
+            @Override
+            public Position getPosition() {
+                return null;
+            }
+
+            @Override
+            public int getTotalDistance() {
+                return 0;
+            }
+        });
+
+        assertEquals(train.getState(10), state);
+    }
+
+    @Test
     public void testInitAlreadyInitialized() {
         Train train = Train.in(context).create("t", "train", 10);
         Edge[] edges = createEdges(20, 20);
         train.eventFactory().init(0, edges[0]);
         expected.expect(IllegalStateException.class);
         train.eventFactory().init(0, edges[1]);
+    }
+
+    @Test
+    public void testInitNegativeTime() {
+        Train train = createRandom(context);
+        Edge[] edges = createEdges(20);
+        train.eventFactory().init(-5, edges[0]);
+        assertFalse(train.getEvents().get(1).getWarnings().isEmpty());
     }
 
     @Test

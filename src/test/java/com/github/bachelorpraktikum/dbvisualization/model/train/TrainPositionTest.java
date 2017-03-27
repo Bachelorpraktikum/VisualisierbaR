@@ -235,10 +235,11 @@ public class TrainPositionTest {
     public void testEquals() {
         TrainPosition init = TrainPosition.init(train, edge1, node1, node2);
         TrainPosition init2 = TrainPosition.init(train, edge1, node1, node2);
-        Train otherTrain = Train.in(context).create("train2", "t2", 10);
+        Train otherTrain = Train.in(context).create("train2", "t2", 20);
         TrainPosition initOtherTrain = TrainPosition.init(otherTrain, edge1, node1, node2);
         TrainPosition reach = init.reachFront(edge2);
         TrainPosition move = reach.move(5);
+        TrainPosition move3 = reach.reachFront(edge3).move(20);
 
         // null
         assertFalse(init.equals(null));
@@ -255,6 +256,9 @@ public class TrainPositionTest {
 
         assertNotEquals(init, reach);
         assertNotEquals(reach, init);
+
+        assertNotEquals(init, move3);
+        assertNotEquals(move3, init);
 
         // transitive
         assertNotEquals(init, reach);
@@ -292,6 +296,14 @@ public class TrainPositionTest {
         CoordinatesAdapter adapter = new SimpleCoordinatesAdapter();
 
         assertEquals(expected, move.getPositions(adapter));
+    }
+
+    @Test
+    public void testGetPositionsDuplicatePoint() {
+        TrainPosition reach = TrainPosition.init(train, edge1, node1, node2).reachFront(edge2);
+        CoordinatesAdapter adapter = new SimpleCoordinatesAdapter();
+        assertEquals(2, reach.getEdges().size());
+        assertEquals(2, reach.getPositions(adapter).size());
     }
 
     @Test
