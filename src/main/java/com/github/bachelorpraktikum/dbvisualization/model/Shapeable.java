@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Objects;
 import javafx.beans.property.Property;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Bounds;
@@ -85,13 +86,33 @@ public interface Shapeable<S extends Shape> {
         }
     }
 
+    /**
+     * Creates Shapes from the FXML files at the specified locations and applies {@link
+     * Shape#union(Shape, Shape)} on them.
+     *
+     * @param urls URLs to FXML resources
+     * @return a shape
+     * @throws IllegalArgumentException if no URLs or invalid URLs have been given
+     */
     @Nonnull
     static Shape createShape(URL... urls) {
         return createShape(Arrays.asList(urls));
     }
 
+    /**
+     * Creates Shapes from the FXML files at the specified locations and applies {@link
+     * Shape#union(Shape, Shape)} on them.
+     *
+     * @param urls URLs to FXML resources
+     * @return a shape
+     * @throws NullPointerException if urls is null
+     * @throws IllegalArgumentException if no URLs or invalid URLs have been given
+     */
     @Nonnull
     static Shape createShape(Collection<URL> urls) {
+        if (Objects.requireNonNull(urls).isEmpty()) {
+            throw new IllegalArgumentException();
+        }
         try {
             Shape shape = null;
 
@@ -107,7 +128,7 @@ public interface Shapeable<S extends Shape> {
             return shape;
         } catch (IOException e) {
             e.printStackTrace();
-            throw new IllegalStateException(e);
+            throw new IllegalArgumentException(e);
         }
     }
 }
