@@ -3,6 +3,7 @@ package com.github.bachelorpraktikum.dbvisualization.model.train;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import com.github.bachelorpraktikum.dbvisualization.model.Context;
@@ -44,7 +45,8 @@ public class TrainTest extends FactoryTest<Train> {
 
     @Override
     protected Train createSame(Context context, Train train) {
-        return getFactory(context).create(train.getName(), train.getReadableName(), train.getLength());
+        return getFactory(context)
+            .create(train.getName(), train.getReadableName(), train.getLength());
     }
 
     @Override
@@ -100,6 +102,12 @@ public class TrainTest extends FactoryTest<Train> {
     public void testLength() {
         Train train = Train.in(context).create("t", "train", 50);
         assertEquals(50, train.getLength());
+    }
+
+    @Test
+    public void testColor() {
+        Train train = createRandom(context);
+        assertNotNull(train.getColor());
     }
 
     @Test
@@ -480,5 +488,14 @@ public class TrainTest extends FactoryTest<Train> {
         assertFalse(newEvent.getWarnings().isEmpty());
         assertEquals(10, newEvent.getTime());
         assertEquals(beforeEvent.getTime(), newEvent.getTime());
+    }
+
+    @Test
+    public void testToString() {
+        Train train = createRandom(context);
+        assertNotNull(train.toString());
+        assertTrue(train.toString().contains(String.valueOf(train.getLength())));
+        assertTrue(train.toString().contains(train.getName()));
+        assertTrue(train.toString().contains(train.getReadableName()));
     }
 }

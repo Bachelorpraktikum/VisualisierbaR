@@ -180,4 +180,9 @@ public abstract class FactoryTest<T extends GraphObject<?>> {
         assertTrue(getFactory(context).checkAffiliated(t));
         assertFalse(getFactory(context).checkAffiliated(other));
     }
+
+    @Test(expected = NullPointerException.class)
+    public void testInWithNullContext() {
+        getFactory(null);
+    }
 }
