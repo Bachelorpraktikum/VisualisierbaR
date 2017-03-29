@@ -5,6 +5,7 @@ import java.net.URL;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Objects;
+import java.util.logging.Logger;
 import javafx.beans.property.Property;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Bounds;
@@ -127,7 +128,10 @@ public interface Shapeable<S extends Shape> {
 
             return shape;
         } catch (IOException e) {
-            e.printStackTrace();
+            Logger.getLogger(Shapeable.class.getName())
+                .severe("Error trying to load Shape from FXML file:"
+                    + System.lineSeparator()
+                    + e);
             throw new IllegalArgumentException(e);
         }
     }
