@@ -33,12 +33,14 @@ public class ConfigFile extends Properties {
     private ConfigFile(String filepath) {
         super();
 
-        try (InputStream defaultInput = getClass().getClassLoader().getResourceAsStream("default.properties")) {
+        try (InputStream defaultInput = getClass().getClassLoader()
+            .getResourceAsStream("default.properties")) {
             defaultConfig = new Properties();
             defaultConfig.load(defaultInput);
         } catch (IOException io) {
             log.severe(
-                String.format("File 'default.properties' not found in classpath. Error: %s", io.getMessage())
+                String.format("File 'default.properties' not found in classpath. Error: %s",
+                    io.getMessage())
             );
         }
         this.filepath = filepath;
@@ -76,7 +78,8 @@ public class ConfigFile extends Properties {
                 // when setting the default values on the real ConfigFile
                 if (defaultConfig.getProperty(key.getKey()) == null) {
                     log.severe(
-                        String.format("Property %s is not in the default config file.", key.getKey())
+                        String
+                            .format("Property %s is not in the default config file.", key.getKey())
                     );
                     continue;
                 }

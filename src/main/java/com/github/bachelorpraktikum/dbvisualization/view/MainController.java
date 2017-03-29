@@ -770,7 +770,7 @@ public class MainController {
         graphPane.getChildren().clear();
         graph = null;
         fitGraphToCenter(getGraph());
-        if(selected != null) {
+        if (selected != null) {
             // reselect element
             elementList.getSelectionModel().select(null);
             elementList.getSelectionModel().select(selected);
