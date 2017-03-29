@@ -209,7 +209,18 @@ public final class Edge implements GraphObject<Line> {
         }
     }
 
+    /**
+     * Gets the Node this Edge and the given Edge have in common.
+     *
+     * @param other the other Edge
+     * @return the common Node
+     * @throws NullPointerException if other is null
+     * @throws IllegalArgumentException if this edge doesn't have an Edge in common with the given
+     * one
+     */
+    @Nonnull
     public Node getCommonNode(Edge other) {
+        Objects.requireNonNull(other);
         Node n1 = getNode1();
         Node n2 = getNode2();
 

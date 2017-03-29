@@ -19,12 +19,15 @@ public class CoordinatesTest {
     public ExpectedException exception = ExpectedException.none();
 
     @Test
-    public void testNullParameters() {
-        Integer x = null;
-        Integer y = null;
+    public void testNegativeX() {
+        exception.expect(IllegalArgumentException.class);
+        new Coordinates(-1, 0);
+    }
 
-        exception.expect(NullPointerException.class);
-        new Coordinates(x, y);
+    @Test
+    public void testNegativeY() {
+        exception.expect(IllegalArgumentException.class);
+        new Coordinates(0, -1);
     }
 
     @Test
@@ -54,6 +57,8 @@ public class CoordinatesTest {
         assertFalse(coordinate12.equals(coordinate11));
         assertFalse(coordinate12.equals(coordinate21));
         assertFalse(coordinate21.equals(coordinate22));
+
+        assertFalse(coordinate11.equals(null));
     }
 
     @Test

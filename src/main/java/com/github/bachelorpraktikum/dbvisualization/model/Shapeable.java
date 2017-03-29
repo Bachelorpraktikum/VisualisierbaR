@@ -11,6 +11,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.geometry.Bounds;
 import javafx.scene.shape.Shape;
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 
 /**
@@ -71,11 +72,24 @@ public interface Shapeable<S extends Shape> {
         return 20;
     }
 
-    default boolean isVisible(Bounds bounds) {
-        if (bounds == null) {
-            return true;
-        }
+    /**
+     * <p>Decides whether a Shape created by this Shapeable should be visible.</p>
+     *
+     * <p>If the current visibleState is {@link VisibleState#AUTO}, the visibility is determined by
+     * the given bounds of the shape and the minimum size returned by {@link #minSize()}. If the
+     * bounds are null, AUTO is equal to {@link VisibleState#ENABLED}</p>
+     *
+     * <p><b>Implementation note:</b><br> The current implementation treats AUTO and ENABLED
+     * equally and ignores {@link #minSize()}. </p>
+     *
+     * @param bounds the bounds on screen of the shape, or null
+     * @return whether the shape should be visible
+     */
+    default boolean isVisible(@Nullable Bounds bounds) {
         VisibleState state = visibleStateProperty().getValue();
+        if (bounds == null) {
+            return state != VisibleState.DISABLED;
+        }
         switch (state) {
             case ENABLED:
                 return true;

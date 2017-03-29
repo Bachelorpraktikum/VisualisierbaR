@@ -17,6 +17,7 @@ interface SourceChooser<T extends DataSource> {
      * Returns the resource.
      *
      * @return the resource
+     * @throws IOException if any error occurs creating the resource
      */
     @Nonnull
     T getResource() throws IOException;

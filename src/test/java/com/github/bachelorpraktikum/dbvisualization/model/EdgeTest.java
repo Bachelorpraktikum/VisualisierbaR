@@ -98,13 +98,72 @@ public class EdgeTest extends FactoryTest<Edge> {
         Edge edge = Edge.in(context).create(null, 50, getNode(), getNode());
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testCreateNodeDifferentContext() {
         Node node1 = getNode();
         Node node2 = getNode();
 
         Context otherContext = new Context();
+        expected.expect(IllegalArgumentException.class);
         Edge.in(otherContext).create("e", 1, node1, node2);
+    }
+
+    @Test
+    public void testGetCommonNode() {
+        Edge edge = createRandom(context);
+        Node otherNode = getNode();
+        Edge other1 = Edge.in(context).create("other1", 10, edge.getNode1(), otherNode);
+        Edge other2 = Edge.in(context).create("other2", 10, otherNode, edge.getNode1());
+
+        assertEquals(edge.getNode1(), edge.getCommonNode(other1));
+        assertEquals(edge.getNode1(), edge.getCommonNode(other2));
+
+        assertEquals(edge.getNode1(), other1.getCommonNode(edge));
+        assertEquals(edge.getNode1(), other2.getCommonNode(edge));
+    }
+
+    @Test
+    public void testGetCommonNodeInvalid() {
+        Edge edge = createRandom(context);
+        Edge other = createRandom(context);
+
+        expected.expect(IllegalArgumentException.class);
+        edge.getCommonNode(other);
+    }
+
+    @Test
+    public void testGetCommonNodeNull() {
+        Edge edge = createRandom(context);
+
+        expected.expect(NullPointerException.class);
+        edge.getCommonNode(null);
+    }
+
+    @Test
+    public void testGetOtherNode() {
+        Edge edge = createRandom(context);
+        Node node1 = edge.getNode1();
+        Node node2 = edge.getNode2();
+
+        assertEquals(node2, edge.getOtherNode(node1));
+        assertEquals(node1, edge.getOtherNode(node2));
+    }
+
+    @Test
+    public void testGetOtherNodeInvalid() {
+        Edge edge = createRandom(context);
+        Node invalid = getNode();
+
+        expected.expect(IllegalArgumentException.class);
+        edge.getOtherNode(invalid);
+    }
+
+    @Test
+    public void testGetOtherNodeNull() {
+        Edge edge = createRandom(context);
+
+        expected.expect(NullPointerException.class);
+        edge.getOtherNode(null);
     }
 
     @Override

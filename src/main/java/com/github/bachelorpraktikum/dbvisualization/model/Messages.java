@@ -95,6 +95,8 @@ public final class Messages {
     /**
      * Fires all message events between the start time (exclusive) and the end time (inclusive).
      *
+     * @param nodeResolver a function that resolves the Node a message is associated with to the
+     * corresponding JavaFX Node on screen
      * @param startTime the start time
      * @param endTime the maximum time of the last message event to be fired
      * @return whether any events have been fired
