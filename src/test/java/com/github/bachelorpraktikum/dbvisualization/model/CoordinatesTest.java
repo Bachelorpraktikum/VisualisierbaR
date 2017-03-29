@@ -6,6 +6,7 @@ import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Random;
+import javafx.geometry.Point2D;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -98,5 +99,14 @@ public class CoordinatesTest {
         Coordinates coordinate = new Coordinates(1, 1);
 
         assertEquals(coordinate.getY(), 1);
+    }
+
+    @Test
+    public void testToPoint2D() {
+        for (int x = 0; x < 100; x++) {
+            for (int y = 0; y < 100; y++) {
+                assertEquals(new Point2D(x, y), new Coordinates(x, y).toPoint2D());
+            }
+        }
     }
 }
