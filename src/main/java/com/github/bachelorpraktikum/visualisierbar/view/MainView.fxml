@@ -41,6 +41,7 @@
             <ToggleButton fx:id="proportionalToggle" mnemonicParsing="false" text="%layout"/>
             <ToggleButton fx:id="legendButton" text="%legend"/>
             <Button fx:id="closeButton" text="%close_data_source"/>
+            <Button fx:id="infoButton" text="%info" />
           </items>
         </ToolBar>
       </children>

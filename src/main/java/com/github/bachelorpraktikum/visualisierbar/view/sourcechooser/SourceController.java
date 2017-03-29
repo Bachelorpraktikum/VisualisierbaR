@@ -1,5 +1,6 @@
 package com.github.bachelorpraktikum.visualisierbar.view.sourcechooser;
 
+import com.github.bachelorpraktikum.visualisierbar.Visualisierbar;
 import com.github.bachelorpraktikum.visualisierbar.datasource.DataSource;
 import com.github.bachelorpraktikum.visualisierbar.model.Context;
 import com.github.bachelorpraktikum.visualisierbar.view.MainController;
@@ -184,5 +185,10 @@ public class SourceController {
     private void closeWindow() {
         Stage primaryStage = (Stage) rootPane.getScene().getWindow();
         primaryStage.close();
+    }
+
+    @FXML
+    private void showLicenceInfo() {
+        Visualisierbar.licenceInfo.showAndWait();
     }
 }

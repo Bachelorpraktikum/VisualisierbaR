@@ -2,6 +2,7 @@ package com.github.bachelorpraktikum.visualisierbar.view;
 
 import com.github.bachelorpraktikum.visualisierbar.CompositeObservableList;
 import com.github.bachelorpraktikum.visualisierbar.FXCollectors;
+import com.github.bachelorpraktikum.visualisierbar.Visualisierbar;
 import com.github.bachelorpraktikum.visualisierbar.config.ConfigFile;
 import com.github.bachelorpraktikum.visualisierbar.config.ConfigKey;
 import com.github.bachelorpraktikum.visualisierbar.datasource.DataSource;
@@ -124,6 +125,8 @@ public class MainController {
     private Button resetButton;
     @FXML
     private Button resetViewButton;
+    @FXML
+    private Button infoButton;
     @FXML
     private TextField timeText;
     @FXML
@@ -249,6 +252,7 @@ public class MainController {
             simulationTime.set(Context.INIT_STATE_TIME);
             selectClosestLogEntry(Context.INIT_STATE_TIME);
         });
+        infoButton.setOnAction(event -> showLicenceInfo());
 
         resetViewButton.setOnAction(event -> resetGraphView());
 
@@ -761,6 +765,10 @@ public class MainController {
             elementList.getSelectionModel().select(null);
             elementList.getSelectionModel().select(selected);
         }
+    }
+
+    private void showLicenceInfo() {
+        Visualisierbar.licenceInfo.showAndWait();
     }
 
     private void exportGraph() {

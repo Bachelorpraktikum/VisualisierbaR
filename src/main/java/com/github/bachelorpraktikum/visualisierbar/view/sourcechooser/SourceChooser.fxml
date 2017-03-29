@@ -30,7 +30,7 @@
           minWidth="-Infinity" mnemonicParsing="false" text="%open_data_source"
           textAlignment="CENTER">
           <BorderPane.margin>
-            <Insets left="75.0"/>
+            <Insets left="5.0"/>
           </BorderPane.margin>
         </Button>
       </center>
@@ -48,6 +48,13 @@
       <padding>
         <Insets bottom="5.0" top="5.0"/>
       </padding>
+         <left>
+            <Button mnemonicParsing="false" onAction="#showLicenceInfo" text="%info" BorderPane.alignment="CENTER">
+               <BorderPane.margin>
+                  <Insets left="4.0" />
+               </BorderPane.margin>
+            </Button>
+         </left>
     </BorderPane>
   </bottom>
 </BorderPane>
