@@ -100,7 +100,7 @@ public class MainController {
     private ToggleButton proportionalToggle;
 
     @FXML
-    private ListView<Shapeable> legend;
+    private ListView<Shapeable<?>> legend;
     @FXML
     private ToggleButton legendButton;
     @FXML
@@ -582,7 +582,7 @@ public class MainController {
 
     private void showLegend() {
         Context context = DataSourceHolder.getInstance().getContext();
-        ObservableList<Shapeable> items = Stream.concat(
+        ObservableList<Shapeable<?>> items = Stream.concat(
             Train.in(context).getAll().stream(),
             Element.in(context).getAll().stream()
                 .map(Element::getType)

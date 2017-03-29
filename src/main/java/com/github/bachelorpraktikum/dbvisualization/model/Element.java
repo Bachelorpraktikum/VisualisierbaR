@@ -89,7 +89,7 @@ public final class Element implements GraphObject<Shape> {
      * Represents the type of an {@link Element}.
      * Every type is associated with an image file containing the symbol for the element.
      */
-    public enum Type implements Shapeable {
+    public enum Type implements Shapeable<Shape> {
         GeschwindigkeitsAnzeiger("GeschwindigkeitsAnzeigerImpl", () ->
             new Polygon(-1, 1, 1, 1, 0, -1)
         ),

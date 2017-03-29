@@ -18,7 +18,7 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.Shape;
 
-public class LegendListViewCell extends ListCell<Shapeable> {
+public class LegendListViewCell extends ListCell<Shapeable<?>> {
 
     @FXML
     private Label eleName;
@@ -30,7 +30,7 @@ public class LegendListViewCell extends ListCell<Shapeable> {
     private AnchorPane cell;
 
     @Override
-    protected void updateItem(Shapeable element, boolean empty) {
+    protected void updateItem(Shapeable<?> element, boolean empty) {
         super.updateItem(element, empty);
         if (empty) {
             setText(null);
