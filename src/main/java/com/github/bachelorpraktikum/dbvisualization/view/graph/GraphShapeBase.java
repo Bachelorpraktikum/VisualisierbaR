@@ -1,5 +1,6 @@
 package com.github.bachelorpraktikum.dbvisualization.view.graph;
 
+import com.github.bachelorpraktikum.dbvisualization.model.GraphObject;
 import com.github.bachelorpraktikum.dbvisualization.view.graph.adapter.CoordinatesAdapter;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -13,7 +14,8 @@ import javafx.scene.shape.Rectangle;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-public abstract class GraphShapeBase<R, S extends Node> implements GraphShape<R> {
+public abstract class GraphShapeBase<R extends GraphObject<?>, S extends Node>
+    implements GraphShape<R> {
 
     protected static final double HIGHLIGHT_FACTOR = 1.5;
     protected static final double HIGHLIGHT_STROKE_WIDTH = 0.05;

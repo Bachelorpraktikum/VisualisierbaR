@@ -1,12 +1,14 @@
 package com.github.bachelorpraktikum.dbvisualization.view.graph;
 
+import com.github.bachelorpraktikum.dbvisualization.model.GraphObject;
 import com.github.bachelorpraktikum.dbvisualization.view.graph.adapter.CoordinatesAdapter;
 import java.util.Collections;
 import java.util.List;
 import javafx.scene.shape.Shape;
 import javax.annotation.Nonnull;
 
-public abstract class SingleGraphShapeBase<R, S extends Shape> extends GraphShapeBase<R, S> {
+public abstract class SingleGraphShapeBase<R extends GraphObject<?>, S extends Shape>
+    extends GraphShapeBase<R, S> {
 
     private final R represented;
 
