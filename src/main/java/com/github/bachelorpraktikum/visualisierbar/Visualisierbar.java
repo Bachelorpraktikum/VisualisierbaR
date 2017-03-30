@@ -15,13 +15,12 @@ import java.util.logging.Logger;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Alert;
-import javafx.scene.layout.Region;
 import javafx.stage.Stage;
 
 public class Visualisierbar extends Application {
 
     private static final String APP_NAME_KEY = "app_name";
-    public static final Alert licenceInfo = new Alert(Alert.AlertType.INFORMATION);
+    private static Alert licenceInfo;
 
     static {
         try (InputStream in = Visualisierbar.class.getResourceAsStream("/logging.properties")) {
@@ -36,29 +35,30 @@ public class Visualisierbar extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception {
+        licenceInfo = new Alert(Alert.AlertType.INFORMATION);
         licenceInfo.setTitle("Licence Information");
         licenceInfo.setHeaderText("VisualisierbaR");
-        licenceInfo.setContentText("MIT License\n" +
-            "\n" +
-            "Copyright (c) 2016 Torben Carstens, Björn Petersen, Yannick Roder, Christian Schaarschmidt, Johannes Semsch\n" +
-            "\n" +
-            "Permission is hereby granted, free of charge, to any person obtaining a copy\n" +
-            "of this software and associated documentation files (the \"Software\"), to deal\n" +
-            "in the Software without restriction, including without limitation the rights\n" +
-            "to use, copy, modify, merge, publish, distribute, sublicense, and/or sell\n" +
-            "copies of the Software, and to permit persons to whom the Software is\n" +
-            "furnished to do so, subject to the following conditions:\n" +
-            "\n" +
-            "The above copyright notice and this permission notice shall be included in all\n" +
-            "copies or substantial portions of the Software.\n" +
-            "\n" +
-            "THE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR\n" +
-            "IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,\n" +
-            "FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE\n" +
-            "AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER\n" +
-            "LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,\n" +
-            "OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE\n" +
-            "SOFTWARE.\n");
+        licenceInfo.setContentText("MIT License\n"
+            + "\n"
+            + "Copyright (c) 2016 Torben Carstens, Björn Petersen, Yannick Roder, Christian Schaarschmidt, Johannes Semsch\n"
+            + "\n"
+            + "Permission is hereby granted, free of charge, to any person obtaining a copy\n"
+            + "of this software and associated documentation files (the \"Software\"), to deal\n"
+            + "in the Software without restriction, including without limitation the rights\n"
+            + "to use, copy, modify, merge, publish, distribute, sublicense, and/or sell\n"
+            + "copies of the Software, and to permit persons to whom the Software is\n"
+            + "furnished to do so, subject to the following conditions:\n"
+            + "\n"
+            + "The above copyright notice and this permission notice shall be included in all\n"
+            + "copies or substantial portions of the Software.\n"
+            + "\n"
+            + "THE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR\n"
+            + "IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,\n"
+            + "FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE\n"
+            + "AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER\n"
+            + "LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,\n"
+            + "OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE\n"
+            + "SOFTWARE.\n");
         licenceInfo.getDialogPane().setPrefWidth(525);
         licenceInfo.getDialogPane().setMaxWidth(Double.MAX_VALUE);
 
@@ -109,6 +109,13 @@ public class Visualisierbar extends Application {
         }
 
         primaryStage.show();
+    }
+
+    /**
+     * Shows a dialog and blocks until it is closed.
+     */
+    public static void showLicenceInfo() {
+        licenceInfo.showAndWait();
     }
 
     public static void main(String[] args) {

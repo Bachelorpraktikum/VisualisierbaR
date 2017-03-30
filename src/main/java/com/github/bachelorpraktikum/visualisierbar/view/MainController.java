@@ -768,7 +768,7 @@ public class MainController {
     }
 
     private void showLicenceInfo() {
-        Visualisierbar.licenceInfo.showAndWait();
+        Visualisierbar.showLicenceInfo();
     }
 
     private void exportGraph() {

@@ -189,6 +189,6 @@ public class SourceController {
 
     @FXML
     private void showLicenceInfo() {
-        Visualisierbar.licenceInfo.showAndWait();
+        Visualisierbar.showLicenceInfo();
     }
 }
