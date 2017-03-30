@@ -1,6 +1,7 @@
 package com.github.bachelorpraktikum.dbvisualization.datasource;
 
 import com.github.bachelorpraktikum.dbvisualization.model.Context;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -18,7 +19,7 @@ public class SubprocessSource extends InputParserSource {
 
     /**
      * Creates a new {@link Context} and starts the process specified by the command with the
-     * specified arguments.
+     * specified arguments. The subprocess will run in the parent directory of the command.
      *
      * <p>Parses the process output until there is no output for {@link #DEFAULT_START_TIMEOUT}
      * milliseconds.</p>
@@ -50,7 +51,14 @@ public class SubprocessSource extends InputParserSource {
         commands.add(command);
         Collections.addAll(commands, args);
 
-        return new ProcessBuilder(commands).start();
+        ProcessBuilder builder = new ProcessBuilder(commands);
+
+        File parentDir = new File(command).getParentFile();
+        if (parentDir != null) {
+            builder.directory(parentDir);
+        }
+
+        return builder.start();
     }
 
     @Override
